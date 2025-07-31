@@ -1,0 +1,111 @@
+Question :https://leetcode.com/problems/rotate-list/description/
+
+solution:
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+
+    /*
+    This is my brute force approach which is O(n*k)
+    public ListNode getLastNode(ListNode node) {
+
+        ListNode p = node,lastNode = null;
+
+        while(p!=null) {
+            if(p.next==null) {
+                lastNode = p;
+                break;
+            }
+            p = p.next;
+        }
+
+        return lastNode;
+    }
+
+    public ListNode rotateRight(ListNode head, int k) {
+        
+        for(int i=0;i<k;i++) {
+            ListNode last_node = getLastNode(head);
+            last_node.next = head;
+            head = last_node;
+        }
+
+        return head;
+    }*/ 
+
+    /*public ListNode rotateRight(ListNode head, int k) {
+        
+        if(head==null) return head;
+        if(k==0) return head;
+
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+
+        ListNode last = dummy,top = dummy;
+        int count=0;
+
+        while(last.next!=null) {
+            count++;
+            last = last.next;
+        }
+
+        for(int i=count-k%count;i>0;i--) {
+            top = top.next;
+        }
+
+        // System.out.println(top.val + " " + last.val);
+
+        last.next = dummy.next;
+        dummy.next = top.next;
+        top.next = null;
+        return dummy.next;
+    }*/
+
+    // Making a standard circular List Method 
+
+    public int getLength(ListNode node) {
+
+        int count=0;
+        while(node!=null) {
+            count++;
+            node = node.next;
+        }
+
+        return count;
+    }
+
+    public ListNode rotateRight(ListNode head, int k) {
+
+        if(head==null) return head;
+        if(k==0) return head;
+
+        int len = getLength(head);
+
+        if(k%len==0) return head;
+
+        //  Making the List circular List
+        ListNode node = head;
+        while(node.next!=null) {
+            node = node.next;
+        }
+        node.next = head;
+
+        ListNode tail = head;
+        for(int i=1;i<len-(k%len);i++) {
+            tail = tail.next;
+        }
+
+        ListNode newHead = tail.next;
+        tail.next = null;
+
+        return newHead;
+    }
+}
