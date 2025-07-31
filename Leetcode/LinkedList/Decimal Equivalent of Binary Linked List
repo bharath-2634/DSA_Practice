@@ -1,0 +1,39 @@
+Question : https://www.geeksforgeeks.org/problems/decimal-equivalent-of-binary-linked-list/1
+
+Solution : 
+/* Node of a linked list
+ class Node {
+   int data;
+    Node next;
+    Node(int d)  { data = d;  next = null; }
+}
+ Linked List class
+class LinkedList
+{
+    Node head;  // head of list
+}
+This is method only submission.  You only need to complete the method. */
+
+class Solution {
+    long DecimalValue(Node head) {
+        
+       StringBuilder sb = new StringBuilder();
+       
+       while(head!=null) {
+           sb.append(head.data);
+           head = head.next;
+       }
+       
+       long num=0;
+       String data = sb.toString();
+       int res=0,pv=1;
+       
+       for(int i = data.length() - 1; i >= 0; i--) {
+            res += pv * (Integer.parseInt(data.substring(i, i+1)));
+            pv = (pv * 2) % 1000000007;
+            res %= 1000000007;
+       }
+       
+        return res;
+    }
+}
