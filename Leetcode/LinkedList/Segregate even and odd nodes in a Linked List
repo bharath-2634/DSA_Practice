@@ -1,0 +1,53 @@
+Question : https://www.geeksforgeeks.org/problems/segregate-even-and-odd-nodes-in-a-linked-list5035/1
+
+Solution : 
+// User function Template for Java
+
+/*
+class Node{
+    int data;
+    Node next;
+
+    Node(int x){
+        data = x;
+        next = null;
+    }
+}
+*/
+
+class Solution {
+    Node divide(Node head) {
+        // code here
+        Node odd_list = new Node(-1);
+        Node odd_tail = odd_list;
+        Node even_list = new Node(-1);
+        Node even_tail = even_list;
+        
+        while(head!=null) {
+            Node node = new Node(head.data);
+            if(head.data%2==0) {
+                even_tail.next = node;
+                even_tail = even_tail.next;
+            }else {
+                odd_tail.next = node;
+                odd_tail = odd_tail.next;
+            }
+            head = head!=null ? head.next : null;
+        }
+        
+        even_list = even_list.next;
+        odd_list = odd_list.next;
+        
+        if(odd_list==null) {
+            return even_list;
+        }
+        
+        if(even_list==null) {
+            return odd_list;
+        }
+        
+        even_tail.next = odd_list;
+        
+        return even_list;
+    }
+}
