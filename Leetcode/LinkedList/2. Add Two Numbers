@@ -1,0 +1,72 @@
+Question : https://leetcode.com/problems/add-two-numbers/description/
+
+Solution : 
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    /* This is my Brute force Approach */
+    /*public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+
+        StringBuilder num1 = new StringBuilder();
+        StringBuilder num2 = new StringBuilder();
+
+        ListNode node1 = l1;
+        while(node1!=null) {
+            num1.append(node1.val);
+            node1 = node1.next;
+        }
+
+        ListNode node2 = l2;
+        while(node2!=null) {
+            num2.append(node2.val);
+            node2 = node2.next;
+        } 
+
+        int total = Integer.parseInt(num1.reverse().toString()) + Integer.parseInt(num2.reverse().toString());
+        if(total<=9) return new ListNode(total);
+        ListNode res = new ListNode(-1);
+        ListNode tail = res;
+
+        while(total!=0) {
+            ListNode node = new ListNode(total%10);
+            tail.next = node;
+            tail = node;
+            total/=10;
+        }
+
+        return res.next;
+    }*/
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+
+        ListNode dummy = new ListNode();
+        ListNode tail = dummy;
+
+        int carry=0;
+
+        while(l1!=null || l2!=null || carry!=0) {
+            int val1 = (l1!=null) ? l1.val : 0;
+            int val2 = (l2!=null) ? l2.val : 0;
+
+            int sum = val1+val2+carry;
+            carry = sum/10;
+
+            ListNode node = new ListNode(sum%10);
+            tail.next = node;
+            tail = node;
+            
+            l1 = (l1!=null) ? l1.next : null;
+            l2 = (l2!=null) ? l2.next : null;
+        }
+
+        return dummy.next;
+    }
+}
