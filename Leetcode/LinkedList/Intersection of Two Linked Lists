@@ -1,0 +1,102 @@
+Question : 
+GFG -> https://www.geeksforgeeks.org/problems/intersection-of-two-linked-list/1
+Leetcode -> https://leetcode.com/problems/intersection-of-two-linked-lists/
+
+Solution : 
+/* structure of list Node:
+
+class Node
+{
+    int data;
+    Node next;
+
+    Node(int a)
+        {
+            data = a;
+            next = null;
+        }
+}
+
+*/
+
+class Solution {
+    
+    public int getLength(Node node) {
+        int count=0;
+        
+        while(node!=null) {
+            count++;
+            node = node.next;
+        }
+        
+        return count;
+    }
+    
+    //  This solution gives Time Complexity : O(n*m)
+    // public Node findIntersection(Node head1, Node head2) {
+        
+    //     int n1=getLength(head1) , n2 = getLength(head2);
+        
+    //     if(n2>n1) {
+    //         Node temp = head1;
+    //         head1 = head2;
+    //         head2 = temp;
+    //     }
+        
+    //     List<Integer> data = new ArrayList<>();
+        
+    //     while(head1!=null) {
+            
+    //         int val = head1 !=null ? head1.data : 0;
+            
+    //         Node node = head2;
+            
+    //         while(node!=null) {
+    //             if(node.data == val) {
+    //                 data.add(node.data);
+    //                 break;
+    //             }
+    //             node = node.next;
+    //         }
+            
+    //         head1 = head1!=null ? head1.next : null;
+    //     }
+        
+    //     Node dummy = new Node(-1);
+    //     Node tail = dummy;
+    //     for(int num : data) {
+    //         Node node = new Node(num);
+    //         tail.next = node;
+    //         tail = tail.next;
+    //     }
+        
+    //     return dummy.next;
+    // }
+    
+    public Node findIntersection(Node head1, Node head2) {
+        
+        Set<Integer> val_head = new HashSet<>();
+        
+        Node node2 = head2;
+        
+        while(node2!=null) {
+            val_head.add(node2.data);
+            node2 = node2.next;
+        }
+        
+        Node dummy = new Node(-1);
+        Node tail = dummy;
+        
+        while(head1!=null) {
+            if(val_head.contains(head1.data)) {
+                Node node = new Node(head1.data);
+                tail.next = node;
+                tail = tail.next;
+            }
+            
+            head1 = head1.next;
+        }
+        
+        return dummy.next;
+    }
+}
