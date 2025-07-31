@@ -1,0 +1,71 @@
+Question : https://leetcode.com/problems/palindrome-linked-list/
+
+Solution : 
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    /* 
+    this is my static approach using stringBuilder
+    public boolean isPalindrome(ListNode head) {
+
+        if(head==null) return false;
+        StringBuilder stb = new StringBuilder();
+
+        ListNode tail = head;
+        while(tail!=null) {
+            stb.append(tail.val+"");
+            tail = tail.next;
+        }
+
+        if(stb.toString().equals(stb.reverse().toString())) return true;
+        return false;
+    }*/
+
+    public ListNode reverseNode(ListNode node) {
+
+        ListNode p=node,q=node,temp=null;
+
+        while(p!=null) {
+            q = p.next;
+            p.next = temp;
+            temp = p;
+            p = q;
+        }
+
+        return temp;
+    }
+
+    public boolean isPalindrome(ListNode head) {
+        if(head==null) return false;
+
+        ListNode fast=head,slow = head;
+
+        while(fast!=null && fast.next!=null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        if(fast!=null) {
+            slow = slow.next; // for odd number comparision
+        }
+
+        ListNode middle_node = reverseNode(slow);
+
+        ListNode left = head,right = middle_node;
+        while(right!=null) {
+            if(left.val!=right.val) return false;
+            left = left!=null ? left.next : null;
+            right = right!=null ? right.next : null;
+        }
+
+        return true;
+    } 
+}
