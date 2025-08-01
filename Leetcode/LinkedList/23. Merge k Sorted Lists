@@ -1,0 +1,64 @@
+Question : https://leetcode.com/problems/merge-k-sorted-lists/description/
+
+Solution : 
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    /*
+    This is my bruteforce Approach - T.C : O(nlogn) and S.C : O(n)
+    public ListNode mergeKLists(ListNode[] lists) {
+        
+        List<Integer> data = new ArrayList<>();
+
+        for(ListNode list : lists) {
+            while(list!=null) {
+                data.add(list.val);
+                list = list.next;
+            }
+        } // O(n*m)
+
+        Collections.sort(data); // O(nlogn)
+
+        ListNode dummy = new ListNode(-1);
+        ListNode tail = dummy;
+        for(int val : data) {
+            ListNode node = new ListNode(val);
+            tail.next = node;
+            tail = tail.next;
+        } // O(n*m)
+
+        return dummy.next;
+    }*/ 
+
+    public ListNode mergeKLists(ListNode[] lists) {
+
+        PriorityQueue<ListNode> queueList = new PriorityQueue<>((a,b)->Integer.compare(a.val,b.val));
+
+        for(ListNode list : lists) {
+            if(list!=null) queueList.add(list);
+        }
+
+        ListNode dummy = new ListNode(-1);
+        ListNode tail = dummy;
+
+        while(!queueList.isEmpty()) {
+            ListNode node = queueList.poll();
+            tail.next = node;
+            tail = tail.next;
+            if(node.next != null) {
+                queueList.add(node.next);
+            }
+        }
+
+        return dummy.next;
+
+    }
+}
