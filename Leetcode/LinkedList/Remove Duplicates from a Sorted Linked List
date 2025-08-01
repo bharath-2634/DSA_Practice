@@ -1,0 +1,32 @@
+Question : https://www.geeksforgeeks.org/problems/remove-duplicate-element-from-sorted-linked-list/1
+
+Solution :
+/*
+class Node
+    {
+        int data;
+        Node next;
+        Node(int d) {data = d; next = null; }
+    }
+*/
+
+class Solution {
+    // Function to remove duplicates from sorted linked list.
+    Node removeDuplicates(Node head) {
+        
+        Node node = head;
+        
+        while(node!=null && node.next!=null) {
+            int val1 = node!=null ? node.data : 0;
+            int val2 = node.next!=null ? node.next.data : 0;
+            
+            if(val1==val2) {
+                node.next = node.next.next;
+            }else {
+                node = node.next;
+            }
+        }
+        
+        return head;
+    }
+} 
