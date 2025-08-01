@@ -1,0 +1,71 @@
+Question :https://www.geeksforgeeks.org/problems/sort-a-linked-list/1
+
+Solution : 
+/*
+The structure of linked list is the following
+
+class Node
+{
+int data;
+Node next;
+    Node(int key)
+    {
+        data = key;
+        next = null;
+    }
+}
+*/
+
+class Solution {
+    
+    static Node splitList(Node node) {
+        
+       Node fast = node,slow = node;
+       
+       while(fast!=null && fast.next!=null) {
+           fast = fast.next.next;
+           if(fast!=null) slow = slow.next;
+       }
+       
+       Node temp = slow.next;
+       slow.next = null;
+       
+       return temp; 
+        
+    }
+    
+    static Node MergeList(Node left,Node right) {
+        
+        if(left==null && right==null) return null;
+        
+        if(left==null) return right;
+        if(right==null) return left;
+        
+        if(left.data < right.data) {
+            left.next = MergeList(left.next,right);
+            return left;
+            
+        }else {
+            right.next = MergeList(left,right.next);
+            return right;
+        }
+
+    }
+    
+    static Node sortList(Node head) {
+        
+        if(head==null || head.next==null) return head;
+        
+        Node split = splitList(head);
+        
+        head = sortList(head);
+        split = sortList(split);
+        
+        return MergeList(head,split);
+    }
+    
+    static Node mergeSort(Node head) {
+       
+       return sortList(head);
+    }
+}
