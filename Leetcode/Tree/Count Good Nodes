@@ -1,0 +1,53 @@
+Question : https://leetcode.com/problems/count-good-nodes-in-binary-tree/
+
+Solution : 
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    /*public int getCount(TreeNode node,int lastVisited) {
+        if(node==null) return 0;
+
+        if(node.val >=lastVisited) {
+            return 1+getCount(node.left,node.val) + getCount(node.right,node.val);
+        }
+
+        return getCount(node.left,lastVisited) + getCount(node.right,lastVisited);
+    }
+
+    public int goodNodes(TreeNode root) {
+        if(root==null) return 0;
+        
+        return 1+getCount(root.left,root.val) + getCount(root.right,root.val);
+    }*/
+
+    public int dfs(TreeNode node,int lastVisitedVal) {
+
+        if(node==null) return 0;
+
+        int isGood = node.val >= lastVisitedVal ? 1 : 0;
+        lastVisitedVal = Math.max(lastVisitedVal,node.val);
+
+        return isGood + dfs(node.left,lastVisitedVal) + dfs(node.right,lastVisitedVal);
+    }
+
+    public int goodNodes(TreeNode root) {
+
+        if(root==null) return 0;
+
+        return dfs(root,Integer.MIN_VALUE);
+    }
+}
