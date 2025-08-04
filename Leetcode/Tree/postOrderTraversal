@@ -1,0 +1,51 @@
+Question : https://www.geeksforgeeks.org/problems/postorder-traversal/1
+
+Solution: 
+/* A Binary Tree node
+class Node {
+    int data;
+    Node left, right;
+   Node(int item)    {
+        data = item;
+        left = right = null;
+    }
+} */
+
+class Solution {
+   
+    ArrayList<Integer> postOrder(Node root) {
+        
+        Node p = root,q = null;
+        Stack<Node> st = new Stack<>();
+        st.push(root);
+        
+        ArrayList<Integer> res = new ArrayList<>();
+        
+        while(!st.isEmpty()) {
+            p = st.peek();
+            if(q==null || q.left==p || q.right==p) {
+                if(p.left!=null) {
+                    st.push(p.left);
+                }else if(p.right!=null) {
+                    st.push(p.right);
+                }else {
+                    Node node = st.pop();
+                    res.add(node.data);
+                }
+            }else if(p.left==q) {
+                if(p.right!=null) {
+                    st.push(p.right);
+                }else {
+                    Node node = st.pop();
+                    res.add(node.data);
+                }
+            }else if(p.right==q) {
+                Node node = st.pop();
+                res.add(node.data);
+            }
+            q = p;
+        }
+        
+        return res;
+    }
+}
