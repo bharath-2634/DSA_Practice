@@ -1,0 +1,65 @@
+Question :https://leetcode.com/problems/binary-tree-paths/
+
+Solution : 
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public String getPath(List<Integer> list) {
+
+        StringBuilder res = new StringBuilder("" + list.get(0));
+
+        for (int i=1; i<list.size(); i++) {
+            res.append("->" + list.get(i));
+        }
+
+        return res.toString();
+    }
+
+    public void getTreePaths(TreeNode node,List<String> res,List<Integer> data) {
+
+        if(node==null) return;
+
+        data.add(node.val);
+        if(node.left==null && node.right==null) {
+            String path = getPath(data);
+            res.add(path);
+            // data.remove(data.size()-1);
+        } 
+
+        getTreePaths(node.left,res,data);
+        getTreePaths(node.right,res,data);
+
+        data.remove(data.size()-1);
+    }
+
+    public List<String> binaryTreePaths(TreeNode root) {
+        if(root==null) return new ArrayList<>();
+
+        List<String> res = new ArrayList<>();
+        List<Integer> data = new ArrayList<>();
+        if(root.left==null && root.right==null) {
+            data.add(root.val);
+            res.add(getPath(data));
+            return res;
+        }
+
+        data.add(root.val);
+        getTreePaths(root.left,res,data);
+        getTreePaths(root.right,res,data);
+
+        return res;
+    }
+}
