@@ -1,0 +1,41 @@
+Question :https://leetcode.com/problems/binary-tree-maximum-path-sum/description/
+
+Solution :
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int maxPathSum = Integer.MIN_VALUE;
+
+    public int getMaxPathSum(TreeNode node) {
+
+        if(node==null) return 0;
+
+        int leftMax = Math.max(0,getMaxPathSum(node.left));
+        int rightMax = Math.max(0,getMaxPathSum(node.right));
+
+        maxPathSum = Math.max(maxPathSum,(node.val+leftMax+rightMax));
+
+        return node.val + Math.max(leftMax,rightMax);
+    }
+
+    public int maxPathSum(TreeNode root) {
+        if(root==null) return 0;
+        
+        getMaxPathSum(root);
+
+        return maxPathSum;
+    }
+}
