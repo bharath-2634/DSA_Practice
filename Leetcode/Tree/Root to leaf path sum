@@ -1,0 +1,42 @@
+Question : https://www.geeksforgeeks.org/problems/root-to-leaf-path-sum/1
+
+Solution : 
+/*
+// A Binary Tree node
+class Node{
+    int data;
+    Node left;
+    Node right;
+    Node(int data){
+        this.data = data;
+        left=null;
+        right=null;
+    }
+}
+*/
+
+class Solution {
+    public boolean checkTarget(Node node,int target) {
+        
+        if(node==null) return false;
+        
+        if(node.left==null && node.right==null && node.data == target) {
+            return true;
+        }
+        
+        return checkTarget(node.left,target-node.data) || checkTarget(node.right,target-node.data);
+    }
+    
+    boolean hasPathSum(Node root, int target) {
+        
+        if(root==null) return false;
+        
+        if(root.left==null && root.right==null && root.data == target) {
+            return true;
+        }
+        
+        target-=root.data;
+        
+        return checkTarget(root.left,target) || checkTarget(root.right,target);
+    }
+}
