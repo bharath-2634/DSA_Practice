@@ -1,0 +1,52 @@
+Question : https://www.geeksforgeeks.org/problems/maximum-path-sum/1
+
+Solution : 
+/* class Node
+{
+    int data;
+    Node left, right;
+
+    Node(int item)
+    {
+        data = item;
+        left = right = null;
+    }
+} */
+class Solution {
+    
+    private int max_path = Integer.MIN_VALUE;
+    
+    public int getMaxPathSum(Node node) {
+        
+        if(node==null) return Integer.MIN_VALUE;
+        
+        if (node.left == null && node.right == null) {
+            // max_path = Math.max(max_path,node.data);
+            return node.data;
+        }
+        
+        int left = getMaxPathSum(node.left);
+        int right = getMaxPathSum(node.right);
+            
+        if(node.left!=null && node.right!=null) {
+            int data = node.data + left + right;
+            max_path = Math.max(max_path,data);
+            return node.data + Math.max(left,right);
+        }
+        
+        if(node.left==null) return right + node.data;
+        else return left + node.data;
+    }
+    
+    int maxPathSum(Node node) {
+        
+        if(node==null) return max_path==Integer.MIN_VALUE ? 0 : max_path;   
+
+        int res = getMaxPathSum(node);
+        
+        if(node.left==null || node.right==null) max_path = Math.max(res,max_path);
+        
+        return max_path==Integer.MIN_VALUE ? 0 : max_path;
+        
+    }
+}
