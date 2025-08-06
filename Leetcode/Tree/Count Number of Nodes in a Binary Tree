@@ -1,0 +1,23 @@
+Question : https://www.geeksforgeeks.org/problems/count-number-of-nodes-in-a-binary-tree/1
+
+Solution : 
+// User function Template for Java
+
+
+class Solution {
+    
+    public static int getCount(Node root) {
+        
+        if(root==null) return 0;
+       
+        return 1+ getCount(root.left) + getCount(root.right);
+    }
+
+    public static int countNodes(Node root) {
+        
+        if(root==null) return 0;
+        
+        return 1+getCount(root.left) + getCount(root.right);
+        
+    }
+}
