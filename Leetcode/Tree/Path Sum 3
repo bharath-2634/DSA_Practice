@@ -1,0 +1,72 @@
+Question : https://leetcode.com/problems/path-sum-iii/description/
+
+Solution : 
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    /*
+    This is my brute force approch with tree recursion method
+    public int getPathSum(TreeNode node,long target) {
+
+        if(node==null) return 0;
+
+        int count=0;
+        if(node.val==target) count++;
+
+        count+=getPathSum(node.left,target-node.val);
+        count+=getPathSum(node.right,target-node.val);
+
+        return count;
+    }
+
+    public int pathSum(TreeNode root, int targetSum) {
+        if(root==null) return 0;
+
+        int count = 0;
+        count = getPathSum(root,(long)targetSum);
+
+        count+=pathSum(root.left,targetSum);
+        count+=pathSum(root.right,targetSum);
+
+        return count;
+    }*/
+
+    public int getPathSum(TreeNode node,Map<Long,Integer> memoMap,int target,long currentSum) {
+
+        if(node==null) return 0;
+
+        currentSum+=node.val;
+        int count = memoMap.getOrDefault(currentSum-target,0);
+        memoMap.put(currentSum,memoMap.getOrDefault(currentSum,0)+1);
+        
+        count+=getPathSum(node.left,memoMap,target,currentSum);
+        count+=getPathSum(node.right,memoMap,target,currentSum);
+
+        memoMap.put(currentSum,memoMap.get(currentSum)-1);
+        return count;
+    }
+
+    public int pathSum(TreeNode root, int targetSum) {
+        if(root==null) return 0;
+
+        Map<Long,Integer> memoMap = new HashMap<>();
+        memoMap.put(0L,1);
+
+        return getPathSum(root,memoMap,targetSum,0L);
+    }
+
+}
