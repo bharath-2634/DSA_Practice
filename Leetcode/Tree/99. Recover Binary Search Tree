@@ -1,0 +1,84 @@
+Question :https://leetcode.com/problems/recover-binary-search-tree/description/
+
+Solution :
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+ 
+class Solution {
+    // Brute force  : Travse the tree in inOrder and store the values in array and then create the tree again
+    /*public void getRecoverTree(TreeNode node,List<Integer> val) {
+
+        if(node==null) return;
+        
+        getRecoverTree(node.left,val);
+        val.add(node.val);
+        getRecoverTree(node.right,val);
+    }
+
+    public void setRecoverTree(TreeNode node,List<Integer> val,int[] idx) {
+        if(node==null) return;
+
+        setRecoverTree(node.left,val,idx);
+        node.val = val.get(idx[0]);
+        idx[0]++;
+        setRecoverTree(node.right,val,idx);
+    }
+
+    public void recoverTree(TreeNode root) {
+
+        List<Integer> values = new ArrayList<>();
+
+        getRecoverTree(root,values);
+
+        Collections.sort(values);
+
+        int[] idx = new int[1];
+        setRecoverTree(root,values,idx);
+    }*/
+
+    // Optimal Approach is Traverse the Tree in-Order and make in-place swaps
+    
+    private TreeNode prev = null, first=null, sec = null;
+
+    public void getRecoverTree(TreeNode node) {
+
+        if(node==null) return;
+
+        getRecoverTree(node.left);
+
+        if(prev!=null && node.val < prev.val) {
+            if(first==null) first = prev;
+            sec = node;
+        }
+
+        prev = node;
+
+        getRecoverTree(node.right);
+
+    }
+
+    public void recoverTree(TreeNode root) {
+
+        if(root==null) return;
+
+        getRecoverTree(root);
+
+        int temp = first.val;
+        first.val = sec.val;
+        sec.val = temp;
+    }
+}
