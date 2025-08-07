@@ -1,0 +1,77 @@
+Question :https://www.geeksforgeeks.org/problems/connect-nodes-at-same-level/1
+
+Solution : 
+/*
+   Node class is Defined as follows:
+   class Node{
+       int data;
+       Node left;
+       Node right;
+       Node nextRight;
+       Node(int data){
+           this.data = data;
+           left=null;
+           right=null;
+           nextRight = null;
+       }
+   }
+   */
+
+class Solution {
+    
+    /*public void getConnectedNodes(Node node) {
+        
+        if(node==null || node.left==null || node.right==null) return;
+        
+        // if(node.left!=null) {
+            node.left.nextRight = node.right;
+        
+        
+        if(node.nextRight!=null) {
+            node.right.nextRight = node.nextRight.left;
+        }
+        
+        getConnectedNodes(node.left);
+        getConnectedNodes(node.right);
+    }
+    
+    public Node connect(Node root) {
+        if(root==null) return root;
+        
+        getConnectedNodes(root);
+        
+        return root;
+    }*/
+    
+    public Node connect(Node node) {
+        
+        if(node==null) return null;
+        
+        Queue<Node> queue = new LinkedList<>();
+        
+        queue.offer(node);
+        
+        while(!queue.isEmpty()) {
+            
+            int size = queue.size();
+            Node prev = null;
+            
+            for(int i=0;i<size;i++) {
+                Node parent = queue.poll();
+                
+                if(prev!=null) {
+                    prev.nextRight = parent;
+                }
+                prev = parent;
+                
+                if(parent.left!=null) queue.offer(parent.left);
+                if(parent.right!=null) queue.offer(parent.right);
+            }
+            
+            prev.nextRight = null;
+            
+        }
+        
+        return node;
+    }
+}
