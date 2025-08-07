@@ -1,0 +1,35 @@
+Question :https://www.geeksforgeeks.org/problems/height-of-binary-tree/1
+
+Solution : 
+/*
+class Node
+{
+    int data;
+    Node left, right;
+
+    Node(int item)
+    {
+        data = item;
+        left = right = null;
+    }
+}
+ */
+
+class Solution {
+    public int getMaxDepth(Node node) {
+        
+        if(node==null) return 0;
+        
+        int left = getMaxDepth(node.left);
+        int right = getMaxDepth(node.right);
+        
+        return 1+Math.max(left,right);
+    }
+    
+    int height(Node node) {
+        if(node==null) return 0;
+        
+        return getMaxDepth(node)-1;
+        
+    }
+}
