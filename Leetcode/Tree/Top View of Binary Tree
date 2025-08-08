@@ -1,0 +1,64 @@
+Question : https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1
+
+Solution :
+/*
+class Node{
+    int data;
+    Node left;
+    Node right;
+    Node(int data){
+        this.data = data;
+        left=null;
+        right=null;
+    }
+}
+*/
+
+class Pair {
+    int col;
+    Node node;
+    
+    Pair(int col,Node node) {
+        this.col = col;
+        this.node = node;
+    }
+}
+
+class Solution {
+
+    static ArrayList<Integer> topView(Node root) {
+       
+       ArrayList<Integer> res = new ArrayList<>();
+       
+       if(root==null) return res;
+       
+       Queue<Pair> queue = new LinkedList<>();
+       queue.offer(new Pair(0,root));
+       
+        Map<Integer,Integer> cMap = new TreeMap<>();
+       
+       while(!queue.isEmpty()) {
+           
+           Pair p = queue.poll();
+           Node node = p.node;
+           
+           if(!cMap.containsKey(p.col)) {
+               cMap.put(p.col,p.node.data);
+           }
+           
+           if(node.left!=null) {
+               queue.offer(new Pair(p.col-1,node.left));
+           }
+           
+           if(node.right!=null) {
+               queue.offer(new Pair(p.col+1,node.right));
+           }
+           
+       }
+       
+       res.addAll(cMap.values());
+       
+       return res;
+       
+    }
+}
