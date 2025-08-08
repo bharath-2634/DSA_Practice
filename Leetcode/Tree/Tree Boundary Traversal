@@ -1,0 +1,82 @@
+Question : https://www.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1
+
+Solution :
+/*
+class Node
+{
+    int data;
+    Node left, right;
+
+    public Node(int d)
+    {
+        data = d;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    
+    public void addLeftBoundary(Node node, ArrayList<Integer> res) {
+        
+        Node curr = node.left;
+        
+        while(curr != null) {
+            
+            if (!(curr.left == null && curr.right == null)) {
+                res.add(curr.data);
+            }
+            
+            if (curr.left != null) curr = curr.left;
+            else curr = curr.right;
+        }
+        
+    }
+    
+    public void addRightBoundary(Node node, ArrayList<Integer> res) {
+        
+        Node curr = node.right;
+        Stack<Integer> stack = new Stack<>();
+        
+        while(curr != null) {
+            if(!(curr.left==null && curr.right==null)) {
+                stack.push(curr.data);
+            }
+            
+            if(curr.right != null) curr = curr.right;
+            else curr = curr.left;
+        }
+        
+        while(!stack.isEmpty()) {
+            res.add(stack.pop());
+        }
+    }
+
+
+    public void getLeafNodes(Node node,ArrayList<Integer> res) {
+        
+        if(node==null) return;
+        
+        if(node.left==null && node.right==null) {
+            res.add(node.data);
+        }
+        
+        getLeafNodes(node.left,res);
+        getLeafNodes(node.right,res);
+    }
+    
+    ArrayList<Integer> boundaryTraversal(Node node) {
+        
+        ArrayList<Integer> res = new ArrayList<>();
+        
+        if(!(node.left == null && node.right == null)) res.add(node.data);
+        
+        addLeftBoundary(node,res);
+        getLeafNodes(node,res);
+        addRightBoundary(node,res);
+        
+        return res;
+    }
+    
+    
+}
