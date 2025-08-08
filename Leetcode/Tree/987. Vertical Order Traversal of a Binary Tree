@@ -1,0 +1,117 @@
+Question : https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/
+
+Solution :
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+class Node {
+    int row;
+    int col;
+    int val;
+
+    public Node(int row,int col,int val) {
+        this.row = row;
+        this.col = col;
+        this.val = val;
+    }
+
+}
+
+/*
+ This is my Priority based solution -> O(nlogn) which again shows heap tradeoff's
+class Solution {
+
+    public void dfs(int row,int col,TreeNode node,PriorityQueue<Node> pq) {
+
+        if(node==null) return;
+
+        Node p = new Node(row,col,node.val);
+        pq.add(p);
+
+        dfs(row+1,col-1,node.left,pq);
+        dfs(row+1,col+1,node.right,pq);
+    }
+
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> {
+            if (a.col != b.col) return a.col - b.col;
+            if (a.row != b.row) return a.row - b.row;
+            return a.val - b.val;
+        });
+
+        dfs(0,0,root,pq);
+
+        List<List<Integer>> res = new ArrayList<>();
+
+        while(!pq.isEmpty()) {
+            List<Integer> ans = new ArrayList<>();
+            int current_col = pq.peek().col;
+            while(!pq.isEmpty() && pq.peek().col==current_col) {
+                Node node = pq.poll();
+                ans.add(node.val);
+            }
+            res.add(ans);
+        }
+
+        return res;
+    }
+}
+*/
+
+class Solution {
+
+    public void dfs(int row,int col,TreeNode node,Map<Integer,List<Node>> tMap) {
+
+        if(node==null) return;
+
+        Node p = new Node(row,col,node.val);
+        if(!tMap.containsKey(col)) {
+            tMap.put(col,new ArrayList<>());
+        }
+        tMap.get(col).add(p);
+
+        dfs(row+1,col-1,node.left,tMap);
+        dfs(row+1,col+1,node.right,tMap);
+    }
+
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+
+       Map<Integer,List<Node>> tMap = new HashMap<>();
+
+        dfs(0,0,root,tMap);
+        
+        List<Integer> sortedCols = new ArrayList<>(tMap.keySet());
+        Collections.sort(sortedCols);
+  
+        List<List<Integer>> res = new ArrayList<>();
+
+        for (int col : sortedCols) {
+            List<Node> nodes = tMap.get(col);
+            Collections.sort(nodes, (a, b) -> {
+                if (a.row != b.row) return a.row - b.row;
+                return a.val - b.val;
+            });
+
+            List<Integer> colVals = new ArrayList<>();
+            for (Node n : nodes) {
+                colVals.add(n.val);
+            }
+            res.add(colVals);
+        }
+        return res;
+    }
+}
