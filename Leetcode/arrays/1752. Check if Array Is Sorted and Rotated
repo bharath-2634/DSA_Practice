@@ -1,0 +1,14 @@
+Question  :https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/
+
+class Solution {
+    public boolean check(int[] nums) {
+        
+        int idx = 0;
+
+        for(int i=0;i<nums.length;i++) {
+            if(nums[i] > nums[(i+1)%nums.length]) idx++;
+        }
+
+        return idx<=1;
+    }
+}
