@@ -1,0 +1,31 @@
+Question : https://leetcode.com/problems/missing-number/description/
+Solution :
+class Solution {
+    /*
+    public int missingNumber(int[] nums) {
+        Arrays.sort(nums);
+        int i=0;
+        for(i=0;i<nums.length;i++) {
+            if(nums[i]!=i) return i;
+        }
+
+        if(nums[nums.length-1] != i) return i; 
+
+        return -1;
+    }
+    */
+
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        int expectedSum = n*(n + 1)/2;
+        int actualSum = 0;
+        
+        for (int num : nums) {
+            actualSum += num;
+        }
+        
+        return expectedSum - actualSum;
+    }
+
+
+}
