@@ -1,0 +1,32 @@
+Question : https://www.geeksforgeeks.org/problems/second-largest3735/1
+
+Solution : 
+class Solution {
+    public int getSecondLargest(int[] arr) {
+        
+        int small = Integer.MAX_VALUE, sec_small = Integer.MAX_VALUE;
+        
+        int large = Integer.MIN_VALUE, sec_large = Integer.MIN_VALUE;
+        
+        for(int i=0;i<arr.length;i++) {
+            if(small < arr[i]) {
+                sec_small = small;
+                small = arr[i];
+            }else if(arr[i] < sec_small && small!=arr[i]) {
+                sec_small = arr[i];
+            }
+        }
+        
+        for(int i=0;i<arr.length;i++) {
+            if(large < arr[i]) {
+                sec_large = large;
+                large = arr[i];
+            }else if(arr[i] > sec_large && large!=arr[i]) {
+                sec_large = arr[i];
+            }
+        }
+        
+        return sec_large==Integer.MIN_VALUE ? -1 : sec_large;
+        
+    }
+}
