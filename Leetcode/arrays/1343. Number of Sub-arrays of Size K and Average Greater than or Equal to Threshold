@@ -1,0 +1,29 @@
+Question :https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/
+
+Solution :
+class Solution {
+
+  
+    public int numOfSubarrays(int[] arr, int k, int threshold) {
+        
+        int count=0;
+        int left=0,right=0,sum=0;
+
+        while(right<arr.length) {
+            sum+=arr[right];
+
+            while((right-left+1)>k) {
+                sum-=arr[left];
+                left++;
+            }
+
+            if((right-left+1)==k && (sum/k)>=threshold) {
+                count++;
+            }
+
+            right++;
+        }
+
+        return count;
+    }
+}
