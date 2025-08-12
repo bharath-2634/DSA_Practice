@@ -1,0 +1,44 @@
+Question : https://leetcode.com/problems/subarray-product-less-than-k/
+
+Solution : 
+class Solution {
+    // public int numSubarrayProductLessThanK(int[] nums, int k) {
+        
+    //     int count =0 ;
+
+    //     for(int i=0;i<nums.length;i++) {
+    //         int sum=1;
+    //         for(int j=i;j<nums.length;j++) {
+    //             sum*=nums[j];
+    //             if(sum<k) count++;
+    //             else break;
+    //         }
+    //     }
+
+    //     return count;
+    // }
+
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        if(k<=1) return 0;
+
+        int product=1,left=0,right=0;
+        int count=0;
+
+        while(right<nums.length) {
+            product*=nums[right];
+
+            while(product>=k) {
+                product/=nums[left];
+                left++;
+            }
+
+            if(product<k) {
+                count+=(right-left+1);
+            }
+            
+            right++;
+        }
+
+        return count;
+    }
+}
