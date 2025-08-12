@@ -1,0 +1,34 @@
+Question:https://leetcode.com/problems/minimum-operations-to-reduce-x-to-zero/description/
+
+Solution :
+class Solution {
+    
+    public int minOperations(int[] nums, int x) {
+        int len=nums.length;
+        int sum=0;
+        for(int i=0;i<len;++i){
+            sum+=nums[i];
+        }
+
+        if(sum==x){
+            return len;
+        }
+
+        int subTarget=sum-x,subLen=0;
+        int l=0,r=0,cumSum=0;
+
+        while(r<len){
+            cumSum+=nums[r++];
+
+            while(cumSum>subTarget && l<r){
+                cumSum-=nums[l++];
+            }
+
+            if(cumSum==subTarget){
+                subLen=Math.max(subLen,r-l);
+            }
+        }
+
+        return subLen==0?-1:len-subLen;
+    }
+}
