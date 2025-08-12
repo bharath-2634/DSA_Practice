@@ -1,0 +1,51 @@
+Note :
+
+ -> Prefix sum: prefixSum[j] - prefixSum[i] = k
+→ store prefixSum in map.
+
+ -> Remainder: (sum[j] - sum[i]) % k == 0
+→ store prefixSum % k in map.
+
+ -> Count frequency: 
+-> count how many times a certain value has appeared so far → store value → count.
+
+Question : https://leetcode.com/problems/continuous-subarray-sum/
+
+Solution :
+class Solution {
+    
+    /* This is my brute force Approach
+    public boolean checkSubarraySum(int[] nums, int k) {
+        
+        for(int i=0;i<nums.length;i++) {
+            int sum=0;
+            for(int j=i;j<nums.length;j++) {
+                sum+=nums[j];
+                if(j-i+1 >=2 && sum%k==0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    */
+    public boolean checkSubarraySum(int[] nums, int k) {
+
+        Map<Integer,Integer> fMap = new HashMap<>();
+        fMap.put(0,-1);  // val,idx
+        int sum=0;
+        for(int i=0;i<nums.length;i++) {
+            sum+=nums[i];
+            if(k!=0) sum = sum%k;
+            if(fMap.containsKey(sum)) {
+                if(i-fMap.get(sum) > 1) return true;
+            }else {
+                fMap.put(sum,i);
+            }
+        }
+
+        return false;
+    }
+
+}
