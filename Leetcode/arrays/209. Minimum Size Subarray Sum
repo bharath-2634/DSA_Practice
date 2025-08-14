@@ -1,0 +1,40 @@
+Question :https://leetcode.com/problems/minimum-size-subarray-sum/
+
+Solution :
+class Solution {
+    
+    /*
+    Brute force Approach which has T.C = O(n^2)
+    public int minSubArrayLen(int target, int[] nums) {
+        int min_sub = Integer.MAX_VALUE;
+
+        for(int i=0;i<nums.length;i++) {
+            int sum=0;
+            for(int j=i;j<nums.length;j++) {
+                sum+=nums[j];
+                if(sum>=target) {
+                    min_sub = Math.min(min_sub,(j-i+1));
+                }
+            }
+        }
+
+        return min_sub==Integer.MAX_VALUE ? 0 : min_sub;
+    }*/
+
+    public int minSubArrayLen(int target, int[] nums) {
+        int left=0,right=0,sum=0;
+        int min_len = Integer.MAX_VALUE;
+
+        while(right<nums.length) {
+            sum+=nums[right];
+            while(sum>=target) {
+                min_len = Math.min(min_len,(right-left+1));
+                sum-=nums[left];
+                left++;
+            }
+            right++;
+        }
+
+        return min_len==Integer.MAX_VALUE ? 0 : min_len;
+    }
+}
