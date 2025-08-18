@@ -1,0 +1,54 @@
+Question :https://www.geeksforgeeks.org/problems/count-number-of-substrings4528/1
+
+Solution :
+class Solution {
+    //  This is my brute force approach which has O(n^2)
+    // int countSubstr(String s, int k) {
+        
+    //     int count=0;
+    //     char c[] = s.toCharArray();
+        
+    //     for(int i=0;i<c.length;i++) {
+    //         Set<Character> fMap = new HashSet<>();
+    //         for(int j=i;j<c.length;j++) {
+    //             fMap.add(c[j]);
+                
+    //             if(fMap.size()==k) count++;
+                
+    //             if(fMap.size() >k) break;
+    //         }
+    //     }
+        
+    //     return count;
+    // }
+    
+    int countSubstr(String s, int k) {
+        char[] chr = s.toCharArray();
+        
+        return atMostK(chr,k) - atMostK(chr,k-1);
+    }
+    
+    int atMostK(char[] chr,int k) {
+        
+        int right=0,left=0,count=0;
+        
+        HashMap<Character,Integer> fMap = new HashMap<>();
+        
+        while(right<chr.length) {
+            fMap.put(chr[right],fMap.getOrDefault(chr[right],0)+1);
+            
+            if(fMap.get(chr[right])==1) k--;
+            
+            while(k<0) {
+                fMap.put(chr[left],fMap.get(chr[left])-1);
+                if(fMap.get(chr[left])==0) k++;
+                left++;
+            }
+            
+            count+=(right-left+1);
+            right++;
+        }
+        
+        return count;
+    }
+}
