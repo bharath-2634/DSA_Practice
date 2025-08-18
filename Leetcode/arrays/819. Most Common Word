@@ -1,0 +1,67 @@
+Question :https://leetcode.com/problems/most-common-word/
+
+Solution :
+class Solution {
+    // public String mostCommonWord(String paragraph, String[] banned) {
+    //     Set<String> ban_set = new HashSet<>();
+        
+    //     for (String b_str : banned) {
+    //         ban_set.add(b_str);
+    //     }
+
+    //     StringBuilder sb = new StringBuilder();
+    //     Map<String, Integer> map = new HashMap<>();
+    //     int max_cnt = 0;
+    //     String ans = "";
+    //     paragraph = paragraph + ".";
+    //     for (char c : paragraph.toCharArray()) {
+    //         if (Character.isLetter(c)) {
+    //             sb.append(Character.toLowerCase(c));
+    //         } else if (sb.length() > 0) {
+    //             String word = sb.toString();
+    //             if (!ban_set.contains(word)) {
+    //                 int count = map.getOrDefault(word, 0) + 1;
+    //                 map.put(word, count);
+    //                 if (count > max_cnt) {
+    //                     max_cnt = count;
+    //                     ans = word;
+    //                 }
+    //             }
+    //             sb.setLength(0);
+    //         }
+            
+    //     }
+
+    //     return ans;
+
+    // }
+
+    public String mostCommonWord(String paragraph,String[] banned) {
+
+        Set<String> bannedSet = new HashSet<>();
+        for(String ban : banned) bannedSet.add(ban);
+
+        Map<String,Integer> fMap = new HashMap<>();
+        String[] words = paragraph.toLowerCase().split("[^a-z]+");;
+
+        for(String word : words) {
+            if(word.length() > 0 && !bannedSet.contains(word)) { 
+                fMap.put(word,fMap.getOrDefault(word,0)+1);
+            }
+        }
+
+        // System.out.println(fMap);
+
+        String most_common_word = "";
+        int max_freq = 0;
+
+        for(Map.Entry<String,Integer> e : fMap.entrySet()) {
+            if(max_freq < e.getValue()) {
+                max_freq = e.getValue();
+                most_common_word = e.getKey();
+            }
+        }
+
+        return most_common_word;
+    }
+}
