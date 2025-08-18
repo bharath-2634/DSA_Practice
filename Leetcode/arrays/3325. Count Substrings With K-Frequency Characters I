@@ -1,0 +1,20 @@
+Question:https://leetcode.com/problems/count-substrings-with-k-frequency-characters-i/description/
+
+Solution :
+class Solution {
+    public int numberOfSubstrings(String s, int k) {
+        int n = s.length();
+        int count = 0;
+        for(int i = 0; i < n; i++){
+            int[] hash = new int[26];
+            for(int j = i; j < n; j++){
+                hash[s.charAt(j) - 'a']++;
+                if(hash[s.charAt(j) - 'a'] >= k){
+                    count += (n - 1) - j + 1;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+}
