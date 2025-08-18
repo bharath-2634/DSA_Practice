@@ -1,0 +1,80 @@
+Question:https://leetcode.com/problems/count-of-substrings-containing-every-vowel-and-k-consonants-i/description/
+
+Solution:
+class Solution {
+
+    /*
+    This is my brute force approach of T.C O(n^3)
+    public boolean checkVowels(char[] letters,int start,int end) {
+        Set<Character> vSet = new HashSet<>();
+
+        for(int i=start;i<=end;i++) {
+            if("aeiou".indexOf(letters[i])!=-1) {
+                vSet.add(letters[i]);
+            }
+        }
+
+        return vSet.size()==5;
+    }
+
+    public int countOfSubstrings(String word, int k) {
+        
+        int count=0;
+        char[] letters = word.toCharArray();
+
+        for(int i=0;i<letters.length;i++) {
+            int const_count=0;
+            for(int j=i;j<letters.length;j++) {
+                if("aeiou".indexOf(letters[j])==-1) const_count++;
+                if(const_count==k && checkVowels(letters,i,j)) count++;
+            }
+        }
+
+        return count;
+    }
+    */
+
+    public int countOfSubstrings(String word, int k) {
+        char[] letters = word.toCharArray();
+
+        return atMostK(letters,k) - atMostK(letters,k-1);
+    }
+
+    public int atMostK(char[] letters, int k) {
+        int n = letters.length;
+        int left = 0, count = 0;
+        int constCount = 0;
+        int[] vowelFreq = new int[26];
+        int distinctVowels = 0;
+
+        for (int right = 0; right < n; right++) {
+            char c = letters[right];
+
+            if ("aeiou".indexOf(c) != -1) {
+                if (vowelFreq[c - 'a'] == 0) distinctVowels++;
+                vowelFreq[c - 'a']++;
+            } else {
+                constCount++;
+            }
+
+            while(constCount > k && left<=right) {
+                char leftChar = letters[left];
+                if ("aeiou".indexOf(leftChar) != -1) {
+                    vowelFreq[leftChar - 'a']--;
+                    if (vowelFreq[leftChar - 'a'] == 0) distinctVowels--;
+                } else {
+                    constCount--;
+                }
+                left++;
+            }
+
+
+            if (distinctVowels == 5) {
+                count += (right - left + 1);
+            }
+        }
+
+        return count;
+    }
+
+}
