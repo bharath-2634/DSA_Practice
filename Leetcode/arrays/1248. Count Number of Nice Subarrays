@@ -1,0 +1,49 @@
+Question :https://leetcode.com/problems/count-number-of-nice-subarrays/
+
+Solution :
+class Solution {
+    
+    /*
+    This is my brute force solution where O(n^2) 
+    public int numberOfSubarrays(int[] nums, int k) {
+        
+        int count=0;
+
+        for(int i=0;i<nums.length;i++) {
+            int odd_count=0;
+            for(int j=i;j<nums.length;j++) {
+                if(nums[j]%2!=0) {
+                    odd_count++;
+                }
+
+                if(odd_count==k) count++;
+            }
+        }
+
+        return count;
+    }
+    */
+    public int numberOfSubarrays(int[] nums,int k) {
+        return atMostK(nums,k) - atMostK(nums,k-1);
+    }
+
+    public int atMostK(int[] nums, int k) {
+        int right=0,left=0;
+       
+        int count=0,odd_count=0;
+        while(right<nums.length) {
+            if(nums[right]%2!=0) odd_count++;
+
+            while(odd_count > k){
+                if(nums[left]%2!=0) odd_count--;
+                left++;
+            }
+
+            count+=(right-left+1);
+            right++;
+        }
+
+        return count;
+    }
+
+}
