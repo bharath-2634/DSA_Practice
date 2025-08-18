@@ -1,0 +1,53 @@
+Question :https://www.geeksforgeeks.org/problems/subarrays-with-k-different-integers/1
+
+Solution :
+// User function Template for Java
+
+class Solution {
+    
+    //  This is my bruteforce approach which is O(n^2)
+    // static int exactlyK(int arr[], int k) {
+        
+    //     int count=0;
+        
+    //     for(int i=0;i<arr.length;i++) {
+    //         HashSet<Integer> fSet = new HashSet<>();
+    //         for(int j=i;j<arr.length;j++) {
+    //             fSet.add(arr[j]);
+                
+    //             if(fSet.size()==k) count++;
+    //         }
+    //     }
+        
+    //     return count;
+    // }
+    
+    static int atMostK(int arr[], int k) {
+        int count=0;
+        
+        HashMap<Integer,Integer> fMap = new HashMap<>();
+        
+        int right=0,left=0;
+        
+        while(right<arr.length) {
+            fMap.put(arr[right],fMap.getOrDefault(arr[right],0)+1);
+            
+            if(fMap.get(arr[right])==1) k--;
+            
+            while(k<0) {
+                fMap.put(arr[left],fMap.get(arr[left])-1);
+                if(fMap.get(arr[left])==0) k++;
+                left++;
+            }
+            
+            right++;
+            count+=(right-left+1);
+        }
+        
+        return count;
+    }
+    
+    static int exactlyK(int arr[], int k) {
+        return atMostK(arr,k) - atMostK(arr,k-1);
+    }
+}
