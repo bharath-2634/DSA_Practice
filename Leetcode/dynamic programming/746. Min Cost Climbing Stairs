@@ -1,0 +1,40 @@
+Question :https://leetcode.com/problems/min-cost-climbing-stairs/
+
+Solution :
+class Solution {
+    /* this is my recursion + Memoization approach
+    public int getCost(int[] cost,int n,int[] dp) {
+
+        if(n<0) return 0;
+        if(n==0) return cost[0];
+        if(n==1) return cost[1];
+
+        if(dp[n]!=0) return dp[n];
+
+        int first_step = getCost(cost,n-1,dp);
+        int second_step = getCost(cost,n-2,dp);
+
+        return dp[n] = cost[n] + Math.min(first_step,second_step);
+    }
+
+    public int minCostClimbingStairs(int[] cost) {
+        int[] dp = new int[cost.length];
+
+        return Math.min(getCost(cost,cost.length-1,dp),getCost(cost,cost.length-2,dp));
+    }
+    */
+    /*
+    This is my tabulation approach
+    public int minCostClimbingStairs(int[] cost) {
+        int[] dp = new int[cost.length];
+
+        dp[0] = cost[0];
+        dp[1] = cost[1];
+
+        for(int i=2;i<cost.length;i++) {
+            dp[i] = cost[i] + Math.min(dp[i-1],dp[i-2]);
+        }
+
+        return Math.min(dp[cost.length-1],dp[cost.length-2]);
+    }*/
+}
