@@ -1,0 +1,64 @@
+Question :https://leetcode.com/problems/minimum-cost-for-tickets/
+
+Solution :
+class Solution {
+    /* This is my recursive + Memoization approach
+    public int getMinCost(int[] days,int[] costs,int idx,int[] dp) {
+
+        if(idx>=days.length) return 0;
+
+        if(dp[idx]!=0) return dp[idx];
+
+        int i=idx;
+        while(i<days.length && days[i] <= days[idx]) i++;
+        int buy1 = costs[0] + getMinCost(days,costs,i,dp);
+
+        i=idx;
+        while(i<days.length && days[i] <=days[idx]+6) i++;
+        int buy2 = costs[1] + getMinCost(days,costs,i,dp);
+
+        i = idx;
+        while(i<days.length && days[i] <=days[idx]+29) i++;
+        int buy3 = costs[2] + getMinCost(days,costs,i,dp);
+
+        return dp[idx] = Math.min(buy1,Math.min(buy2,buy3));
+    }
+
+    public int mincostTickets(int[] days, int[] costs) {
+        int[] dp = new int[days.length+1];
+
+        return getMinCost(days,costs,0,dp);
+    }*/
+
+    public int mincostTickets(int[] days, int[] costs) {
+        int[] dp = new int[days.length+1];
+
+        for(int i=days.length-1;i>=0;i--) {
+            int j=i;
+            while(j<days.length && days[j] <= days[i]) j++;
+            int buy1 = costs[0] + dp[j];
+
+            j=i;
+            while(j<days.length && days[j] <= days[i]+6) j++;
+            int buy2 = costs[1] + dp[j];
+
+            j=i;
+            while(j<days.length && days[j] <= days[i]+29) j++;
+            int buy3 = costs[2] + dp[j];
+
+            dp[i] = Math.min(buy1,Math.min(buy2,buy3));
+        }
+
+        return dp[0];
+    }
+}
+
+/*
+    1         -> 2
+    2 3 4 5   -> 7
+    6 7 8 9 10 11
+    11 -> 18
+    18 -> 26
+    26 -> 46 
+
+ */
