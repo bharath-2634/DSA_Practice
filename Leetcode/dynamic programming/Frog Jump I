@@ -1,0 +1,46 @@
+Question : https://www.geeksforgeeks.org/problems/geek-jump/1
+
+Solution :
+/************ This is recursive Approach *************************\
+// class Solution {
+    
+//     public static int getMinCost(int idx,int[] heights) {
+//         if(idx>=heights.length) return 0;
+        
+//         int move1 = Integer.MAX_VALUE;
+//         int move2 = Integer.MAX_VALUE;
+        
+//         move1 = (idx+1 < heights.length)? Math.abs(heights[idx]-heights[idx+1]) + getMinCost(idx+1,heights) : Integer.MAX_VALUE;
+//         move2 = (idx+2 < heights.length)? Math.abs(heights[idx]-heights[idx+2]) + getMinCost(idx+2,heights) : Integer.MAX_VALUE;
+        
+//         return Math.min(move1,move2);
+//     }
+    
+//     int minCost(int[] height) {
+//         int n = height.length;
+        
+//         return getMinCost(0,height);
+//     }
+// }
+
+/***************** This is Tabulation Method **********************\
+class Solution {
+    
+    int minCost(int[] height) {
+        
+        int[] dp = new int[height.length];
+        
+        if(height.length<2) return 0;
+        
+        dp[0] = 0;
+        dp[1] = Math.abs(height[1]-height[0]);
+        
+        for(int i=2;i<height.length;i++) {
+            int m1 = dp[i-1] + Math.abs(height[i]-height[i-1]);
+            int m2 = dp[i-2] + Math.abs(height[i]-height[i-2]); // 
+            dp[i] = Math.min(m1,m2);
+        }
+        
+        return dp[dp.length-1];
+    }
+}
