@@ -1,0 +1,43 @@
+Solution :
+// class Solution {
+    
+//     public static int getMinCost(int idx,int[] heights,int k) {
+//         if(idx>=heights.length) return 0;
+        
+//         if(k==0) return Integer.MAX_VALUE;
+        
+//         int move1 = Integer.MAX_VALUE;
+//         int move2 = Integer.MAX_VALUE;
+        
+//         move1 = (idx+1 < heights.length)? Math.abs(heights[idx]-heights[idx+1]) + getMinCost(idx+1,heights,k-1) : Integer.MAX_VALUE;
+//         move2 = (idx+2 < heights.length)? Math.abs(heights[idx]-heights[idx+2]) + getMinCost(idx+2,heights,k-1) : Integer.MAX_VALUE;
+        
+//         return Math.min(move1,move2);
+//     }
+    
+//     int minCost(int[] height) {
+//         int n = height.length;
+        
+//         return getMinCost(0,height,k);
+//     }
+// }
+
+
+// class Solution {
+    
+//     int minCost(int[] height,int k) {
+//         int[] dp = new int[height.length];
+        
+//         dp[0] = height[0];
+        
+//         for(int i=1;i<n;i++) {
+//             int minHeight = Integer.MAX_VALUE;
+//             for(int j=1;j<=k;j++) {
+//                 minHeight = Math.min(minHeight,dp[i-j]+Math.abs(height[i]-height[i-j]));
+//             }
+//             dp[i] = minHeight;
+//         }
+        
+//       return dp[n-1];
+//     }
+// }
