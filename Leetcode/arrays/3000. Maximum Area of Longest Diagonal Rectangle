@@ -1,0 +1,24 @@
+Question  :https://leetcode.com/problems/maximum-area-of-longest-diagonal-rectangle/description
+
+Solution :
+class Solution {
+    public int areaOfMaxDiagonal(int[][] dimensions) {
+        double max_width = Double.MIN_VALUE;
+        int max_area = Integer.MIN_VALUE;
+
+        for(int i=0;i<dimensions.length;i++) {
+            int len = dimensions[i][0];
+            int wid = dimensions[i][1];
+
+            double dia_width = Math.sqrt((len*len + wid*wid));
+            if(dia_width > max_width) {
+                max_width = dia_width;
+                max_area = len*wid;
+            }else if(dia_width == max_width) {
+                max_area = Math.max(max_area,(len*wid));
+            }
+        }
+
+        return max_area;
+    }
+}
