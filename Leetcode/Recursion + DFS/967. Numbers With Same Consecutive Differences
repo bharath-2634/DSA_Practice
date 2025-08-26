@@ -1,0 +1,84 @@
+Question : https://leetcode.com/problems/numbers-with-same-consecutive-differences/description/
+
+Solution : 
+class Solution {
+    
+    /* This is my brute force solution -> 
+    public int[] numsSameConsecDiff(int n, int k) {
+        List<String> res = new ArrayList<>();
+
+        getResult(n,k,res,new StringBuilder()); 
+
+        int[] nums = new int[res.size()];
+
+        for(int i=0;i<nums.length;i++) {
+            nums[i] = Integer.parseInt(res.get(i));
+        }   
+
+        return nums;
+    }
+
+    public void getResult(int n,int k,List<String> res,StringBuilder ds) {
+        // base case
+        if(ds.length()==n) {
+            boolean canAdd = true;
+            for(int i=1;i<n;i++) {
+                int pre = (i-1 >=0) ? Integer.parseInt(""+ds.charAt(i-1)) : -1;
+                int cur = Integer.parseInt(""+ds.charAt(i));
+
+                if(Math.abs(pre-cur)!=k) {
+                    canAdd = false;
+                    break;
+                }
+            }
+
+            if(canAdd) {
+                res.add(ds.toString());
+            }
+
+            return;
+        }
+
+        for(int i=0;i<=9;i++) {
+            ds.append(""+i);
+            getResult(n,k,res,ds);
+            ds.deleteCharAt(ds.length()-1);
+        }
+
+    }*/
+
+    public int[] numsSameConsecDiff(int n, int k) {
+        List<Integer> res = new ArrayList<>();
+
+        getResult(n,k,0,0,0,res);
+
+        int[] nums = new int[res.size()];
+        for(int i=0;i<res.size();i++) {
+            nums[i] = res.get(i);
+        }
+
+        return nums;
+    }
+
+    public void getResult(int n,int k,int length,int lastDigit,int value,List<Integer> res) {
+
+        if(length==n) {
+            res.add(value);
+            return;
+        }
+
+        if(length==0) {
+            for(int i=1;i<=9;i++) {
+                getResult(n,k,1,i,i,res);
+            }
+        }else {
+            if(lastDigit+k <=9) {
+                getResult(n,k,length+1,lastDigit+k,value*10+(lastDigit+k),res);
+            } 
+            
+            if(k>0 && lastDigit-k>=0) {
+                getResult(n,k,length+1,lastDigit-k,value*10+(lastDigit-k),res);
+            }
+        }
+    }
+}
