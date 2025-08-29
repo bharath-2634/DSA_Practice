@@ -1,0 +1,45 @@
+Question : https://leetcode.com/problems/next-permutation/
+
+Solution : 
+class Solution {
+    public void nextPermutation(int[] nums) {
+        
+        int idx=-1;
+        for(int i=nums.length-2;i>=0;i--) {
+            if(nums[i] < nums[i+1]) {
+                idx = i;
+                break;
+            }
+        }
+
+        if(idx==-1) {
+            reverse(nums,0,nums.length-1);
+            return;
+        }
+
+        int suffix_idx = -1;
+        for(int j=nums.length-1;j>=0;j--) {
+            if(nums[j] > nums[idx]) {
+                suffix_idx = j;
+                break;
+            }
+        }
+
+        int temp = nums[idx];
+        nums[idx] = nums[suffix_idx];
+        nums[suffix_idx] = temp;
+
+        // reverse(nums,idx,suffix_idx);
+        reverse(nums,idx+1,nums.length-1);
+    }
+
+    public void reverse(int[] nums,int start,int end) {
+        while(start<end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+}
