@@ -1,0 +1,45 @@
+Question :https://leetcode.com/problems/combination-sum-iv/description/
+
+Solution :
+class Solution {
+    
+    /* My recurive + memoization approach
+    public int getCombinationSum(int[] nums,int target,int[] dp) {
+        if(target==0) return 1;
+
+        if(dp[target]!=0) return dp[target];
+
+        int ways = 0;
+        for(int num : nums) {
+            if(num<=target) {
+                ways+=getCombinationSum(nums,target-num,dp);
+            }
+        }
+
+        return dp[target] = ways;
+    }
+
+    public int combinationSum4(int[] nums, int target) {
+
+        int[] dp = new int[target+1];
+
+        return getCombinationSum(nums,target,dp);
+    }*/
+
+    public int combinationSum4(int[] nums, int target) {
+        int[] dp = new int[target+1];
+
+        dp[0] = 1;
+
+        for(int i=1;i<=target;i++) {
+            for(int num : nums) {
+                if(i-num>=0) {
+                    dp[i]+=dp[i-num];
+                }
+            }
+        }
+
+        return dp[target];
+    }
+
+}
