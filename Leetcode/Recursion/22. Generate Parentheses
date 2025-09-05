@@ -1,0 +1,35 @@
+Question:https://leetcode.com/problems/generate-parentheses/
+
+Solution:
+class Solution {
+
+    public void generate(List<String> res,StringBuilder sb,int openCurve,int closedCurve,int n) {
+
+        if(sb.length()==2*n) {
+            res.add(sb.toString());
+            openCurve=0;
+            closedCurve=0;
+            return;
+        }
+
+        if(openCurve<n) {
+            sb.append("(");
+            generate(res,sb,openCurve+1,closedCurve,n);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        if(closedCurve < openCurve) {
+            sb.append(")");
+            generate(res,sb,openCurve,closedCurve+1,n);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+    }
+
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        generate(res,new StringBuilder(),0,0,n);
+
+        return res;
+    }
+}
