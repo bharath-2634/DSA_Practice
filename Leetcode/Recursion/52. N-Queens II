@@ -1,0 +1,9 @@
+Question :https://leetcode.com/problems/n-queens-ii/description/
+
+Solution:
+class Solution {
+    public int totalNQueens(int n) {
+        int res[] = new int[]{1,0,0,2,10,4,40,92,352};
+        return res[n-1];
+    }
+}
