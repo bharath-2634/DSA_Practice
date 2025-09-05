@@ -1,0 +1,59 @@
+Question:https://leetcode.com/problems/n-queens/
+
+Solution:
+class Solution {
+    public boolean checkPlacementOfQueen(int row_idx,int col_idx,int n,char[][] board) {
+
+        for(int i=0;i<col_idx;i++) {
+            if(board[row_idx][i]=='Q') return false;
+        }
+
+        for(int i=row_idx-1,j=col_idx-1;i>=0 && j>=0;i--,j--) {
+            if(board[i][j]=='Q') return false;
+        }
+
+        for(int i=row_idx+1,j=col_idx-1;i<n && j>=0;i++,j--) {
+            if(board[i][j]=='Q') return false;
+        }
+
+        return true;
+    }
+
+    public void solve(int n,int col_idx,char[][] board,List<List<String>> res) {
+
+        if(col_idx==n) {
+            List<String> ds = new ArrayList<>();
+            for(int i=0;i<n;i++) {
+                ds.add(new String(board[i]));
+            }
+            res.add(new ArrayList<>(ds));
+            return;
+        }
+
+
+        for(int row_idx=0;row_idx<n;row_idx++) {
+            if(checkPlacementOfQueen(row_idx,col_idx,n,board)) {
+                board[row_idx][col_idx] = 'Q';
+                solve(n,col_idx+1,board,res);
+                board[row_idx][col_idx] = '.';
+            } 
+        }
+
+    }
+
+    public List<List<String>> solveNQueens(int n) {
+        
+        char[][] board = new char[n][n];
+        List<List<String>> res = new ArrayList<>();
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                board[i][j] = '.';
+            }
+        }
+
+        solve(n,0,board,res);
+
+        return res;
+    }
+}
