@@ -1,0 +1,93 @@
+Question:https://leetcode.com/problems/next-permutation/
+
+Solution :
+class Solution {
+    /* This is my brute force approach 
+    public void nextPermutation(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        boolean[] used = new boolean[nums.length];
+
+        getPermutation(nums,res,used,new ArrayList<>());
+
+        for(List<Integer> ds : res) {
+            Collections.sort(ds);
+        }
+        int listidx=0;
+        for(listidx=0;listidx<res.size();listidx++) {
+            boolean found = true;
+            List<Integer> ds = res.get(listidx);
+            for(int i=0;i<nums.length;i++) {
+                if(ds.get(i)!=nums[i]) {
+                    found = false;
+                    break;
+                }
+            }
+
+            if(found) {
+                break;
+            }
+        }
+
+        for(int num : res.get(listidx)) {
+            System.out.println(num);
+        }
+    }
+
+    public void getPermutation(int[] nums,List<List<Integer>> res,boolean[] used,List<Integer> ds) {
+        if(ds.size()==nums.length) {
+            res.add(new ArrayList<>(ds));
+            return;
+        }
+
+        for(int i=0;i<nums.length;i++) {
+            if(!used[i]) {
+                used[i] = true;
+                ds.add(nums[i]);
+                getPermutation(nums,res,used,ds);
+                used[i] = false;
+                ds.remove(ds.size()-1);
+            }
+        }
+    }*/
+
+    public void nextPermutation(int[] nums) {
+        
+        int idx=-1;
+        for(int i=nums.length-2;i>=0;i--) {
+            if(nums[i] < nums[i+1]) {
+                idx = i; 
+                break;
+            }
+        }
+
+        if(idx==-1) {
+            reverse(nums,0,nums.length-1);
+            return;
+        }
+
+        int suffix_idx = -1;
+        for(int j=nums.length-1;j>=0;j--) {
+            if(nums[j] > nums[idx]) {
+                suffix_idx = j;
+                break;
+            }
+        }
+
+        int temp = nums[idx];
+        nums[idx] = nums[suffix_idx];
+        nums[suffix_idx] = temp;
+
+        // reverse(nums,idx,suffix_idx);
+        reverse(nums,idx+1,nums.length-1);
+    }
+
+    public void reverse(int[] nums,int start,int end) {
+        while(start<end) {
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        }
+    }
+}
