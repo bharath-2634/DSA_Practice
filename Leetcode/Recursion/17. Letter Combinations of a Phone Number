@@ -1,0 +1,60 @@
+Question:https://leetcode.com/problems/letter-combinations-of-a-phone-number/description/
+
+Solution:
+class Solution {
+
+    public void initializeMap(Map<Integer,String> phoneMap) {
+        phoneMap.put(1,"");
+        phoneMap.put(2,"abc");
+        phoneMap.put(3,"def");
+        phoneMap.put(4,"ghi");
+        phoneMap.put(5,"jkl");
+        phoneMap.put(6,"mno");
+        phoneMap.put(7,"pqrs");
+        phoneMap.put(8,"tuv");
+        phoneMap.put(9,"wxyz");
+    }
+
+    public void getCombinationPattern(List<String> val,List<String> res,String digits,StringBuilder sb,int idx) {
+        
+        // if(idx>=digits.length()) return;
+
+        if(sb.length()==digits.length()) {
+            res.add(sb.toString());
+            return;
+        }
+
+        String str = val.get(idx);
+
+        for(char chr : str.toCharArray()) {
+            sb.append(chr);
+            getCombinationPattern(val,res,digits,sb,idx+1);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+    }
+
+    public List<String> letterCombinations(String digits) {
+        Map<Integer,String> phoneMap = new HashMap<>();
+        initializeMap(phoneMap);
+        
+        List<String> values = new ArrayList<>();
+        for(char digit : digits.toCharArray()) {
+            String value = phoneMap.get(digit-'0');
+            values.add(value);
+        }
+
+        List<String> result = new ArrayList<>();
+        if(digits.length() == 0) return result;
+        getCombinationPattern(values,result,digits,new StringBuilder(),0);
+
+        return result;
+       
+    }
+}
+
+/**
+    23
+    abc def
+    ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+ */
