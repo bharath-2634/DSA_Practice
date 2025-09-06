@@ -1,0 +1,72 @@
+Question:https://leetcode.com/problems/palindrome-partitioning-ii/
+
+solution:
+class Solution {
+
+    public boolean isPalindrome(String s,int i,int j) {
+        while(i < j){
+            if(s.charAt(i) != s.charAt(j)) return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
+
+    /*
+    This is my memoization + recursive approach
+    public int getMinCut(String s,int idx,int[] dp) {
+        if(idx==s.length()) {
+            return -1;
+        }
+
+        if(dp[idx]!=0) return dp[idx];
+
+        int min_count = Integer.MAX_VALUE;
+
+        for(int i=idx;i<s.length();i++) {
+            String sb = s.substring(idx,i+1);
+            if(isPalindrome(sb)) {
+                int cut = 1+getMinCut(s,i+1,dp);
+                min_count = Math.min(cut,min_count);
+            }
+        }
+
+        return dp[idx] = min_count;
+    }
+
+    public int minCut(String s) {
+        int[] dp = new int[s.length()+1];
+
+        return getMinCut(s,0,dp);
+    }
+    */
+
+    public int minCut(String s) {
+        int[] dp = new int[s.length()+1];
+
+        dp[s.length()]= -1;
+
+        for(int i=s.length()-1;i>=0;i--) {
+            int min_cut = Integer.MAX_VALUE;
+            for(int j=i;j<s.length();j++) {
+                // String sb = s.substring(i,j+1);
+                if(isPalindrome(s,i,j)) {
+                    int cut = 1+dp[j+1];
+                    min_cut = Math.min(cut,min_cut);
+                }
+            }
+            dp[i] = min_cut;
+        }
+
+        return dp[0];
+    }
+}
+
+/**
+    s="aab"
+    1 -> {a,a,b} // cuts = 2
+    2 -> {aa,b} // cuts = 1
+
+    min_cut = 1
+
+ */
