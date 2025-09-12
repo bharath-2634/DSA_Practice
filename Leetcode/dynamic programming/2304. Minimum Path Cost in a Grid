@@ -1,0 +1,66 @@
+Question:https://leetcode.com/problems/minimum-path-cost-in-a-grid/description/
+
+Solution:
+class Solution {
+    /* This is my recursion + Memoization Approach
+    public int dfs(int[][] grid,int[][] cost,int row,int col,int[][] dp) {
+        if(row==grid.length-1) return grid[row][col];
+
+        int min_val = Integer.MAX_VALUE;
+        if(dp[row][col]!=0) return dp[row][col];
+
+        for(int move=0;move<grid[0].length;move++) {
+            int total_cost = grid[row][col] + cost[grid[row][col]][move] + dfs(grid,cost,row+1,move,dp);
+            min_val = Math.min(min_val,total_cost);
+            // dp[row][move] = min_val;
+        }
+
+        return dp[row][col] = min_val;
+
+    }
+
+    public int minPathCost(int[][] grid, int[][] moveCost) {
+        
+        int minCost = Integer.MAX_VALUE;
+        int[][] dp = new int[grid.length+1][grid[0].length+1];
+
+        for(int col=0;col<grid[0].length;col++) {
+            minCost = Math.min(minCost,dfs(grid,moveCost,0,col,dp));
+        }
+
+        return minCost;
+    }*/
+
+    public int minPathCost(int[][] grid, int[][] moveCost) {
+        
+        // int minCost = Integer.MAX_VALUE;
+        int[][] dp = new int[grid.length+1][grid[0].length+1];
+
+        for(int col=0;col<grid[0].length;col++) {
+            dp[0][col] = grid[0][col];
+        }
+
+        for(int i=1;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                int min_cost = Integer.MAX_VALUE;
+
+                for(int k=0;k<grid[0].length;k++) {
+                    int dfs = grid[i][j] + moveCost[grid[i-1][k]][j] + dp[i-1][k];
+                    min_cost = Math.min(min_cost,dfs);
+                }
+
+                dp[i][j] = min_cost;
+            }
+        }
+
+        int minCost = Integer.MAX_VALUE;
+        for(int j=0;j<grid[0].length;j++) {
+            minCost = Math.min(minCost, dp[grid.length-1][j]);
+        }
+
+        return minCost;
+    }
+
+}
+
+/* This is variable start + Variable End DP - Problem */
