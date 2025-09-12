@@ -1,0 +1,46 @@
+Question:https://leetcode.com/problems/minimum-path-sum/description/
+
+Solution:
+class Solution {
+
+    /* This is my recursive + Memoization Approach
+    public int getMinPathSum(int[][] grid,int row,int col,int[][] dp) {
+
+        if(row==0 && col==0) return grid[row][col];
+
+        if(row<0 || col<0) return Integer.MAX_VALUE;
+
+        if(dp[row][col]!=0) return dp[row][col];
+
+        int moveUp = getMinPathSum(grid,row-1,col,dp);
+        int moveDown = getMinPathSum(grid,row,col-1,dp);
+
+        return dp[row][col] = grid[row][col] + Math.min(moveUp,moveDown);
+    }
+
+    public int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length+1][grid[0].length+1];
+
+        return getMinPathSum(grid,grid.length-1,grid[0].length-1,dp);
+
+    }*/
+
+    public int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length+1][grid[0].length+1];
+
+        // for(int i=0;i<grid.length;i++) dp[i][0] = 1;
+        // for(int j=0;j<grid[0].length;j++) dp[0][j] = 1;
+        dp[0][0] = grid[0][0];
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(i==0 && j==0) continue;
+                int moveUp = (i>0) ? dp[i-1][j] : Integer.MAX_VALUE;
+                int movedown = (j>0) ? dp[i][j-1] : Integer.MAX_VALUE;
+                dp[i][j] = grid[i][j] + Math.min(moveUp,movedown);
+            }
+        }
+
+        return dp[grid.length-1][grid[0].length-1];
+    }
+}
