@@ -1,0 +1,110 @@
+Question:https://leetcode.com/problems/word-break/
+
+Solution:
+class Solution {
+
+    /* My Greedy Approach and fails as Greedy
+    public boolean sameWord(String word,String full) {
+        int count=0;
+        for(int i=0;i<word.length();i++) {
+            if(word.charAt(i)==full.charAt(i)) {
+                count++;
+            }else {
+                break;
+            }
+        }
+
+        if(count==word.length()) return true;
+        return false;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) {
+        
+        int idx = 0;
+        while(idx<s.length()) {
+            char start = s.charAt(idx);
+            boolean chk = false;
+            for(String word : wordDict) {
+                if(word.charAt(0)==start && sameWord(word,s)) {
+                    idx+=word.length();
+                    chk = true;
+                    break;
+                }
+            }
+
+            if(!chk) return false;
+            if(idx==s.length()) return true;
+            if(idx>s.length()) return false;
+        }
+
+        return true;
+    }
+    */
+
+    /* This is my recursive approach + Memoization
+    public boolean isPresent(String s,List<String> words) {
+
+        for(String word : words) {
+            if(word.equals(s)) return true;
+        }
+
+        return false;
+    }
+
+    public boolean getWordBreak(String s,List<String> words,int idx,Boolean[] dp) {
+
+        if(idx==s.length()) return true;
+
+        if(dp[idx]!=null) return dp[idx];
+
+        for(int i=idx;i<s.length();i++) {
+            String subStr = s.substring(idx,i+1);
+            if(isPresent(subStr,words)) {
+                if(getWordBreak(s,words,i+1,dp)) {
+                    dp[idx] = true;
+                    return true;
+                }
+            }
+        }
+
+        return dp[idx] = false;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) { 
+        Boolean[] dp = new Boolean[s.length()+1];
+
+        return getWordBreak(s,wordDict,0,dp);
+    }
+    */
+
+    public boolean isPresent(String s,List<String> words) {
+
+        for(String word : words) {
+            if(word.equals(s)) return true;
+        }
+
+        return false;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) { 
+        boolean[] dp = new boolean[s.length()+1];
+        
+        dp[s.length()] = true;
+
+        for(int i = s.length()-1;i>=0;i--) {
+            for(int j = i;j<s.length();j++) {
+                String subStr = s.substring(i,j+1);
+                if(isPresent(subStr,wordDict)) {
+                    if(dp[j+1]) {
+                        dp[i] = true;
+                        break;
+                    }else {
+                        dp[i] = false;
+                    }
+                }
+            }
+        }
+
+        return dp[0];
+    }
+}
