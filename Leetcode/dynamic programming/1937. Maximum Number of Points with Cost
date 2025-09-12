@@ -1,0 +1,63 @@
+Question:https://leetcode.com/problems/maximum-number-of-points-with-cost/description/
+
+Solution:
+class Solution {
+
+
+    /* This is recursive + Memoization Approach
+    public long getMaxPoints(int[][] points,int row,int col,long[][] dp) {
+
+        if(row==points.length-1) return points[row][col];
+
+        if(dp[row][col]!=0) return dp[row][col];
+
+        long max_points = Long.MIN_VALUE;
+
+        for(int i=0;i<points[0].length;i++) {
+            long current_point = points[row][col] + getMaxPoints(points,row+1,i,dp) - Math.abs(col-i);
+            max_points = Math.max(max_points,current_point);
+        }
+
+        return dp[row][col] = max_points;
+    }
+
+
+    public long maxPoints(int[][] points) {
+        long max_points = Long.MIN_VALUE;
+        long[][] dp = new long[points.length+1][points[0].length+1];
+
+        for(int col=0;col<points[0].length;col++) {
+            max_points = Math.max(max_points,getMaxPoints(points,0,col,dp));
+        }
+
+        return max_points;
+    }*/
+
+    public long maxPoints(int[][] points) {
+        
+        long[][] dp = new long[points.length+1][points[0].length+1];
+
+        for(int col=0;col<points[0].length;col++) {
+            dp[0][col] = points[0][col];
+        }
+
+        for(int i=1;i<points.length;i++) {
+            for(int j=0;j<points[0].length;j++) {
+                long current_point = Long.MIN_VALUE;
+                for(int nextCol = 0;nextCol<points[0].length;nextCol++) {
+                    long dfs = points[i][j] + dp[i-1][nextCol] - Math.abs(nextCol - j);
+                    current_point = Math.max(current_point,dfs);
+                }
+                dp[i][j] = current_point;
+            }
+        }
+
+        long max_points = Long.MIN_VALUE;
+        for(int i=0;i<points[0].length;i++) {
+            max_points = Math.max(max_points,dp[points.length-1][i]);
+        }
+
+        return max_points;
+    }
+    
+}
