@@ -1,0 +1,28 @@
+Question:
+
+Solution:
+import java.util.* ;
+import java.io.*; 
+public class Solution {
+
+    public boolean getSubSetSum(int[] arr,int target,int idx,int val) {
+        if(val==target) return true;
+        
+        if(idx==0) {
+            if(arr[idx]==target) return true;
+            else return false; 
+        }
+
+        boolean notTake = getSubSetSum(arr,target,idx-1,val);
+        boolean take = false;
+        if(arr[idx] < target) {
+            take = getSubSetSum(arr,target,idx-1,val+arr[idx]);
+        }
+
+        return take || notTake;
+    }
+
+    public static boolean subsetSumToK(int n, int k, int arr[]){
+        return getSubSetSum(arr,k,n-1,0);
+    }
+}
