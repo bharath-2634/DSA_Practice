@@ -1,0 +1,98 @@
+Question:https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1
+
+Solution:
+// class Solution {
+    
+//     public static int getMaxItems(int W,int val[],int wt[],int idx,int[][] dp) {
+        
+//         if(idx==0) {
+//             if(W>=wt[0]) {
+//                 return val[0];
+//             }else {
+//                 return 0;
+//             }
+//         }
+        
+//         // if(W==0) return 0;
+        
+//         if(dp[idx][W]!=0) return dp[idx][W];
+        
+//         int notTake = 0+getMaxItems(W,val,wt,idx-1,dp);
+//         int take = Integer.MIN_VALUE;
+        
+//         if(W>=wt[idx]) {
+//             take = val[idx] + getMaxItems(W-wt[idx],val,wt,idx-1,dp);
+//         }
+        
+//         return dp[idx][W] = Math.max(take,notTake);
+//     }
+//     static int knapsack(int W, int val[], int wt[]) {
+        
+//         int[][] dp = new int[val.length][W+1];
+        
+//         return getMaxItems(W,val,wt,val.length-1,dp);
+//     }
+// }
+
+/* This is Tabulation Approach*/
+
+// class Solution {
+    
+//     static int knapsack(int W, int val[], int wt[]) {
+        
+//         int[][] dp = new int[val.length][W+1];
+        
+//         for(int i=wt[0];i<=W;i++) {
+//             dp[0][i] = val[0];
+//         }
+        
+//         for(int i=1;i<val.length;i++) {
+//             for(int weight=0;weight<=W;weight++) {
+                
+//                 int notTake = dp[i-1][weight];
+                
+//                 int take=0;
+//                 if (wt[i]<=weight) {
+//                     take = val[i] + dp[i-1][weight - wt[i]];
+//                 }
+                
+//                 dp[i][weight] = Math.max(take,notTake);
+//             }
+//         }
+        
+//         return dp[val.length-1][W];
+        
+//     }
+// }
+
+/* This is my space optimised Approach*/
+
+class Solution {
+    static int knapsack(int W, int val[], int wt[]) {
+        
+        int[] prev = new int[W+1];
+        
+        
+        for(int w=wt[0];w<=W;w++) {
+            prev[w] = val[0];
+        }
+        
+        for(int i=1;i<val.length;i++) {
+            // int[] cur = new int[W+1];
+            for(int w=W;w>=0;w--) {
+                
+                int notTake = prev[w];
+                int take=Integer.MIN_VALUE;
+                if(w>=wt[i]) {
+                    take = val[i] + prev[w-wt[i]];
+                }
+                
+                prev[w] = Math.max(take,notTake);
+            }
+            // prev = cur;
+        }
+        
+        return prev[W];
+    }
+}
+
