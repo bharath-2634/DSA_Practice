@@ -1,0 +1,100 @@
+Question:https://leetcode.com/problems/number-of-provinces/description/
+
+Solution:
+/*
+This is my DFS Approach
+class Solution {
+
+    public void generateAdjList(int[][] isConnected,Map<Integer,List<Integer>> adjList) {
+
+        for(int i=0;i<isConnected.length;i++) {
+            adjList.put(i,new ArrayList<>());
+            for(int j=0;j<isConnected[i].length;j++) {
+                if(i!=j && isConnected[i][j]==1) {
+                    adjList.get(i).add(j);
+                }
+            }
+        }
+    }
+    
+    public void dfs(int node,Map<Integer,List<Integer>> adjList,boolean[] visited) {
+
+        visited[node] = true;
+
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                dfs(adjNode,adjList,visited);
+            }
+        }
+    }
+
+    public int getNumberOfProvinces(Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        int count = 0;
+
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                count++;
+                dfs(node,adjList,visited);
+            }
+        }
+
+        return count;
+    }
+
+    public int findCircleNum(int[][] isConnected) {
+
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(isConnected,adjList);
+
+        boolean[] visited = new boolean[isConnected.length];
+
+        return getNumberOfProvinces(adjList,visited);
+
+    }
+}*/
+
+
+
+class Solution {
+
+    public void generateAdjList(int[][] isConnected,Map<Integer,List<Integer>> adjList) {
+
+        for(int i=0;i<isConnected.length;i++) {
+            adjList.put(i,new ArrayList<>());
+            for(int j=0;j<isConnected[i].length;j++) {
+                if(i!=j && isConnected[i][j]==1) {
+                    adjList.get(i).add(j);
+                }
+            }
+        }
+    }
+
+    public int findCircleNum(int[][] isConnected) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(isConnected,adjList);
+
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[isConnected.length];
+
+        int count=0;
+
+        for(int i=0;i<isConnected.length;i++) {
+            if(!visited[i]) {
+                queue.add(i);
+                count++;
+                visited[i] = true;
+
+                while(!queue.isEmpty()) {
+                    for(int adjNode : adjList.get(queue.poll())) {
+                        if(!visited[adjNode]) {
+                            queue.add(adjNode);
+                            visited[adjNode] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+}
