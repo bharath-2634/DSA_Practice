@@ -1,0 +1,85 @@
+Question:https://leetcode.com/problems/flood-fill/description/
+
+Solution:
+/*
+This is my dfs solution
+class Solution {
+
+    public void dfs(int[][] image,int row,int col,int targetColor,int replaceColor) {
+
+        if(row<0 || row>=image.length || col<0 || col>=image[0].length) return;
+
+        if(image[row][col]!=targetColor) return; 
+
+        if(image[row][col]==targetColor) {
+            image[row][col] = replaceColor;
+        }
+
+        dfs(image,row+1,col,targetColor,replaceColor);
+        dfs(image,row-1,col,targetColor,replaceColor);
+        dfs(image,row,col+1,targetColor,replaceColor);
+        dfs(image,row,col-1,targetColor,replaceColor);
+
+    }
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        if(sr<0 || sr>=image.length || sc<0 || sc>=image[0].length) return image;
+
+        if(image[sr][sc]==color) return image;
+
+        int targetColor = image[sr][sc];
+        dfs(image,sr,sc,targetColor,color);
+
+        return image;
+
+    }
+}*/
+
+class Pair {
+    int row;
+    int col;
+
+    public Pair(int r,int c) {
+        this.row = r;
+        this.col = c;
+    }
+}
+
+class Solution {
+
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        if(sr<0 || sr>=image.length || sc<0 || sc>=image[0].length) return image;
+
+        if(image[sr][sc]==color) return image;
+
+        int targetColor = image[sr][sc];
+
+        Queue<Pair> queue = new LinkedList<>();
+        queue.add(new Pair(sr,sc));
+
+        int[] delRow = {+1,0,-1,0};
+        int[] delCol = {0,+1,0,-1};
+
+        while(!queue.isEmpty()) {
+            Pair p = queue.poll();
+            int row = p.row;
+            int col = p.col;
+            image[row][col] = color;
+
+            for(int k=0;k<4;k++) {
+                int newRow = row+delRow[k];
+                int newCol = col+delCol[k];
+
+                if(newRow>=0 && newRow<image.length && newCol>=0 && newCol<image[0].length && image[newRow][newCol]==targetColor) {
+                    queue.add(new Pair(newRow,newCol));
+                    image[newRow][newCol] = color;
+                }
+            }
+
+        }
+
+        return image;
+    }
+}
