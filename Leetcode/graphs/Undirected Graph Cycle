@@ -1,0 +1,61 @@
+Question:https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
+
+Solution:
+class Solution {
+    
+    public void generateAdjList(int V,int[][] edges,Map<Integer,List<Integer>> adjList) {
+        
+        for (int i = 0; i < V; i++) {
+            adjList.put(i, new ArrayList<>()); // ensure every node exists
+        }
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+           
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }    
+    }
+    
+    public boolean dfs(int node,int parent,Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        
+        if(visited[node]) return false;
+        
+        visited[node] = true;
+        
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,node,adjList,visited)) {
+                    return true;
+                }
+            }else if(adjNode!=parent) return true;
+        }
+        
+        
+        return false;
+        
+    }
+    
+    public boolean detectCycle(Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                if(dfs(node,-1,adjList,visited)) return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean isCycle(int V, int[][] edges) {
+        // Code here
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(V,edges,adjList);
+        
+        boolean[] visited = new boolean[V];
+        
+        return detectCycle(adjList,visited);
+        
+    }
+}
