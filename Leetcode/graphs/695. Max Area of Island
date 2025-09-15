@@ -1,0 +1,91 @@
+Question:https://leetcode.com/problems/max-area-of-island/description/
+
+Solution:
+/*
+
+This is my DFS solution
+
+class Solution {
+
+    public int dfs(int[][] grid,int row,int col) {
+
+        if(row<0 || row>=grid.length || col<0 || col>=grid[0].length || grid[row][col]==0) return 0;
+
+        // if(grid[row][col]==1) return 1;
+
+        grid[row][col] = 0;
+
+        return 1+dfs(grid,row+1,col) + dfs(grid,row-1,col) + dfs(grid,row,col+1) + dfs(grid,row,col-1);
+
+    }
+
+    public int maxAreaOfIsland(int[][] grid) {
+        
+        int maxArea = Integer.MIN_VALUE;
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    maxArea = Math.max(maxArea,dfs(grid,i,j));
+                }
+            }
+        }
+
+        return maxArea==Integer.MIN_VALUE ? 0 : maxArea;
+    }
+}*/
+
+class Pair {
+    int row;
+    int col;
+
+    public Pair(int r,int c) {
+        this.row = r;
+        this.col = c;
+    }
+}
+
+class Solution {
+
+    public int maxAreaOfIsland(int[][] grid) {
+
+        int maxArea = Integer.MIN_VALUE;
+
+        Queue<Pair> queue = new LinkedList<>();
+
+        int[] delRow = {+1,0,-1,0};
+        int[] delCol = {0,+1,0,-1};
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    queue.add(new Pair(i,j));
+                    grid[i][j] = 0;
+                    int area = 1;
+
+                    while(!queue.isEmpty()) {
+                        Pair p = queue.poll();
+                        int row = p.row;
+                        int col = p.col;
+
+                        for(int k=0;k<4;k++) {
+                            int newRow = row+delRow[k];
+                            int newCol = col+delCol[k];
+
+                            if(newRow>=0 && newRow<grid.length && newCol>=0 && newCol<grid[0].length && grid[newRow][newCol]==1) {
+                                area++;
+                                queue.add(new Pair(newRow,newCol));
+                                grid[newRow][newCol] = 0;
+                            }
+                        }
+
+                    }
+
+                    maxArea = Math.max(maxArea,area);
+                }
+            }
+        }
+
+        return maxArea==Integer.MIN_VALUE ? 0 : maxArea;
+    }
+}
