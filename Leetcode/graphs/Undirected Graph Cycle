@@ -1,6 +1,8 @@
 Question:https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
 
 Solution:
+/*
+
 class Solution {
     
     public void generateAdjList(int V,int[][] edges,Map<Integer,List<Integer>> adjList) {
@@ -49,7 +51,7 @@ class Solution {
     }
     
     public boolean isCycle(int V, int[][] edges) {
-        // Code here
+       
         Map<Integer,List<Integer>> adjList = new HashMap<>();
         generateAdjList(V,edges,adjList);
         
@@ -58,4 +60,87 @@ class Solution {
         return detectCycle(adjList,visited);
         
     }
+    
+    
+    
 }
+*/
+
+class Pair {
+    int node;
+    int parent;
+    
+    public Pair(int u,int v) {
+        this.node = u;
+        this.parent = v;
+    }
+}
+
+class Solution {
+    
+    public void generateAdjList(int V,int[][] edges,Map<Integer,List<Integer>> adjList) {
+        
+        for(int i=0;i<V;i++) {
+            adjList.put(i,new ArrayList<>());
+        }    
+        
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+    }
+    
+    public boolean detectCycle(int start_node,int start_parent,Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        
+        Queue<Pair> queue = new LinkedList<>();
+        
+        queue.add(new Pair(start_node,start_parent));
+        
+        
+        while(!queue.isEmpty()) {
+            Pair p = queue.poll();
+            int node = p.node;
+            int parent = p.parent;
+            
+            if(visited[node]) continue;
+            
+            visited[node] = true;
+            
+            for(int adjNode : adjList.get(node)) {
+                if(!visited[adjNode]) {
+                    queue.add(new Pair(adjNode,node));
+                    // visited[adjNode] = true;
+                }else if(adjNode!=parent) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean isCycle(int V, int[][] edges) {
+        
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(V,edges,adjList);
+        
+        
+        boolean[] visited = new boolean[V];
+        
+        for(int node : adjList.keySet()) {
+            if(detectCycle(node,-1,adjList,visited)) return true;
+        }
+        
+        
+        return false;
+    }
+}
+
+
+
+
+
