@@ -1,0 +1,97 @@
+Question:https://leetcode.com/problems/01-matrix/description/
+
+Solution:
+/*
+This is my dfs solution with T.C = O((n*m)^2)
+
+class Solution {
+
+    public int dfs(int[][] grid,int row,int col) {
+        if(row<0 || row>=grid.length || col<0 || col>=grid[0].length || grid[row][col]==-1) return Integer.MAX_VALUE;
+
+        if(grid[row][col]==0) return 0;
+
+        int temp = grid[row][col];
+        grid[row][col]=-1;
+
+        int val = Math.min(Math.min(dfs(grid,row+1,col),dfs(grid,row-1,col)),Math.min(dfs(grid,row,col+1),dfs(grid,row,col-1)));
+
+        grid[row][col]=temp;
+
+        return val==Integer.MAX_VALUE ? Integer.MAX_VALUE : val+1;
+
+    }
+
+    public int[][] updateMatrix(int[][] mat) {
+        
+        int[][] dist = new int[mat.length][mat[0].length];
+
+        for(int i=0;i<mat.length;i++) {
+            for(int j=0;j<mat[0].length;j++) {
+                if(mat[i][j]==1) {
+                    dist[i][j] = dfs(mat,i,j);
+                }else {
+                    dist[i][j] = 0;
+                }
+            }
+        }
+
+        return dist;
+    }
+}
+*/
+
+class Pair {
+    int row;
+    int col;
+    int dist;
+
+    public Pair(int r,int c,int d) {
+        this.row = r;
+        this.col = c;
+        this.dist = d;
+    }
+}
+
+class Solution {
+
+    public int[][] updateMatrix(int[][] mat) {
+
+        Queue<Pair> queue = new LinkedList<>();
+        int[][] dist = new int[mat.length][mat[0].length];
+        boolean[][] visited = new boolean[mat.length][mat[0].length];
+
+        for(int i=0;i<mat.length;i++) {
+            for(int j=0;j<mat[0].length;j++) {
+                if(mat[i][j]==0) {
+                    queue.add(new Pair(i,j,0));
+                    visited[i][j] = true;
+                    dist[i][j] = 0;
+                }
+            }
+        }
+
+        int[] delRow = {+1,0,-1,0};
+        int[] delCol = {0,+1,0,-1};
+
+        while(!queue.isEmpty()) {
+            Pair p = queue.poll();
+            int row = p.row;
+            int col = p.col;
+            int start_dist = p.dist;
+
+            for(int k=0;k<4;k++) {
+                int newRow = row+delRow[k];
+                int newCol = col+delCol[k];
+
+                if(newRow>=0 && newRow<mat.length && newCol>=0 && newCol<mat[0].length && !visited[newRow][newCol] && mat[newRow][newCol]==1) {
+                    dist[newRow][newCol] = start_dist+1;
+                    visited[newRow][newCol] = true;
+                    queue.add(new Pair(newRow,newCol,start_dist+1));
+                }
+            }
+        }
+
+        return dist;
+    } 
+}
