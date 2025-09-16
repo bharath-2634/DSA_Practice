@@ -1,0 +1,113 @@
+Question:https://leetcode.com/problems/find-eventual-safe-states/description/
+
+Solution:
+/* This is was my DFS solution */
+// class Solution {
+
+//     public static void getAdjList(int[][] graph, Map<Integer, List<Integer>> adjList) {
+//         for (int i = 0; i < graph.length; i++) {
+//             adjList.put(i, new ArrayList<>());
+//             for (int j = 0; j < graph[i].length; j++) {
+//                 adjList.get(i).add(graph[i][j]);
+//             }
+//         }
+//     }
+
+//     public static boolean dfs(boolean[] visited, boolean[] pathVisited, boolean[] isSafe,
+//                               Map<Integer, List<Integer>> adjList, int node) {
+
+//         visited[node] = true;
+//         pathVisited[node] = true;
+
+//         for (int adjNode : adjList.get(node)) {
+//             if (!visited[adjNode]) {
+//                 if(dfs(visited, pathVisited, isSafe, adjList, adjNode)) {
+//                     return true;
+//                 }
+//             } else if (pathVisited[adjNode]) {
+//                 return true;
+//             }
+//         }
+
+//         pathVisited[node] = false;
+//         isSafe[node] = true;
+//         return false;
+//     }
+
+//     public List<Integer> eventualSafeNodes(int[][] graph) {
+
+//         int n = graph.length;
+//         Map<Integer, List<Integer>> adjList = new HashMap<>();
+//         getAdjList(graph, adjList);
+
+//         boolean[] visited = new boolean[n];
+//         boolean[] pathVisited = new boolean[n];
+//         boolean[] isSafe = new boolean[n];
+
+//         for (int i = 0; i < n; i++) {
+//             if (!visited[i]) {
+//                 dfs(visited, pathVisited, isSafe, adjList, i);
+//             }
+//         }
+
+//         List<Integer> res = new ArrayList<>();
+//         for (int i = 0; i < n; i++) {
+//             if (isSafe[i]) res.add(i);
+//         }
+
+//         return res;
+//     }
+// }
+
+class Solution {
+
+    public static void getAdjList(Map<Integer,List<Integer>> adjList,int[][] graph) {
+
+        for (int i=0; i<graph.length; i++) {
+            adjList.putIfAbsent(i, new ArrayList<>());
+        }
+
+        for (int i = 0; i < graph.length; i++) {
+            for (int j : graph[i]) {
+                adjList.get(j).add(i);
+            }
+        }
+    }
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        
+        getAdjList(adjList,graph);
+
+        int[] inDegree = new int[graph.length];
+
+        for(int node : adjList.keySet()) {
+            for(int adjNode : adjList.get(node)) {
+                inDegree[adjNode]++;
+            }
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+
+        for(int i=0;i<inDegree.length;i++) {
+            if(inDegree[i]==0) {
+                queue.add(i);
+            }
+        }
+        
+        List<Integer> safeNodes = new ArrayList<>();
+        while(!queue.isEmpty()) {
+            int node = queue.peek();
+            safeNodes.add(node);
+            queue.remove();
+
+            for(int adjNode : adjList.get(node)) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) queue.add(adjNode);
+            }
+        }
+
+        Collections.sort(safeNodes);
+
+        return safeNodes;
+    }
+}
