@@ -1,0 +1,126 @@
+Question:https://leetcode.com/problems/number-of-black-blocks/description/
+
+Solution:
+/*
+This solution is bit complicated as because of Object equating method in JVM 
+class Position {
+    int row;
+    int col;
+
+    public Position(int r,int c) {
+        this.row = r;
+        this.col = c;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;        
+        if (o == null || getClass() != o.getClass()) return false;
+        Position p = (Position) o;
+        return row == p.row && col == p.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, col);  
+    }
+
+    @Override
+    public String toString() {
+        return "(" + row + "," + col + ")";
+    }
+}
+
+class Solution {
+
+    public boolean isBlackCoordinate(int[][] coordinates,int x,int y) {
+        for(int[] coordinate : coordinates) {
+            if(x==coordinate[0] && y==coordinate[1]) return true;
+        }
+
+        return false;
+    }
+
+    public long[] countBlackBlocks(int m, int n, int[][] coordinates) {
+        
+        long[] res = new long[5];
+        Map<Position,Integer> fMap = new HashMap<>();
+
+        int idx=0;
+
+        int[] delRow = {0,+1,0,+1};
+        int[] delCol = {0,0,+1,+1};
+
+        for(int[] coordinate : coordinates) {
+            int x = coordinate[0];
+            int y = coordinate[1];
+
+            int[][] blocks = {{x,y},{x-1,y},{x,y-1},{x-1,y-1}};
+
+            for(int[] block : blocks) {
+                int new_x = block[0];
+                int new_y = block[1];
+
+                if(new_x>=0 && new_x<m-1 && new_y>=0 && new_y<n-1) {
+                    fMap.put(new Position(new_x,new_y), fMap.getOrDefault(new Position(new_x,new_y), 0) + 1);
+                }
+            }
+
+        }
+
+        for(int count : fMap.values()) {
+            res[count]++;
+        }
+
+        res[0] = (long)((long)(m-1)*(n-1) - (res[1]+res[2]+res[3]+res[4]));
+
+        // System.out.println(fMap);
+
+        return res;
+    }
+}
+*/
+
+/*
+
+    1. the total number of blocks can be formed is -> (m-1)*(n-1)  = alpha
+    2. derive the coordinates for each block // don't derive all the coord
+    3. check the number of black boxes that each block contains
+    4. res[0] = no. of blocks which contain 0 black boxes, res[1] = no. of blocks which contains 1 black boxes, res[2] = ....
+
+    step ->2 : Deriving all the steps will not be good ! [(x,y),(x+1,y),(x,y+1),(x+1,y+1)] for each block
+
+ */
+
+class Solution {
+    public long[] countBlackBlocks(int m, int n, int[][] coordinates) {
+
+        long[] res = new long[5];
+        Map<String,Integer> fMap = new HashMap<>();
+
+        for(int[] coordinate : coordinates) {
+            int x = coordinate[0];
+            int y = coordinate[1];
+
+            int[][] blocks = {{x,y},{x-1,y},{x,y-1},{x-1,y-1}};
+
+            for(int[] block : blocks) {
+                int new_x = block[0];
+                int new_y = block[1];
+
+                if(new_x>=0 && new_x<m-1 && new_y>=0 && new_y<n-1) {
+                    String key = new_x+","+new_y;
+                    fMap.put(key,fMap.getOrDefault(key,0)+1);
+                }
+            }
+        }
+
+        for(int count : fMap.values()) {
+            res[count]++;
+        }
+
+        res[0] = (long)((long)(m-1)*(n-1) - (res[1]+res[2]+res[3]+res[4]));
+
+        return res;
+    }
+}
