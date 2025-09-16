@@ -1,0 +1,40 @@
+Question:https://www.geeksforgeeks.org/problems/number-of-distinct-islands/1
+
+Solution:
+// User function Template for Java
+
+class Solution {
+    
+    public void dfs(int[][] grid,List<String> island,int row1,int col1,int row2,int col2) {
+        
+        if(row1<0 || row2<0 || col1<0 || col2<0 || row1>=grid.length || row2>=grid.length || col1>=grid[0].length || col2>=grid[0].length || grid[row2][col2]==0) return;
+        
+        island.add((row2-row1)+""+(col2-col1));
+        
+        grid[row2][col2] = 0;
+        
+        dfs(grid,island,row1,col1,row2+1,col2);
+        dfs(grid,island,row1,col1,row2-1,col2);
+        dfs(grid,island,row1,col1,row2,col2+1);
+        dfs(grid,island,row1,col1,row2,col2-1);
+        
+    }
+
+    int countDistinctIslands(int[][] grid) {
+        
+        Set<List<String>> dist_islands = new HashSet<>();
+        
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    List<String> island = new ArrayList<>();
+                    dfs(grid,island,i,j,i,j);
+                    dist_islands.add(island);
+                }
+            }
+        }
+        
+        return dist_islands.size();
+        
+    }
+}
