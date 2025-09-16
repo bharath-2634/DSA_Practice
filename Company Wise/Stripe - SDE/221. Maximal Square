@@ -1,0 +1,64 @@
+Question:https://leetcode.com/problems/maximal-square/
+
+Solution:
+class Solution {
+
+    /* This is my recursion + memoization approach 
+    public int getMaxArea(char[][] matrix,int row,int col,int[][] dp) {
+        if(row<0 || row>=matrix.length || col<0 || col>=matrix[0].length || matrix[row][col]=='0') return Integer.MIN_VALUE;
+
+        if(dp[row][col]!=0) return dp[row][col];
+
+        int maxSide = 1;
+
+        while(row+maxSide < matrix.length && col+maxSide < matrix[0].length) {
+
+            for(int i=col;i<=col+maxSide;i++) {
+                if(matrix[row + maxSide][i]=='0') return maxSide*maxSide;
+            }
+
+            for(int i=row;i<=row+maxSide;i++) {
+                if(matrix[i][col+maxSide]=='0') return maxSide*maxSide;
+            }
+
+            maxSide++;
+
+        }
+
+        return dp[row][col] = maxSide*maxSide;
+    }
+
+    public int maximalSquare(char[][] matrix) {
+        
+        int maxArea = Integer.MIN_VALUE;
+        int[][] dp = new int[matrix.length+1][matrix[0].length+1];
+
+        for(int i=0;i<matrix.length;i++) {
+            for(int j=0;j<matrix[0].length;j++) {
+                if(matrix[i][j]=='1') {
+                    maxArea = Math.max(maxArea,getMaxArea(matrix,i,j,dp));
+                }
+            }
+        }
+
+        return maxArea==Integer.MIN_VALUE ? 0 : maxArea;
+    }
+    */
+
+    public int maximalSquare(char[][] matrix) {
+        
+        int maxArea = 0;
+        int[][] dp = new int[matrix.length+1][matrix[0].length+1];
+
+        for(int i=1;i<=matrix.length;i++) {
+            for(int j=1;j<=matrix[0].length;j++) {
+                if(matrix[i-1][j-1]=='1') {
+                    dp[i][j] = 1 + Math.min(dp[i-1][j], Math.min(dp[i][j-1], dp[i-1][j-1]));
+                    maxArea = Math.max(maxArea,dp[i][j]);
+                }
+            }
+        }
+
+        return maxArea*maxArea;
+    }
+}
