@@ -1,0 +1,55 @@
+Question:https://www.geeksforgeeks.org/problems/bipartite-graph/1
+
+Solution:
+class Solution {
+    
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges,int V) {
+        
+        for(int i=0;i<V;i++) {
+            adjList.put(i,new ArrayList<>());
+        }
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+    }
+    
+    public boolean checkIsBipartite(Map<Integer,List<Integer>> adjList,int[] color,int node) {
+        
+        
+        for(int adjNode : adjList.get(node)) {
+            if(color[adjNode]==-1) {
+                color[adjNode] = 1 - color[node];
+                if(!checkIsBipartite(adjList,color,adjNode)) return false;
+                
+            } else if(color[adjNode]==color[node]) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    public boolean isBipartite(int V, int[][] edges) {
+        
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        
+        generateAdjList(adjList,edges,V);
+        
+        int[] color = new int[V];
+        Arrays.fill(color,-1);
+        
+        for(int node : adjList.keySet()) {
+            if(color[node]==-1){
+                color[node] = 0;
+                if(!checkIsBipartite(adjList,color,node)) return false;
+            } 
+        }
+        
+        return true;
+    }
+}
