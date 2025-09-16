@@ -1,0 +1,56 @@
+Question:https://www.geeksforgeeks.org/problems/topological-sort/1
+
+Solution:
+class Solution {
+    
+    public static void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges,int V) {
+        
+        for(int i=0;i<V;i++) {
+            adjList.put(i,new ArrayList<>());
+        }
+        
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            adjList.get(u).add(v);
+        }
+    }
+    
+    public static void dfs(Map<Integer,List<Integer>> adjList,boolean[] visited,Stack<Integer> st,int node) {
+        
+        visited[node] = true;
+        
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                dfs(adjList,visited,st,adjNode);
+            }
+        }
+        
+        st.push(node);
+    }
+    
+    public static ArrayList<Integer> topoSort(int V, int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(adjList,edges,V);
+        
+        Stack<Integer> st = new Stack<>();
+        boolean[] visited = new boolean[V];
+        
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                dfs(adjList,visited,st,node);
+                // st.push(node);
+            }
+        }
+        
+        ArrayList<Integer> arr = new ArrayList<>();
+        
+        while(!st.isEmpty()) {
+            int num = st.pop();
+            arr.add(num);
+        }
+        
+        return arr;
+        
+    }
+}
