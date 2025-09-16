@@ -1,0 +1,50 @@
+Question: https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+Solution:
+class Solution {
+    
+    public static void generateAdjList(int[][] edges, Map<Integer, List<Integer>> adjList, int V) {
+        
+        for (int i = 0; i < V; i++) {
+            adjList.put(i, new ArrayList<>());
+        }
+        
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            adjList.get(u).add(v);
+        }
+    }
+    
+    public boolean dfs(Map<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited,int node) {
+        visited[node] = true;
+        pathVisited[node] = true;
+        
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                if(dfs(adjList,visited,pathVisited,adjNode)) return true;
+            }else if(pathVisited[adjNode]) return true;
+        }
+        
+        pathVisited[node]= false;
+        
+        return false;
+    }
+    
+    public boolean isCyclic(int V, int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        
+        generateAdjList(edges,adjList,V);
+        
+        boolean[] visited = new boolean[V];
+        boolean[] pathVisited = new boolean[V];
+        
+        for(int node : adjList.keySet()) {
+            if(!visited[node] && !pathVisited[node]) {
+                if(dfs(adjList,visited,pathVisited,node)) return true;
+            }
+        }
+        
+        return false;
+    }
+}
