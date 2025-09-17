@@ -1,0 +1,62 @@
+Question:https://leetcode.com/problems/most-popular-video-creator/description/
+
+Solution:
+class Video {
+    String creator;
+    String id;
+    int view;
+
+    public Video(String c,String i,int v) {
+        this.creator = c;
+        this.id = i;
+        this.view = v;
+    } 
+}
+
+class Solution {
+    public List<List<String>> mostPopularCreator(String[] creators, String[] ids, int[] views) {
+        Map<String,PriorityQueue<Video>> cMap = new HashMap<>();
+        Map<String,Long> sumMap = new HashMap<>();
+
+        for(int i=0;i<creators.length;i++) {
+            String creator = creators[i];
+            String id = ids[i];
+            int view = views[i];
+            sumMap.put(creator,sumMap.getOrDefault(creator,0L)+view);
+
+            Video video = new Video(creator,id,view);
+
+            cMap.computeIfAbsent(creator,k->new PriorityQueue<>((a,b)->{
+                if(b.view != a.view) {
+                    return b.view - a.view;
+                }
+
+                return a.id.compareTo(b.id);
+            })).add(video);
+        }
+
+        long max_view = Collections.max(sumMap.values());
+        List<String> max_creators = new ArrayList<>();
+
+        for(Map.Entry<String,Long> e : sumMap.entrySet()) {
+            if(e.getValue()==max_view) {
+                max_creators.add(e.getKey());
+            }
+        }
+
+        List<List<String>> res = new ArrayList<>();
+        for(String creator : max_creators) {
+            String bestVideo_id = cMap.get(creator).peek().id;
+            res.add(Arrays.asList(creator,bestVideo_id));
+        }
+
+        return res;
+    }
+}
+
+/*
+
+    Map<String,PQ<Video>> -> creator -> Video(creator,id,view)
+    insert based on the highest view count of the video 
+
+ */
