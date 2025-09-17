@@ -1,0 +1,140 @@
+Question:https://leetcode.com/problems/design-a-food-rating-system/description
+
+Solution:
+/*
+
+// import java.util.Comparable;
+
+class Pair {
+    String cusine;
+    int rating;
+
+    public Pair(String cusine,int rating) {
+        this.cusine = cusine;
+        this.rating = rating;
+    }
+}
+
+class Food implements Comparable<Food> {
+    String food;
+    int rating;
+
+    public Food(String food,int rating) {
+        this.food = food;
+        this.rating = rating;
+    }
+
+    @Override
+    public int compareTo(Food obj1) {
+        if(this.rating != obj1.rating) {
+            return Integer.compare(obj1.rating, this.rating);
+        }
+
+        return this.food.compareTo(obj1.food);
+    }
+}
+
+class FoodRatings {
+
+    private Map<String,Pair> foodMaps = new HashMap<>();
+    private Map<String,TreeSet<Food>> cusineMaps = new HashMap<>(); // cursine -> Food{Food,rating} (custom sorting for food based on the rating (inc.))
+
+    public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
+        int n = foods.length;
+
+        for(int i=0;i<n;i++) {
+            String food = foods[i];
+            String cusine = cuisines[i];
+            int rating = ratings[i];
+
+            foodMaps.put(food,new Pair(cusine,rating));
+            cusineMaps.putIfAbsent(cusine,new TreeSet<>());
+            cusineMaps.get(cusine).add(new Food(food,rating));
+        }
+    }
+    
+    public void changeRating(String food, int newRating) {
+        Pair p = foodMaps.get(food);
+        String cusine = p.cusine;
+
+        cusineMaps.get(cusine).remove(new Food(food, p.rating));
+        p.rating = newRating;
+    
+        cusineMaps.get(cusine).add(new Food(food,newRating));
+    }
+    
+    public String highestRated(String cuisine) {
+        return cusineMaps.get(cuisine).first().food;
+    }
+}
+
+*/
+
+/**
+ * Your FoodRatings object will be instantiated and called as such:
+ * FoodRatings obj = new FoodRatings(foods, cuisines, ratings);
+ * obj.changeRating(food,newRating);
+ * String param_2 = obj.highestRated(cuisine);
+ */
+
+class Food {
+    String food;
+    String cusine;
+    int rating;
+
+    public Food(String food,String cusine,int rating) {
+        this.food = food;
+        this.cusine = cusine;
+        this.rating = rating;
+    }
+}
+
+
+class FoodRatings {
+    
+    private Map<String,PriorityQueue<Food>> rMap = new HashMap<>();
+    private Map<String,Food> fMap = new HashMap<>();
+
+    public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
+
+        for(int i=0;i<foods.length;i++) {
+            String food = foods[i];
+            String cuisine = cuisines[i];
+            int rating = ratings[i];
+
+            fMap.put(food,new Food(food,cuisine,rating));
+
+            rMap.computeIfAbsent(cuisine,k->new PriorityQueue<>((a,b)->{
+                if(b.rating != a.rating) {
+                    return b.rating - a.rating;
+                }
+                return a.food.compareTo(b.food);
+
+            })).add(new Food(food,cuisine,rating));
+        }
+    }
+
+    public void changeRating(String food, int newRating) {
+        Food old_food = fMap.get(food);
+        String cuisine = old_food.cusine;
+        fMap.put(food,new Food(food,cuisine,newRating));
+        rMap.get(cuisine).add(new Food(food,cuisine,newRating));
+    }
+
+    public String highestRated(String cuisine) {
+        PriorityQueue<Food> pq = rMap.get(cuisine);
+
+        while(!pq.isEmpty()) {
+            Food f_1 = pq.peek();
+            Food latest = fMap.get(f_1.food);
+
+            if(latest.rating == f_1.rating) {
+                return f_1.food;
+            }else {
+                pq.poll();
+            }
+        }
+
+        return "";
+    }
+}
