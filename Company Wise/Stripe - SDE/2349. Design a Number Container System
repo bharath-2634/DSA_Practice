@@ -1,0 +1,61 @@
+Question:https://leetcode.com/problems/design-a-number-container-system/
+
+Solution:
+
+class Container {
+    int index;
+    int number;
+
+    public Container(int idx,int num) {
+        this.index = idx;
+        this.number = num;
+    }
+}
+
+class NumberContainers {
+
+    private Map<Integer,Container> fMap;
+    private Map<Integer,PriorityQueue<Container>> rMap;
+
+    public NumberContainers() {
+        fMap = new HashMap<>();
+        rMap = new HashMap<>();
+    }
+    
+    public void change(int index, int number) {
+        Container con = new Container(index,number);
+
+        fMap.put(index,con);
+        rMap.computeIfAbsent(number, k->new PriorityQueue<>((a,b)->{
+            if(a.index!=b.index) {
+                return Integer.compare(a.index, b.index);
+            }
+
+            return a.index - b.index;
+        })).add(con);
+    }
+    
+    public int find(int number) {
+        if(!rMap.containsKey(number)) return -1;
+
+        PriorityQueue<Container> pq = rMap.get(number);
+
+        while(!pq.isEmpty()) {
+            Container con = pq.peek();
+            Container old = fMap.get(con.index);
+
+            if(old!=null && old.number==number) return old.index;
+
+            pq.poll();
+        } 
+
+        return -1;
+    }
+}
+
+/**
+ * Your NumberContainers object will be instantiated and called as such:
+ * NumberContainers obj = new NumberContainers();
+ * obj.change(index,number);
+ * int param_2 = obj.find(number);
+ */
