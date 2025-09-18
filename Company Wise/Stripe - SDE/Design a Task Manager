@@ -1,0 +1,94 @@
+Question:https://leetcode.com/problems/design-task-manager
+
+Solution:
+class Task {
+    int userId;
+    int taskId;
+    int priority;
+
+    public Task(int u,int t,int p) {
+        this.userId = u;
+        this.taskId = t;
+        this.priority = p;
+    }
+}
+
+
+class TaskManager {
+    
+    private Map<Integer,Task> tMap = new HashMap<>();
+    private PriorityQueue<Task> pq; // here the task with the highest priority across all users so usually by adding the pMap will contain the task which has highest priority so no need of Map here 
+
+    public TaskManager(List<List<Integer>> tasks) {
+        pq = new PriorityQueue<>((a, b) -> {
+            if (a.priority != b.priority) {
+                return Integer.compare(b.priority, a.priority);
+            }
+            return Integer.compare(b.taskId, a.taskId);
+        });
+
+        for(List<Integer> task : tasks) {
+            int userId = task.get(0);
+            int taskId = task.get(1);
+            int priority = task.get(2);
+
+            Task t = new Task(userId,taskId,priority);
+            tMap.put(taskId,t);
+            pq.offer(t);
+        } 
+    }
+    
+    public void add(int userId, int taskId, int priority) {
+        Task t = new Task(userId,taskId,priority);
+
+        tMap.put(taskId,t);
+        pq.offer(t);
+    }
+    
+    public void edit(int taskId, int newPriority) {
+        Task t = tMap.get(taskId);
+        Task new_task = new Task(t.userId,taskId,newPriority);
+
+        tMap.put(taskId,new_task);
+        pq.offer(new_task);
+    }
+    
+    public void rmv(int taskId) {
+        tMap.remove(taskId);
+        // how to remove this in my PQ
+    }
+    
+    public int execTop() {
+        if(pq.isEmpty()) return -1;
+
+        while(!pq.isEmpty()) {
+            Task t = pq.peek();
+            Task current = tMap.get(t.taskId);
+
+            if(current==null || current.priority!=t.priority || current.userId!= t.userId) {
+                pq.poll();
+                continue;
+            }
+
+            pq.poll();
+            tMap.remove(t.taskId);
+            return t.userId;
+        }
+
+        return -1;
+    }
+}
+
+/*
+
+    Map<TaskId,PQ<>> -> 
+ */
+
+/**
+ * Your TaskManager object will be instantiated and called as such:
+ * TaskManager obj = new TaskManager(tasks);
+ * obj.add(userId,taskId,priority);
+ * obj.edit(taskId,newPriority);
+ * obj.rmv(taskId);
+ * int param_4 = obj.execTop();
+ */
