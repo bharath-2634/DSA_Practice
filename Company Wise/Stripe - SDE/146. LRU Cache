@@ -1,0 +1,101 @@
+Question:https://leetcode.com/problems/lru-cache/
+
+Solution:
+class Node {
+    int key;
+    int value;
+    Node next;
+    Node prev;
+
+    public Node(int k,int v,Node n,Node p) {
+        this.key = k;
+        this.value = v;
+        this.next = n;
+        this.prev = p;
+    }
+}
+
+
+class LRUCache {
+
+    private int Capacity;
+    private Map<Integer,Node> nMap = new HashMap<>();
+    private Node head=null,tail=null;
+
+    public LRUCache(int capacity) {
+        Capacity = capacity;
+        head = new Node(-1,-1,null,null);
+        tail = new Node(-1,-1,null,null);
+        head.next = tail;
+        tail.prev = head;
+    }
+    
+    public int get(int key) {
+        if (!nMap.containsKey(key)) {
+            return -1;
+        }
+        Node node = nMap.get(key);
+        removeNode(node);
+        addToHead(node);
+        return node.value;
+    }
+    
+    public void put(int key, int value) {
+        
+        if(nMap.containsKey(key)) {
+            Node updated_node = nMap.get(key);
+            updated_node.value = value;
+            removeNode(updated_node);
+            addToHead(updated_node);
+        }else {
+            Node node = new Node(key, value,null,null);
+            nMap.put(key, node);
+            addToHead(node);
+
+            if(nMap.size()>Capacity) {
+                Node lru = popTail();
+                nMap.remove(lru.key);
+            }
+        }
+    }
+
+    public void addToHead(Node node) {
+        node.prev = head;
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
+        // tail = node;
+    }
+
+    private void removeNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private Node popTail() {
+        Node lru = tail.prev;
+        removeNode(lru);
+        return lru;
+    }
+
+    
+}
+
+/**
+
+    how to find the least recently used key -> 
+    Time based deletion is done -> Time -> attr 
+    if the key is used update the time of the key++
+    else keep the time as it is and on deletion part will check for minimum time used key -> PQ delete the first one
+
+    Adding to list should be like -> [head <-> node2 <-> node1 <-> tail]
+
+ */
+
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
