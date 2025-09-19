@@ -1,0 +1,95 @@
+Question:https://leetcode.com/problems/implement-router/
+
+Solution:
+class Packet {
+    int source;
+    int destination;
+    int timestamp;
+    
+    public Packet(int s,int d,int t) {
+        this.source = s;
+        this.destination = d;
+        this.timestamp = t;
+    }
+}
+
+class Router {
+
+    private Queue<Packet> queue = new LinkedList<>();
+    private Set<String> dupSet = new HashSet<>();
+    private Map<Integer, TreeMap<Integer, Integer>> dMap = new HashMap<>();
+    private int limit = 0;
+
+    public Router(int memoryLimit) {
+        this.limit = memoryLimit;
+    }
+    
+    public boolean addPacket(int source, int destination, int timestamp) {
+        Packet p = new Packet(source,destination,timestamp);
+        String evaluate_packet = source+","+destination+","+timestamp;
+        if(dupSet.contains(evaluate_packet)) return false;
+
+        if(queue.size() >= limit) {
+            Packet old = queue.poll();
+            String old_packet = old.source+","+old.destination+","+old.timestamp;
+            dupSet.remove(old_packet);
+
+            TreeMap<Integer,Integer> tmap = dMap.get(old.destination);
+            tmap.put(old.timestamp, tmap.get(old.timestamp) - 1);
+            if (tmap.get(old.timestamp) == 0) tmap.remove(old.timestamp);
+            if (tmap.isEmpty()) dMap.remove(old.destination);
+        }
+
+        queue.offer(p);
+        dMap.putIfAbsent(destination, new TreeMap<>());
+        dMap.get(destination).merge(timestamp, 1, Integer::sum);
+        dupSet.add(evaluate_packet);
+
+        return true;
+    }
+
+    // private boolean doPacketExists(int source, int destination, int timestamp) {
+    //     if(!dMap.containsKey(destination)) return false;
+
+    //     for(Packet p : dMap.get(destination)) {
+    //         if(p.source==source && p.timestamp==timestamp) return true;
+    //     }
+
+    //     return false;
+    // }
+    
+    public int[] forwardPacket() {
+        if (queue.isEmpty()) return new int[]{};
+
+        Packet p = queue.poll();
+        String old_packet = p.source + "," + p.destination + "," + p.timestamp;
+        dupSet.remove(old_packet);
+
+        TreeMap<Integer,Integer> tmap = dMap.get(p.destination);
+        tmap.put(p.timestamp, tmap.get(p.timestamp) - 1);
+        if (tmap.get(p.timestamp) == 0) tmap.remove(p.timestamp);
+        if (tmap.isEmpty()) dMap.remove(p.destination);
+
+        return new int[]{p.source, p.destination, p.timestamp};
+    }
+
+    
+    public int getCount(int destination, int startTime, int endTime) {
+        int count = 0;
+        if(!dMap.containsKey(destination)) return count;
+
+        // int count = 0;
+        for (int c : dMap.get(destination).subMap(startTime, true, endTime, true).values()) {
+            count += c;
+        }
+        return count;
+    }
+}
+
+/**
+ * Your Router object will be instantiated and called as such:
+ * Router obj = new Router(memoryLimit);
+ * boolean param_1 = obj.addPacket(source,destination,timestamp);
+ * int[] param_2 = obj.forwardPacket();
+ * int param_3 = obj.getCount(destination,startTime,endTime);
+ */
