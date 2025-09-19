@@ -1,0 +1,42 @@
+Question:https://leetcode.com/problems/design-authentication-manager/description/
+
+Solution:
+class AuthenticationManager {
+    private int timeToLive;
+    private Map<String,Integer> tokenmap;
+
+    public AuthenticationManager(int timeToLive) {
+        this.timeToLive=timeToLive;
+        this.tokenmap=new HashMap<>();
+    }
+    
+    public void generate(String tokenId, int currentTime) {
+        tokenmap.put(tokenId,currentTime+timeToLive);
+    }
+    
+    public void renew(String tokenId, int currentTime) {
+        if(tokenmap.containsKey(tokenId) && (tokenmap.get(tokenId)>currentTime)){
+            tokenmap.put(tokenId, currentTime+ timeToLive);
+        }
+    }
+    
+    public int countUnexpiredTokens(int currentTime) {
+        Iterator<Map.Entry<String,Integer>> iterator= tokenmap.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String,Integer> map=iterator.next();
+            if(map.getValue()<=currentTime){
+                iterator.remove();
+            }
+
+        }
+        return tokenmap.size();
+    }
+}
+
+/**
+ * Your AuthenticationManager object will be instantiated and called as such:
+ * AuthenticationManager obj = new AuthenticationManager(timeToLive);
+ * obj.generate(tokenId,currentTime);
+ * obj.renew(tokenId,currentTime);
+ * int param_3 = obj.countUnexpiredTokens(currentTime);
+ */
