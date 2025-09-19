@@ -1,0 +1,60 @@
+Question:https://leetcode.com/problems/design-spreadsheet/
+
+Solution:
+class Spreadsheet {
+
+    private Map<Character,int[]> sMap = new HashMap<>();
+
+    public Spreadsheet(int rows) {
+        
+        for(char c='A';c<='Z';c++) {
+            sMap.put(c,new int[rows]);
+        }
+    }
+    
+    public void setCell(String cell, int value) {
+
+        int idx = Integer.parseInt(cell.substring(1)) - 1;
+        sMap.get(cell.charAt(0))[idx] = value;
+    }
+    
+    public void resetCell(String cell) {
+        int idx = Integer.parseInt(cell.substring(1)) - 1;
+        sMap.get(cell.charAt(0))[idx] = 0;
+    }
+    
+    public int getValue(String formula) {
+        String expr = formula.substring(1);    
+        String[] parts = expr.split("\\+");  
+        
+        int leftVal = evaluateOperand(parts[0]);
+        int rightVal = evaluateOperand(parts[1]);
+        
+        return leftVal + rightVal;
+    }
+
+    public int evaluateOperand(String op) {
+        if (Character.isLetter(op.charAt(0))) {
+            char col = op.charAt(0);
+            int rowIdx = Integer.parseInt(op.substring(1)) - 1;
+            return sMap.get(col)[rowIdx];
+        } else {
+            return Integer.parseInt(op);
+        }
+    }
+}
+
+/*
+    "A1" A->26 array contains
+
+ */
+
+
+
+/**
+ * Your Spreadsheet object will be instantiated and called as such:
+ * Spreadsheet obj = new Spreadsheet(rows);
+ * obj.setCell(cell,value);
+ * obj.resetCell(cell);
+ * int param_3 = obj.getValue(formula);
+ */
