@@ -1,0 +1,55 @@
+Question:
+Given: Array of numbers Find: Pairs (i,j) where i<j, same length, differ by exactly one digit Example: [1,151,241,1,9,22,351] → Output: 3- (1,9): same length, differ by one digit- (151,351): same length, differ by one digit - Two 1's with 9: another valid pair
+
+Solution:
+import java.util.*;
+
+
+class Main {
+    
+    public static int getPairCount(int[] arr) {
+        Map<Integer,List<String>> nMap = new HashMap<>();
+        
+        for(int a : arr) {
+            String num = String.valueOf(a);
+            nMap.putIfAbsent(num.length(),new ArrayList<>());
+            nMap.get(num.length()).add(num);
+        }
+        
+        int count = 0;
+        for(int grp_len : nMap.keySet()) {
+            List<String> grpList = nMap.get(grp_len);
+            for(int i=0;i<grpList.size();i++) {
+                for(int j=i+1;j<grpList.size();j++) {
+                    String one = grpList.get(i);
+                    String two = grpList.get(j);
+                    int diff_count = 0;
+                    for(int k=0;k<one.length();k++) {
+                        if(one.charAt(k)!=two.charAt(k)) diff_count++;
+                    }
+                    
+                    if(diff_count==1) {
+                        count++;
+                    }
+                    
+                }
+            }
+        }
+        
+        return count;
+        
+    }
+        
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] arr = new int[n];
+        
+        for(int i=0;i<n;i++) {
+            arr[i] = sc.nextInt();
+        }
+        
+        int count = getPairCount(arr);
+        System.out.println(count);
+    }
+}
