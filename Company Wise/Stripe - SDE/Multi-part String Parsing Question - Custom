@@ -1,0 +1,78 @@
+Question:
+Multi-part problem structure: 
+  1. Extract IDs from long input strings using pattern recognition 
+  2. Verify which extracted IDs exist in master list 
+  3. Check if extracted strings serve as prefixes for master list entries
+
+Solution:
+import java.util.*;
+import java.util.regex.*;
+
+public class IDProcessor {
+    
+    // Part 1: Extract IDs from text
+    public static List<String> extractIDs(String text) {
+        // Regex: "ID" followed by 2 or more digits (so it also catches ID12 and ID1234)
+        Pattern pattern = Pattern.compile("ID\\d{2,}");
+        Matcher matcher = pattern.matcher(text);
+        
+        List<String> ids = new ArrayList<>();
+        while (matcher.find()) {
+            ids.add(matcher.group());
+        }
+        return ids;
+    }
+
+    // Part 2: Verify IDs against master list
+    public static List<String> verifyIDs(List<String> extracted, Set<String> master) {
+        List<String> valid = new ArrayList<>();
+        for (String id : extracted) {
+            if (master.contains(id)) {
+                valid.add(id);
+            }
+        }
+        return valid;
+    }
+
+    // Part 3: Check prefix matches
+    public static Map<String, List<String>> checkPrefixes(List<String> extracted, Set<String> master) {
+        Map<String, List<String>> prefixMatches = new HashMap<>();
+        
+        for (String id : extracted) {
+            List<String> matches = new ArrayList<>();
+            for (String m : master) {
+                if (m.startsWith(id)) {
+                    matches.add(m);
+                }
+            }
+            if (!matches.isEmpty()) {
+                prefixMatches.put(id, matches);
+            }
+        }
+        return prefixMatches;
+    }
+
+    // Driver program
+    public static void main(String[] args) {
+        String text = "User logs: started with ID1234, retried with ID9999, partial ID12 detected.";
+        
+        Set<String> masterList = new HashSet<>(Arrays.asList(
+            "ID1234", "ID5678", "ID1200", "ID8888"
+        ));
+        
+        // Step 1: Extract
+        List<String> extracted = extractIDs(text);
+        System.out.println("Extracted IDs: " + extracted);
+        
+        // Step 2: Verify
+        List<String> valid = verifyIDs(extracted, masterList);
+        System.out.println("Valid IDs: " + valid);
+        
+        // Step 3: Prefix matches
+        Map<String, List<String>> prefixMatches = checkPrefixes(extracted, masterList);
+        System.out.println("Prefix Matches:");
+        for (String id : prefixMatches.keySet()) {
+            System.out.println("  " + id + " → " + prefixMatches.get(id));
+        }
+    }
+}
