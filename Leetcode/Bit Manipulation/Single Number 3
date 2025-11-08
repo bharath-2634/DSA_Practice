@@ -1,0 +1,22 @@
+Question:https://leetcode.com/problems/single-number-iii/
+
+Solution:
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        int overall_xor = 0;
+        for(int num : nums) overall_xor^=num;
+
+        int mask = overall_xor & (-overall_xor);
+
+        int x=0,y=0;
+        for(int num : nums) {
+            if((num&mask)==0) {
+                x^=num;
+            }else {
+                y^=num;
+            }
+        }
+
+        return new int[]{x,y};
+    }
+}
