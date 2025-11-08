@@ -1,0 +1,18 @@
+Question: https://leetcode.com/problems/single-number/description/
+
+Solution:
+class Solution {
+    public int singleNumber(int[] nums) {
+        int ans=0;
+        for(int num : nums) {
+            ans^=num;
+        }
+
+        return ans;
+    }
+}
+
+/*
+    first thought -> using hashmap and check the freq(value) 
+    second thought -> using 
+ */
