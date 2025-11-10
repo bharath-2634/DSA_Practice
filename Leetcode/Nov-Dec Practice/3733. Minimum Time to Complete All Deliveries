@@ -1,0 +1,73 @@
+Question:https://leetcode.com/problems/minimum-time-to-complete-all-deliveries/description/
+
+Note: 
+  * When ever one or more task should be performed periodically and we should need atleast one or overlap data then we should think of using LCM 
+  * total_hours_remaining = total_time - ((drone1-recharging time) + (drone2-recharging time) - (overlapping-recharging time)) 
+
+Solution:
+class Solution {
+
+    public boolean canDeliver(int[] d,int[] r,long T,long lcm) {
+
+        // first find the slot where drone-0 and drone-1 will be available to deliver 
+        long d0 = d[0] - Math.min(d[0],(T/r[1] - T/lcm)); // Slots where Drone 0 is available but Drone 1 is recharging.
+        long d1 = d[1] - Math.min(d[1],(T/r[0] - T/lcm));
+
+        long remaining_time = T - ((T/r[0] + T/r[1]) - T/lcm);
+
+        if(d0+d1 > remaining_time) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public long lcm(int r1,int r2) {
+        return ((r1*r2)/gcd(r1,r2));
+    }
+
+    public long gcd(int a,int b) {
+        if(a==0) {
+            return b;
+        }
+        return gcd(b%a,a);
+    }
+
+    public long minimumTime(int[] d, int[] r) {
+
+        long lcm = lcm(r[0],r[1]);
+        long start_time=1,end_time = Long.MAX_VALUE;
+
+        while(start_time < end_time) {
+            long T = start_time + (end_time - start_time)/2;
+
+            if(canDeliver(d,r,T,lcm)) {
+                end_time = T;
+            }else {
+                start_time = T+1;
+            }
+        }
+
+        return start_time;
+    }
+
+}
+
+/*
+
+
+    My first thought is to solve it using this structure
+
+    for T = 1..∞:
+    if (T % r[0] != 0 && T % r[1] != 0):
+        // both drones available greedily choose which drone to be flied [by comparing d]
+    else if (T % r[0] != 0):
+        // drone1 only
+    else if (T % r[1] != 0):
+        // drone2 only
+
+    but this is inefficient wright ! because T->∞ should not work so I need to use Binary Search to get the total time 
+
+    prb1 -> how to find total time T
+ */
