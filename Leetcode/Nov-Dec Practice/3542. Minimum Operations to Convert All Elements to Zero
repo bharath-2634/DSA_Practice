@@ -1,0 +1,155 @@
+Question: https://leetcode.com/problems/minimum-operations-to-convert-all-elements-to-zero/description/
+
+Solution:
+/* 
+
+This is my first thought but failed at the min_val!=target case (shrinking window Idea greedily)
+class Solution {
+
+    public void markValuesToZero(int[] nums,int target) {
+        for(int i=0;i<nums.length;i++) {
+            if(nums[i]==target) {
+                nums[i] =0;
+            }
+        }
+    }
+
+    public int minOperations(int[] nums) {
+        TreeMap<Integer,Integer> fMap = new TreeMap<>();
+        for(int num : nums) {
+            fMap.put(num,fMap.getOrDefault(num,0)+1);
+        }
+
+        int min_operation = 0;
+
+        for(Map.Entry<Integer,Integer> e : fMap.entrySet()) {
+            int target = e.getKey();
+            int occurrence = e.getValue();
+
+            int start=0,end=0;
+            int min_val=Integer.MAX_VALUE;
+
+            while(end<nums.length) {
+                if(nums[end]==target) {
+                    occurrence--;
+                }
+                min_val = Math.min(min_val,nums[end]);
+                if(occurrence==0) {
+                    break;
+                }
+                end++;
+            }
+
+            if(min_val==target) {
+                markValuesToZero(nums,target);
+                min_operation++;
+            }else {
+                int segment_min_value = Integer.MAX_VALUE;
+
+                while(segment_min_value!=target) {
+                    segment_min_value = Integer.MAX_VALUE;
+
+                    for(int i=start;i<nums.length && i<=end;i++) {
+                        if(nums[i]==0) continue;
+                        segment_min_value = Math.min(segment_min_value,nums[i]);
+                    }
+
+                    if(segment_min_value==target) {
+                        markValuesToZero(nums,target);
+                        min_operation++;
+                        break;
+                    }
+                    start++;
+                }
+            }
+
+        }
+
+        return min_operation;
+    }
+}
+*/
+
+/*
+class Solution {
+    public void markValuesToZero(int[] nums, int target) {
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) nums[i] = 0;
+        }
+    }
+
+    public boolean allZero(int[] nums) {
+        for (int num : nums) if (num != 0) return false;
+        return true;
+    }
+
+    public boolean hasZero(int[] nums) {
+        for (int num : nums) if (num == 0) return true;
+        return false;
+    }
+
+    public int findMin(int[] nums) {
+        int min = Integer.MAX_VALUE;
+        for (int num : nums) if (num != 0) min = Math.min(min, num);
+        return min;
+    }
+
+    public int minOperations(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        if (allZero(nums)) return 0;
+
+        if (hasZero(nums)) {
+            int i = 0, total = 0;
+            while (i < nums.length) {
+                while (i < nums.length && nums[i] == 0) i++;
+                int start = i;
+                while (i < nums.length && nums[i] != 0) i++;
+                int end = i;
+                if (start < end) {
+                    int[] segment = Arrays.copyOfRange(nums, start, end);
+                    total += minOperations(segment);
+                }
+            }
+            return total;
+        }
+
+        int minVal = findMin(nums);
+        markValuesToZero(nums, minVal);
+        int count = 1;
+
+        int i = 0;
+        while (i < nums.length) {
+            while (i < nums.length && nums[i] == 0) i++;
+            int start = i;
+            while (i < nums.length && nums[i] != 0) i++;
+            int end = i;
+            if (start < end) {
+                int[] segment = Arrays.copyOfRange(nums, start, end);
+                count += minOperations(segment);
+            }
+        }
+        return count;
+    }
+}
+*/
+
+
+class Solution {
+
+    public int minOperations(int[] nums) {
+        List<Integer> s = new ArrayList<>();
+        int res = 0;
+        for (int a : nums) {
+            while (!s.isEmpty() && s.get(s.size() - 1) > a) {
+                s.remove(s.size() - 1);
+            }
+            if (a == 0) continue;
+            if (s.isEmpty() || s.get(s.size() - 1) < a) {
+                res++;
+                s.add(a);
+            }
+        }
+        return res;
+    }
+}
+
