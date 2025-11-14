@@ -1,0 +1,31 @@
+Question:https://leetcode.com/problems/maximum-number-of-operations-to-move-ones-to-the-end/
+
+Solution:
+class Solution {
+    public int maxOperations(String s) {
+        
+        int operation=0,ones=0;
+        boolean found = false;
+
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)=='1') {
+                found = true;
+                ones++;
+            }
+
+            if(found && s.charAt(i)=='0') {
+                operation+=ones;
+                found = false;
+            }
+        }
+
+        return operation;
+    }
+}
+
+/*
+    s = "1001101" 
+    i=0 -> 0001111
+
+
+ */
