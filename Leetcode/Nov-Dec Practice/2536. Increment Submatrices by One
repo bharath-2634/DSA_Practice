@@ -1,0 +1,62 @@
+Question: https://leetcode.com/problems/increment-submatrices-by-one/
+
+Solution:
+class Solution {
+    /*
+    This is my naive solution which is O(mn^2) -> too slow
+    public int[][] rangeAddQueries(int n, int[][] queries) {
+        int[][] res = new int[n][n];
+
+        for(int[] row : res) {
+            Arrays.fill(row,0);
+        }
+
+        for(int[] query : queries) {
+            int r1 = query[0];
+            int c1 = query[1];
+            int r2 = query[2];
+            int c2 = query[3];
+
+            for(int i=r1;i<=r2;i++) {
+                for(int j=c1;j<=c2;j++) {
+                    res[i][j]+=1;
+                }
+            }
+        }
+
+        return res;
+    }*/
+
+    public int[][] rangeAddQueries(int n, int[][] queries) {
+        int[][] res = new int[n+1][n+1];
+
+        for(int[] row : res) {
+            Arrays.fill(row,0);
+        }
+
+        for(int[] query : queries) {
+            int r1 = query[0];
+            int c1 = query[1];
+            int r2 = query[2];
+            int c2 = query[3];
+
+            res[r1][c1]+=1;
+            res[r1][c2+1]-=1;
+            res[r2+1][c1]-=1;
+            res[r2+1][c2+1]+=1;
+        }
+
+        int[][] mat = new int[n][n];
+        for (int i=0; i<n;i++) {
+            for (int j=0; j<n;j++) {
+                int above = i > 0 ? mat[i - 1][j] : 0;
+                int left = j > 0 ? mat[i][j - 1] : 0;
+                int diag = i > 0 && j > 0 ? mat[i - 1][j - 1] : 0;
+                mat[i][j] = res[i][j] + above + left - diag;
+            }
+        }
+
+        return mat;
+    }
+}
+
