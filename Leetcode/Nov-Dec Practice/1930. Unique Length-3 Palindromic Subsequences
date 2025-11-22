@@ -1,0 +1,132 @@
+Question: https://leetcode.com/problems/unique-length-3-palindromic-subsequences/
+
+Solution:
+
+class Solution {
+
+    public int getFirstIdx(String s,char c) {
+        
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)==c) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int getLastIdx(String s,char c,int first_idx) {
+        for(int i=s.length()-1;i>first_idx;i--) {
+            if(s.charAt(i)==c) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int countPalindromicSubsequence(String s) {
+        
+        Set<String> palindrome_string = new HashSet<>();
+
+        for(char c='a';c<='z';c++) {
+            int first_idx = getFirstIdx(s,c);
+            if(first_idx==-1) continue;
+
+            int last_idx = getLastIdx(s,c,first_idx);
+            if(last_idx==-1) continue;
+
+            String sub_window = s.substring(first_idx+1,last_idx);
+            Set<Character> fSet = new HashSet<>();
+
+            for(char w : sub_window.toCharArray()) {
+                fSet.add(w);
+            }
+
+            for(Character chr : fSet) {
+                String palindrome = s.charAt(first_idx) + ""+chr+""+ s.charAt(last_idx);
+                palindrome_string.add(palindrome);
+            }
+        }
+
+        return palindrome_string.size();
+    }
+}
+
+/*
+class Solution {
+
+    public void createIndexMapping(Map<Character,int[]> indexMap,String s) {
+
+        for(int i=0;i<s.length();i++) {
+            char c = s.charAt(i);
+            if(!indexMap.containsKey(c)) {
+                indexMap.put(c,new int[]{i,i});
+            }else {
+                indexMap.get(c)[1]=i;
+            }
+        }
+    }
+
+    public int[] getIndex(char c,Map<Character,int[]> iMap) {
+        if(!iMap.containsKey(c)) {
+            return new int[]{-1,-1};
+        }else {
+            return iMap.get(c);
+        }
+    }
+
+    public int countPalindromicSubsequence(String s) {
+        Map<Character,int[]> indexMap = new HashMap<>();
+        createIndexMapping(indexMap,s);
+
+        int count=0;
+
+        int[][] prefix_fTable = new int[s.length()][26];
+        boolean[][] seen = new boolean[26][26];
+
+        for(int i=0;i<s.length();i++) {
+            if(i>0) {
+                for(int c=0;c<26;c++) {
+                    prefix_fTable[i][c] = prefix_fTable[i-1][c];
+                }
+            }
+
+            int current_chr = s.charAt(i) - 'a';
+            prefix_fTable[i][current_chr]++;
+        }
+
+        for(char c='a';c<='z';c++) {
+            int[] index = getIndex(c,indexMap);
+            if(index[0]==-1 || index[1]==-1) continue;
+
+            for(int middle=0;middle<26;middle++) {
+                int middle_num = prefix_fTable[index[1]-1][middle] - prefix_fTable[index[0]][middle];
+
+                if(middle_num>0) {
+                    seen[c-'a'][middle] = true;
+                }
+            }
+            
+        }
+
+        for(int i=0;i<26;i++) {
+            for(int j=0;j<26;j++) {
+                if(seen[i][j]) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+*/
+
+/*
+    aabca -> "aaa" || "aba" || aca -> count=3
+    -> use of set for unique palindromic subsequence strings
+
+    // -> aab
+
+ */
