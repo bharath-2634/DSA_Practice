@@ -1,0 +1,75 @@
+Question:https://leetcode.com/problems/paths-in-matrix-whose-sum-is-divisible-by-k/
+
+Solution:
+/*
+class Solution {
+    private static final int MOD = 1_000_000_007;
+
+    public int getNumberOfPaths(int[][] grid,int k,int row,int col,int sum,int[][][] dp) {
+        
+        if(row<0 || col<0) return 0;
+
+        if(row==0 && col==0) {
+            // sum+=grid[row][col];
+            int val = grid[row][col]%k;
+
+            if(val==sum) {
+                return dp[row][col][sum] = 1;
+            }
+            return dp[row][col][sum] = 0;
+        }
+
+        if(dp[row][col][sum]!=-1) return dp[row][col][sum];
+
+        int prev_sum = (sum - (grid[row][col]%k) + k)%k;
+
+        int top = getNumberOfPaths(grid,k,row-1,col,prev_sum,dp);
+        int left = getNumberOfPaths(grid,k,row,col-1,prev_sum,dp);
+
+        dp[row][col][sum] = (top+left)%MOD;
+
+        return dp[row][col][sum];
+    }
+
+    public int numberOfPaths(int[][] grid, int k) {
+        int[][][] dp = new int[grid.length][grid[0].length][k];
+        for(int[][] row : dp) {
+            for(int[] col : row) Arrays.fill(col,-1);
+        }
+        return getNumberOfPaths(grid,k,grid.length-1,grid[0].length-1,0,dp);
+    }
+
+}
+
+*/
+
+class Solution {
+    private static final int MOD = 1_000_000_007;
+
+    public int numberOfPaths(int[][] grid, int k) {
+        int[][][] dp = new int[grid.length][grid[0].length][k];
+        // for(int[][] row : dp) {
+        //     for(int[] col : row) Arrays.fill(col,-1);
+        // }
+
+        dp[0][0][grid[0][0] % k] = 1;
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                for(int sum=0;sum<k;sum++) {
+                    int current_sum = (sum+grid[i][j])%k;
+                    if(i>0) {
+                        dp[i][j][current_sum]+=dp[i-1][j][sum];
+                    }
+
+                    if(j>0) {
+                        dp[i][j][current_sum]+=dp[i][j-1][sum];
+                    }
+
+                    dp[i][j][current_sum]%=MOD;
+                }
+            }
+        }
+        return dp[grid.length-1][grid[0].length-1][0];
+    }
+}
