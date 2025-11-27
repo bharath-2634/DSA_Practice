@@ -1,0 +1,44 @@
+Question: https://leetcode.com/problems/number-of-zero-filled-subarrays/
+
+Solution:
+class Solution {
+    public long zeroFilledSubarray(int[] nums) {
+        // long count=0;
+        
+        // for(int i=0;i<nums.length;i++) {
+        //     for(int j=i;j<nums.length;j++) {
+        //         if(nums[j]==0) count++;
+        //         else break;
+        //     }
+        // }
+
+        // return count;
+
+        //====optimized O(n)
+        // long maxCount=0;
+        // long count=0;
+
+        // for(int i=0;i<nums.length;i++) {
+        //     if(nums[i]==0) {
+        //         count++;
+        //         maxCount+=count;
+        //     }else count=0;
+        // }
+
+        // return maxCount;
+
+        // ===== another optimized way
+        long count=0;
+        // int right=0;
+
+        for(int right=0;right<nums.length;right++) {
+            long consecutive_one=0;
+            while(right < nums.length && nums[right]==0) {
+                count+=(++consecutive_one);
+                right++;
+            }
+        }
+
+        return count;
+    }
+}
