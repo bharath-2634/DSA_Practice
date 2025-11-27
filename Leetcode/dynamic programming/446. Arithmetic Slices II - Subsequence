@@ -1,0 +1,77 @@
+Question: https://leetcode.com/problems/arithmetic-slices-ii-subsequence/
+
+Solution:
+/*
+class Solution {
+
+    public int getNumberOfAMSlices(int[] nums,int idx,long diff,int len,Map<Long,Integer>[] dp) {
+        // if((nums.length-idx)<3) return 0;
+
+        int count=0;
+
+        if(dp[idx].containsKey(diff)) return dp[idx].get(diff);
+        
+        for(int i=idx+1;i<nums.length;i++) {
+            if(((long)nums[i] - (long)nums[idx])==diff) {
+                // diff = nums[i] - nums[idx];
+                if(len>= 2) count++;
+                
+                count+=getNumberOfAMSlices(nums,i,diff,len+1,dp);
+            }
+        }
+
+        dp[idx].put(diff,dp[idx].getOrDefault(diff,0)+count);
+
+        return count;
+    }
+
+    public int numberOfArithmeticSlices(int[] nums) {
+        
+        int count=0;
+        Map<Long,Integer>[] dp = new Map[nums.length];
+
+        for (int i=0; i<dp.length; i++) {
+            dp[i] = new HashMap<>();
+        }
+
+        for(int i=0;i<nums.length;i++) {
+            for(int j=i+1;j<nums.length;j++) {
+                long prev_diff = (long)nums[j]- (long)nums[i];
+                count+=getNumberOfAMSlices(nums,j,prev_diff,2,dp);
+            }
+        }
+
+        return count;
+    }
+}
+
+/*
+    nums-> [2,4,6,8,10]
+    -> if the length of the slice should be 3 if so will increament the count  
+
+ */
+
+class Solution {
+    public int numberOfArithmeticSlices(int[] nums) {
+        
+        int count=0;
+        Map<Long,Integer>[] dp = new Map[nums.length];
+
+        for(int i=0; i<dp.length; i++) {
+            dp[i] = new HashMap<>();
+        }
+
+        for(int i=0;i<nums.length;i++) {
+            for(int j=0;j<i;j++) {
+                long diff = (long)nums[i] - (long)nums[j];
+
+                int count_j = dp[j].getOrDefault(diff, 0);
+                dp[i].put(diff, dp[i].getOrDefault(diff, 0) + count_j + 1);
+
+                count += count_j; 
+            }
+        }
+
+        return count;
+    }
+}
