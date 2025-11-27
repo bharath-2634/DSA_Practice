@@ -1,0 +1,62 @@
+Question: https://leetcode.com/problems/maximum-subarray-sum-with-length-divisible-by-k/description
+
+Solution: 
+
+class Solution {
+
+    // public long getSum(int[] nums,int start,int end) {
+    //     long sum=0;
+    //     for(int i=start;i<=end;i++) {
+    //         sum+=nums[i];
+    //     }
+
+    //     return sum;
+    // }
+
+    public long maxSubarraySum(int[] nums, int k) {
+        long maxSum = Long.MIN_VALUE;
+
+        long[] minSoFar = new long[k];
+        Arrays.fill(minSoFar,Long.MAX_VALUE/2);
+
+        long prefix_sum = 0;
+
+        minSoFar[k-1]=0;
+
+        for(int i=0;i<nums.length;i++) {
+            prefix_sum +=nums[i];
+            maxSum = Math.max(maxSum,prefix_sum-minSoFar[i%k]);
+            minSoFar[i%k] = Math.min(minSoFar[i%k],prefix_sum);
+        }
+
+    //    for(int i=0;i<nums.length;i++) {
+    //         for(int j=i;j<nums.length;j++) {
+    //             if((j-i+1)%k==0) {
+    //                 long sum=0;
+    //                 if(i==0) {
+    //                     sum = prefix_sum[j];
+    //                 }else {
+    //                     sum = prefix_sum[j] - prefix_sum[i-1]; 
+    //                 }
+    //                 maxSum = Math.max(sum,maxSum);
+    //             } 
+    //         }
+    //    }
+
+        // for(int i=0;i<nums.length;i++) {
+        //     for(int j=i;j<nums.length;j++) {
+        //         if((j-i+1)%k==0) {
+        //             maxSum = Math.max(maxSum,getSum(nums,i,j));
+        //         }
+        //     }
+        // }
+
+        return maxSum;
+    } // max T.C : O(n^2) and max S.C : O(1)
+}
+
+/*
+    Prefix-sum Idea is to pre-compute the length of the sub-array which is divisible by k and storing the sum
+
+
+ */
