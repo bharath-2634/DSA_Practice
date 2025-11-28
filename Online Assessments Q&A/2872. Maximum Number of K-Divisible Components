@@ -1,0 +1,57 @@
+Question:https://leetcode.com/problems/maximum-number-of-k-divisible-components/
+
+solution:
+class Solution {
+    private int count=0;
+
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }
+
+    }
+
+    public long dfs(int root,int parent,int k,int[] values,Map<Integer,List<Integer>> adjList) {
+        
+        long sum = (long)values[root];
+
+        for(int adjNode : adjList.get(root)) {
+            if(adjNode!=parent) {
+                long child_sum = dfs(adjNode,root,k,values,adjList);
+                sum+=child_sum;
+            }
+        }
+
+        if(sum%k==0) {
+            count++;
+            return 0;
+        }
+
+        return sum;
+    }
+
+    public int maxKDivisibleComponents(int n, int[][] edges, int[] values, int k) {
+        
+        
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(adjList,edges);
+
+        if(adjList.size()==0) return 1;
+
+        dfs(0,-1,k,values,adjList);
+
+        return count;
+    }
+}
+
+/*
+    Make chooose any point to remove initially and perform operation of DFS of DFS and increment the count of breaks performed ! 
+    Calculate the sum and check for the condition -> sum%k==0 
+
+    // Naive Solution -> won't work feasibily 
+ */
