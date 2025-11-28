@@ -1,0 +1,130 @@
+Question: https://leetcode.com/problems/knight-probability-in-chessboard/
+
+Solution:
+/*
+Approach -1 
+class Solution {
+    public double knightProbability(int n, int k, int row, int column) {
+        if (k == 0) return 1.0;
+
+        int N = n * n;
+        double[][] T = new double[N][N];
+        int[][] moves = {
+            {2, 1}, {1, 2}, {-1, 2}, {-2, 1},
+            {-2, -1}, {-1, -2}, {1, -2}, {2, -1}
+        };
+
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                int from = r * n + c;
+                for (int[] m : moves) {
+                    int nr = r + m[0], nc = c + m[1];
+                    if (nr >= 0 && nr < n && nc >= 0 && nc < n) {
+                        int to = nr * n + nc;
+                        T[from][to] += 1.0 / 8.0;
+                    }
+                }
+            }
+        }
+
+        double[][] Tk = matrixPower(T, k);
+
+        double[] v0 = new double[N];
+        v0[row * n + column] = 1.0;
+
+        double[] vFinal = multiplyVectorMatrix(v0, Tk);
+
+        double ans = 0.0;
+        for (double p : vFinal) ans += p;
+        return ans;
+    }
+
+    private double[] multiplyVectorMatrix(double[] v, double[][] M) {
+        int N = v.length;
+        double[] res = new double[N];
+        for (int j = 0; j < N; j++) {
+            double sum = 0.0;
+            for (int i = 0; i < N; i++) {
+                if (v[i] != 0.0 && M[i][j] != 0.0) sum += v[i] * M[i][j];
+            }
+            res[j] = sum;
+        }
+        return res;
+    }
+
+    private double[][] multiplyMatrix(double[][] A, double[][] B) {
+        int N = A.length;
+        double[][] C = new double[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int k = 0; k < N; k++) {
+                double aik = A[i][k];
+                if (aik == 0.0) continue;
+                for (int j = 0; j < N; j++) {
+                    if (B[k][j] != 0.0) C[i][j] += aik * B[k][j];
+                }
+            }
+        }
+        return C;
+    }
+
+    private double[][] matrixPower(double[][] base, int p) {
+        int N = base.length;
+        double[][] result = new double[N][N];
+        for (int i = 0; i < N; i++) result[i][i] = 1.0;
+
+        double[][] cur = copyMatrix(base);
+
+        while (p > 0) {
+            if ((p & 1) == 1) result = multiplyMatrix(result, cur);
+            cur = multiplyMatrix(cur, cur);
+            p >>= 1;
+        }
+        return result;
+    }
+
+    private double[][] copyMatrix(double[][] A) {
+        int N = A.length;
+        double[][] B = new double[N][N];
+        for (int i = 0; i < N; i++) System.arraycopy(A[i], 0, B[i], 0, N);
+        return B;
+    }
+}
+
+*/
+
+/* Approach-2 */
+class Solution {
+    private final int[][] moves = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
+
+    public double knightProbability(int n, int k, int row, int column) {
+        double[][] dp = new double[n][n];
+        dp[row][column] = 1.0;
+
+        for(int move = 1; move<=k; move++) {
+            double[][] ndp = new double[n][n];
+            for(int r = 0; r<n; r++) {
+                for(int c = 0; c<n; c++) {
+                    for(int[] m: moves) {
+                        int nr = r+m[0];
+                        int nc = c+m[1];
+                        if (isValid(nr, nc, n)) ndp[r][c] += dp[nr][nc]/8.0;
+                    }
+                }
+            }
+            dp = ndp;
+        }
+
+        double prob = 0.0;
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                prob += dp[r][c];
+            }
+        }
+
+        return prob;
+    }
+
+    private boolean isValid(int r, int c, int n) {
+        return r >= 0 && r < n && c >= 0 && c < n;
+    }
+}
