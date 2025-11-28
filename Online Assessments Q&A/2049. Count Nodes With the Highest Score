@@ -1,0 +1,62 @@
+Question: https://leetcode.com/problems/count-nodes-with-the-highest-score/
+
+Solution:
+class Solution {
+    private long max_Score = Long.MIN_VALUE;
+    private int count =0;
+
+    private int dfs(Map<Integer,List<Integer>> adjList,int parent,int n) {
+        int subTree_size = 1;
+        long current_score = 1;
+
+        for(int adjNode : adjList.getOrDefault(parent,new ArrayList<>())) {
+            long current_size = dfs(adjList,adjNode,n);
+            subTree_size+=current_size;
+            current_score*=current_size;
+        }
+
+        long remaining_tree_size = n - subTree_size;
+
+        if(remaining_tree_size > 0) current_score*=remaining_tree_size;
+
+        if(max_Score < current_score) {
+            max_Score = current_score;
+            count=1;
+        }else if(max_Score==current_score) { 
+            count++;
+        }
+
+        return subTree_size;
+    }
+
+    private void generateAdjList(int[] parents,Map<Integer,List<Integer>> adjList) {
+        
+        for(int i=1;i<parents.length;i++) {
+            adjList.computeIfAbsent(parents[i],k->new ArrayList<>()).add(i);
+        }
+
+    }
+    
+
+    public int countHighestScoreNodes(int[] parents) {
+        
+        // if(parents.length==1) return 1;
+
+        Map<Integer,List<Integer>> adList = new HashMap<>();
+        generateAdjList(parents,adList);
+
+        max_Score=0;
+        count=0;
+
+        dfs(adList,0,parents.length);
+        return count;        
+    }
+}
+
+/*
+    [-1,2,0,2,0]
+    0->-1
+    2->0
+    0->0
+
+ */
