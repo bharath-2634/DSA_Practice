@@ -1,0 +1,72 @@
+Question: https://leetcode.com/problems/create-components-with-same-value/
+
+Solution:
+class Solution {
+
+    public void get_factors(ArrayList<Integer> factors, int sum) {
+
+        for (int i = 1; i * i <= sum; ++i) {
+
+            if (sum % i == 0) {
+
+                factors.add(i);
+                factors.add(sum / i);
+            }
+        }
+    }
+
+    public int dfs(ArrayList<ArrayList<Integer>> adj, int[] nums, int csum, int[] count, int i, int parent) {
+
+        int sum = nums[i];
+
+        for (int j : adj.get(i)) {
+
+            if (j != parent) {
+
+                int x = dfs(adj, nums, csum, count, j, i);
+
+                if (x == csum) 
+                    count[0]++;
+                else
+                    sum += x;
+            }
+        }
+
+        return sum;
+    }
+
+    public int componentValue(int[] nums, int[][] edges) {
+        
+        int sum = 0;
+        int ans = 0;
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        ArrayList<Integer> factors = new ArrayList<>();
+
+        for (int i : nums) {
+
+            sum += i;
+            adj.add(new ArrayList<>());
+        }
+        
+        for (int[] i : edges) {
+
+            adj.get(i[0]).add(i[1]);
+            adj.get(i[1]).add(i[0]);
+        }
+        
+        get_factors(factors, sum);
+
+        for (int i : factors) {
+
+            int[] count = new int[1];
+
+            if (dfs(adj, nums, sum / i, count, 0, -1) == (sum / i))
+                count[0]++;
+            
+            if (count[0] == i)
+                ans = Math.max(i - 1, ans);
+        }
+       
+        return ans;
+    }
+}
