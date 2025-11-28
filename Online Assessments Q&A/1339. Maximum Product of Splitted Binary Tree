@@ -1,0 +1,49 @@
+Question: https://leetcode.com/problems/maximum-product-of-splitted-binary-tree/description/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    private long max_product_res = Long.MIN_VALUE;
+    private static final int MOD = 1_000_000_007;
+
+    public long getTotalSum(TreeNode node) {
+        if(node==null) return 0;
+
+        return (long)node.val + getTotalSum(node.left) + getTotalSum(node.right);
+    }
+
+    public long dfs(TreeNode node,long total) {
+        if(node==null) return 0;
+        long sum=0;
+
+        sum += (long)node.val + dfs(node.left,total) + dfs(node.right,total);
+
+        max_product_res = Math.max(max_product_res,(total-sum)*sum);
+
+        return sum;
+    }
+
+    public int maxProduct(TreeNode root) {
+        if(root==null) return 0;
+
+        long total_sum = getTotalSum(root);
+        dfs(root,total_sum);
+
+        return (int)(max_product_res%MOD);
+    }
+}
