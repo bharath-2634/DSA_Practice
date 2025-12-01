@@ -1,0 +1,50 @@
+Question: https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/description/
+
+Solution:
+class Solution {
+
+    public boolean canLoad(int[] weights,int days,int stock) {
+        int current_load=0,current_day=1;
+
+        for(int weight : weights) {
+            if(current_load + weight <= stock) {
+                current_load+=weight;
+            }else {
+                current_day++;
+                current_load=weight;
+
+                if(current_day > days) return false;
+            }
+        }
+        return current_day<=days;
+    }
+
+    public int shipWithinDays(int[] weights, int days) {
+        int left=Integer.MIN_VALUE, right = 0;
+
+        for(int weight : weights) {
+            left = Math.max(left,weight);
+            right+=weight;
+        }
+
+        int max_weight_capacity=0;
+
+        while(left<=right) {
+            int mid = left + (right-left)/2;
+            if(canLoad(weights,days,mid)) {
+                right = mid-1;
+                max_weight_capacity = mid;
+            }else {
+                left = mid+1;
+            }
+        }
+
+        return max_weight_capacity;
+    }
+}
+
+/*
+    left = min(weights) and right = max(weights) 
+    and mid ->  
+
+ */
