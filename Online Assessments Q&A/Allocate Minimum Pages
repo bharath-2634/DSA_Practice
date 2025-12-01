@@ -1,0 +1,52 @@
+Question:https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1
+
+Solution:
+class Solution {
+    
+    public boolean isAllocated(int allocation,int[] arr,int k) {
+        
+        int sum=0,count=1;
+        
+        for(int a : arr) {
+            if(a>allocation) return false;
+            
+            if(a+sum > allocation) {
+                count++;
+                sum = a;
+                
+                if(count>k) return false;
+            }else {
+                sum+=a;
+            }
+        }
+        
+        return true;
+    }
+    
+    public int findPages(int[] arr, int k) {
+        
+        if (k > arr.length) return -1;
+        
+        int left=0,right=0;
+        
+        for(int a : arr) {
+            left = Math.max(left,a);
+            right+=a;
+        }
+        
+        int ans=right;
+        
+        while(left<=right) {
+            int mid = left + (right-left)/2;
+            
+            if(isAllocated(mid,arr,k)) {
+                ans = mid;
+                right = mid-1;
+            }else {
+                left = mid+1;
+            }
+        }
+        
+        return ans==right? -1 : ans;
+    }
+}
