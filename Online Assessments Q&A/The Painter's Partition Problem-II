@@ -1,0 +1,66 @@
+Question: https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1
+
+Solution:
+class Solution {
+    
+    public boolean canPaint(int t,int[] arr,int k) {
+        int sum=0,painters=1;
+        
+        for(int a : arr) {
+            if(a>t) return false;
+            
+            if(a+sum > t) {
+                sum = a;
+                painters++;
+                
+                if(painters > k) return false;
+            }else {
+                sum+=a;
+            }
+        }
+        
+        return true;
+    }
+    
+    public int minTime(int[] arr, int k) {
+        
+        int left=0,right=0;
+        
+        for(int num : arr) {
+            left = Math.max(left,num);
+            right+=num;
+        }
+        
+        int max_time=0;
+        
+        while(left<=right) {
+            int mid = left+(right-left)/2;
+            
+            if(canPaint(mid,arr,k)) {
+                max_time = mid;
+                right = mid-1;
+            }else {
+                left = mid+1;
+            }
+        }
+        
+        return max_time;
+    }
+}
+
+/*
+    arr[] = [5, 10, 30, 20, 15], k = 3
+    
+    [5,10] -> painter 1 -> 15(min)
+    [30] -> painter 2-> 30(min),
+    [20,15] -> painter 2-> 35(min) 
+    
+    max(15,30,35) -> 35 
+    
+    // Binary Search -> left=max(board_length), right=sum(board_length)-> 
+    time in range so mid = left+(right-left)/2;
+    
+    canPaint(mid,)
+    
+
+*/
