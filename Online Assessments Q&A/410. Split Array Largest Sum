@@ -1,0 +1,49 @@
+Question: https://leetcode.com/problems/split-array-largest-sum/
+
+Solution:
+class Solution {
+
+    public boolean canSplit(int point,int[] nums,int k) {
+
+        int sum=0,count=1;
+        for(int num : nums) {
+            if(num>point) return false;
+
+            if(num+sum>point) {
+                sum = num;
+                count++;
+
+                if(count>k) return false;
+            }else {
+                sum+=num;
+            }
+        }
+
+        return true;
+    }
+
+    public int splitArray(int[] nums, int k) {
+        if(k>nums.length) return -1;
+
+        int left=0,right=0;
+        for(int num : nums) {
+            left = Math.max(left,num);
+            right+=num;
+        }
+
+        int max_sum=0;
+
+        while(left<=right) {
+            int mid = left + (right-left)/2;
+
+            if(canSplit(mid,nums,k)) {
+                max_sum = mid;
+                right = mid-1;
+            }else {
+                left = mid+1;
+            }
+        }
+
+        return max_sum;
+    }
+}
