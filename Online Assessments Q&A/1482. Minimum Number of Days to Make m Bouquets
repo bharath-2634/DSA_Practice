@@ -1,0 +1,56 @@
+Question: https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/
+
+Solution:
+class Solution {
+
+    public boolean canMakeBouque(int[] bloomDay,int m,int k,int day) {
+        int current_bouque_count=0;
+        int adj_flower_count=0;
+
+        for(int bloom : bloomDay) {
+            if(bloom <= day) {
+                adj_flower_count++;
+
+                if(adj_flower_count==k) {
+                    current_bouque_count++;
+                    adj_flower_count=0;
+                }
+            }else {
+                adj_flower_count=0;
+            }
+        }
+
+        return current_bouque_count>=m;
+    }
+
+    public int minDays(int[] bloomDay, int m, int k) {
+        if(bloomDay.length<k) return -1;
+
+        int left=Integer.MAX_VALUE,right=Integer.MIN_VALUE;
+
+        for(int day : bloomDay) {
+            left = Math.min(left,day);
+            right = Math.max(right,day);
+        }
+
+        int min_day = -1;
+        while(left<=right) {
+            int mid = left+(right-left)/2;
+            if(canMakeBouque(bloomDay,m,k,mid)) {
+                min_day = mid;
+                right = mid-1;
+            }else {
+                left = mid+1;
+            }
+        }
+
+        return min_day;
+    }
+}
+
+/**
+    bloomDay = [1,10,3,10,2], m = 3, k = 1
+
+    left = min(bloomDay) and right = max(bloomDay) 
+
+*/
