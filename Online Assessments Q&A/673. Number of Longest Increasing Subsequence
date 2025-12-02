@@ -1,0 +1,69 @@
+Question: https://leetcode.com/problems/number-of-longest-increasing-subsequence/description/
+
+Solution:
+class Solution {
+    private int[] dpLen;
+    private int[] dpCount;
+
+    public int getLengthLIS(int idx,int[] nums) {
+        if(idx >=nums.length) return 0;
+
+        if(dpLen[idx]!=0) return dpLen[idx];
+
+        int len=1;
+        for(int i=idx+1;i<nums.length;i++) {
+            if(nums[i] > nums[idx]) {
+                len = Math.max(len,1+getLengthLIS(i,nums));
+            }
+        }
+
+        return dpLen[idx] = len;
+    }
+
+    public int getCountLIS(int idx,int[] nums) {
+        if(idx>=nums.length) return 0;
+        if(dpCount[idx]!=0) return dpCount[idx];
+
+        int count=0;
+
+        for(int i=idx+1;i<nums.length;i++) {
+            if(nums[i] > nums[idx] && 1+dpLen[i] == dpLen[idx]) {
+                count+=getCountLIS(i,nums);
+            }
+        }
+
+        if(count==0) count=1;
+
+        dpCount[idx] = count;
+
+        return count;
+    }
+
+    public int findNumberOfLIS(int[] nums) {
+        dpLen = new int[nums.length];
+        dpCount = new int[nums.length];
+
+        // getting maxLength of LIS that can be formed!
+        int maxLen = 0;
+        for(int i=0;i<nums.length;i++) {
+            maxLen = Math.max(maxLen,getLengthLIS(i,nums));
+        }
+
+        // counting the maxLIS
+        int count=0;
+        for(int i=0;i<nums.length;i++) {
+            if(dpLen[i]==maxLen) {
+                count+=getCountLIS(i,nums);
+            }
+        }
+
+        return count;
+    }
+}
+
+/*
+    Counting the number of LIS -> 
+    1. LIS should be the maximum length of the subArray wright ! -> find the max len 
+    2. count the LIS which has same length -> count
+
+ */
