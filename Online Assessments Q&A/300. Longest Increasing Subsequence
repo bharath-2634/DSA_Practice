@@ -1,0 +1,54 @@
+Question: https://leetcode.com/problems/longest-increasing-subsequence/description/
+
+Solution:
+class Solution {
+    /* This is my DP Approach */
+    public int lengthOfLIS(int[] nums) {
+        if(nums.length==0) return 0;
+        int maxLen=0;
+        int[] dp = new int[nums.length];
+        for(int i=1;i<nums.length;i++) {
+            for(int j=0;j<i;j++) {
+                if(nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i],dp[j]+1);
+                } 
+            }
+            if(dp[i] > maxLen) maxLen = dp[i];
+        }
+
+        return maxLen+1;
+    }
+
+    // public int lengthOfLIS(int[] nums) {
+    //     int maxLen=1;
+
+    //     for(int i=0;i<nums.length;i++) {
+    //         int count=0;
+    //         for(int j=i+1;j<nums.length;j++) {
+    //             if(nums[j] > nums[i]) {
+    //                 count++;
+    //             }
+    //         }
+    //         System.out.println(maxLen);
+    //         maxLen = Math.max(count,maxLen);
+    //     }
+
+    //     return maxLen;
+    // }
+}
+
+/*
+
+    for(int i=0->n) {
+        max_len = Math.max(max_len,getLIS());
+    }
+
+    getLIS(int idx,):
+        if(idx==nums.length) return 0;
+
+        for(int i=idx;i<nums.length;i++) {
+            if(nums[i]>nums[idx]) {
+                getLIS(i+1,i)
+            }
+        }
+ */
