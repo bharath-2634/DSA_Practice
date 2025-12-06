@@ -1,0 +1,155 @@
+Question: https://leetcode.com/problems/count-partitions-with-max-min-difference-at-most-k/description/
+
+Solution:
+/*
+class Solution {
+
+    public int getCountPartitions(int[] nums,int k,int start,int[] dp) {
+        if(start==nums.length) return 1;
+
+        if(dp[start]!=-1) return dp[start];
+
+        int count=0;
+        int max_i = nums[start];
+        int min_i = nums[start];
+
+        for(int i=start;i<nums.length;i++) {
+            max_i = Math.max(max_i,nums[i]);
+            min_i = Math.min(min_i,nums[i]);
+
+            if((max_i - min_i)<=k) {
+                count+=getCountPartitions(nums,k,i+1,dp);
+            }else {
+                break;
+            }
+        }
+
+        return dp[start] = count;
+    }
+
+    public int countPartitions(int[] nums, int k) {
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp,-1);
+        return getCountPartitions(nums,k,0,dp);
+    }
+}
+
+/*
+    nums = [9,4,1,3,7], k = 4
+    []
+
+ */
+
+/*
+class Solution {
+    private static final int MOD = 1_000_000_007;
+
+    public int getCountPartitions(int[] nums,int k,int start,int[] dp) {
+        if(start==nums.length) return 1;
+
+        if(dp[start]!=-1) return dp[start];
+
+        int count=0;
+        Deque<Integer> min_d = new ArrayDeque<>();
+        Deque<Integer> max_d = new ArrayDeque<>();
+
+        for(int i=start;i<nums.length;i++) {
+            
+            while(!max_d.isEmpty() && max_d.peekLast() < nums[i]) {
+                max_d.pollLast();
+            }
+            max_d.offerLast(nums[i]);
+
+            while(!min_d.isEmpty() && min_d.peekLast() > nums[i]) {
+                min_d.pollLast();
+            }
+            min_d.offerLast(nums[i]);
+
+            int max_i = max_d.peekFirst();
+            int min_i = min_d.peekFirst();
+
+            if((max_i - min_i)<=k) {
+                count = (count+getCountPartitions(nums,k,i+1,dp))%MOD;
+            }else {
+                break;
+            }
+        }
+
+        return dp[start] = count;
+    }
+
+    public int countPartitions(int[] nums, int k) {
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp,-1);
+        return getCountPartitions(nums,k,0,dp)%MOD;
+    }
+}
+*/
+
+/*
+class Solution {
+    private static final int MOD = 1_000_000_007;
+    public int countPartitions(int[] nums, int k) {
+        int[] dp = new int[nums.length+1];
+        // Arrays.fill(dp,-1);
+
+        dp[nums.length]=1;
+
+        for(int i=nums.length-1;i>=0;i--) {
+            Deque<Integer> min_d = new ArrayDeque<>();
+            Deque<Integer> max_d = new ArrayDeque<>();
+
+            for(int j=i;j<nums.length;j++) {
+               
+                while(!max_d.isEmpty() && max_d.peekLast() < nums[j])
+                    max_d.pollLast();
+                max_d.offerLast(nums[j]);
+
+                while(!min_d.isEmpty() && min_d.peekLast() > nums[j]) {
+                    min_d.pollLast();
+                }
+                min_d.offerLast(nums[j]);
+
+                int max_i = max_d.peekFirst();
+                int min_i = min_d.peekFirst(); 
+                if((max_i - min_i)<=k) {
+                    dp[i] = (dp[i]+dp[j+1])%MOD;
+                }else {
+                    break;
+                }
+            }
+        }
+        return dp[0];
+    }
+}
+
+*/
+
+class Solution {
+
+    public int countPartitions(int[] nums, int k) {
+        int n = nums.length;
+        long mod = (long) 1e9 + 7;
+        long[] dp = new long[n + 1];
+        long[] prefix = new long[n + 1];
+        TreeMap<Integer, Integer> cnt = new TreeMap<>();
+
+        dp[0] = 1;
+        prefix[0] = 1;
+        for (int i = 0, j = 0; i < n; i++) {
+            cnt.put(nums[i], cnt.getOrDefault(nums[i], 0) + 1);
+            while (j <= i && cnt.lastKey() - cnt.firstKey() > k) {
+                cnt.put(nums[j], cnt.get(nums[j]) - 1);
+                if (cnt.get(nums[j]) == 0) {
+                    cnt.remove(nums[j]);
+                }
+                j++;
+            }
+
+            dp[i + 1] = (prefix[i] - (j > 0 ? prefix[j - 1] : 0) + mod) % mod;
+            prefix[i + 1] = (prefix[i] + dp[i + 1]) % mod;
+        }
+
+        return (int) dp[n];
+    }
+}
