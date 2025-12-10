@@ -1,0 +1,53 @@
+Question: https://leetcode.com/problems/combination-sum-iv/
+
+Solution:
+/*
+
+This is my recursive + Memoization Approach
+class Solution {
+
+    public int getCombinationSum(int[] nums,int target,int[] dp) {
+
+        if(target==0) {
+            return 1;
+        }
+
+        if(dp[target]!=0) return dp[target];
+
+        int count=0;
+        for(int i=0;i<nums.length;i++) {
+            if(nums[i]<=target) {
+                count+=getCombinationSum(nums,target-nums[i],dp);
+            }
+        }
+
+        return dp[target] = count;
+    }
+
+    public int combinationSum4(int[] nums, int target) {
+        int[] dp = new int[target+1];
+
+        return getCombinationSum(nums,target,dp);
+    }
+}
+*/
+
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+        int[] dp = new int[target+1];
+
+        dp[0]=1;
+
+        for(int i=1;i<=target;i++) {
+            int count=0;
+            for(int j=0;j<nums.length;j++) {
+                if(nums[j]<=i) {
+                    count+=dp[i-nums[j]];
+                }
+            }
+            dp[i] = count;
+        }
+
+        return dp[dp.length-1];
+    }
+}
