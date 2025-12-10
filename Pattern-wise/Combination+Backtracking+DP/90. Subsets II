@@ -1,0 +1,30 @@
+Question: https://leetcode.com/problems/subsets-ii/description/
+
+Solution:
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        getSubsets(nums,res,new ArrayList<>(),0);
+
+        return res;
+    }
+
+    public void getSubsets(int[] nums,List<List<Integer>> res,List<Integer> ds,int idx) {
+        res.add(new ArrayList<>(ds));
+
+        for(int i=idx;i<nums.length;i++) {
+            if(i>idx && nums[i]==nums[i-1]) continue;
+            ds.add(nums[i]);
+            getSubsets(nums,res,ds,i+1);
+            ds.remove(ds.size()-1);
+        }
+    }
+}
+
+/*
+    [[],[1],[1,2],[1,2,2],[1,2],[2],[2,2],[2]]
+
+    before adding I must check whether the set is alredy present in my list or not !
+
+ */
