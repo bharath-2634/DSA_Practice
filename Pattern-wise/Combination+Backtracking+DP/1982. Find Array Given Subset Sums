@@ -1,0 +1,64 @@
+Question: https://leetcode.com/problems/find-array-given-subset-sums/
+
+Solution: 
+class Solution {
+    
+    public void getRecoverArray(int n,Map<Integer,Integer> fMap,List<Integer> arr) {
+        if(n==0) return;
+
+        int minSum = Integer.MAX_VALUE;
+        for (int s : fMap.keySet()) {
+            if (fMap.get(s) > 0 && s < minSum) minSum = s;
+        }
+
+        int x = -1;
+        for (int s : fMap.keySet()) {
+            if (fMap.get(s) > 0 && s != minSum) {
+                x = s - minSum;
+                break;
+            }
+        }
+
+        List<Integer> with_out_x= new ArrayList<>();
+        Map<Integer,Integer> nextCounter = new HashMap<>(fMap);
+
+        for(int s : fMap.keySet()) {
+            int count = fMap.get(s);
+            while(count>0) {
+                with_out_x.add(s);
+                nextCounter.put(s,nextCounter.getOrDefault(s,0)-1);
+                nextCounter.put(s+x,nextCounter.getOrDefault(s+x,0)-1);
+                count--;
+            }
+        }
+
+        arr.add(x);
+        getRecoverArray(n-1,nextCounter,arr);
+    }
+
+    public int[] recoverArray(int n, int[] sums) {
+        List<Integer> arr = new ArrayList<>();
+        
+        Map<Integer,Integer> fMap = new HashMap<>();
+        for(int num :sums) {
+            fMap.put(num,fMap.getOrDefault(num,0)+1);
+        }
+
+        Arrays.sort(sums);
+
+        getRecoverArray(n,fMap,arr);
+
+        int[] nums = new int[n];
+        int idx=0;
+        for(int num : arr) {
+            nums[idx++] = num;
+        }
+
+        return nums;
+    }
+}
+
+/*
+    [1,2,-3]
+ */
+
