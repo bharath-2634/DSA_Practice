@@ -1,0 +1,24 @@
+// Online Java Compiler
+// Use this editor to write, compile and run your Java code online
+
+class Main {
+    public static int getFrequency(int[] arr,int val,int l,int r) {
+        
+        if(l==r) {
+            if(arr[l]==val) return 1;
+            else return 0;
+        }    
+        int mid = l+(r-l)/2;
+        
+        return getFrequency(arr,val,l,mid) + getFrequency(arr,val,mid+1,r); 
+        
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {1,2,2,1,5,4,10,11,2};
+        
+        int freq = getFrequency(arr,2,0,arr.length-1);
+        
+        System.out.println(freq);
+    }
+}
