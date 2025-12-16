@@ -1,0 +1,96 @@
+Question: https://www.geeksforgeeks.org/dsa/tiling-problem-using-divide-and-conquer-algorithm/
+
+Solution:
+import java.util.*;
+
+class Main {
+    
+    private static int[][][] moves = {
+        {{0, 0}, {0, 1}, {1, 0}},
+        {{0, 0}, {0, 1}, {1, 1}},
+        {{0, 0}, {1, 0}, {1, 1}},
+        {{0, 0}, {1, 0}, {1, -1}} 
+    };
+    
+    public static boolean canPlaceTile(int[][] move,int row,int col,int n) {
+        for(int[] d : move) {
+            int new_row = row+d[0];
+            int new_col = col+d[1];
+            if(new_row <0 || new_row>=n || new_col<0 || new_col>=n) return false;
+        }
+        
+        return true;
+    }
+    
+    public static void placeTile(int[][] tile,int[] ord,int[][] move,int row,int col) {
+        for(int[] d : move) {
+            tile[row+d[0]][col+d[1]] = ord[0];
+        }
+        
+        ord[0]++;
+    }
+    
+    public static void removeTile(int[][] tile,int[] ord,int[][] move,int row,int col) {
+        for(int[] d : move) {
+            tile[row+d[0]][col+d[1]] = 0;
+        }
+        
+        ord[0]--;
+    }
+    
+    public static boolean dfs(int[][] tile,int[] ord) {
+            
+            int row=-1,col=-1;
+            for(int i=0;i<tile.length;i++) {
+                boolean flag = false;
+                for(int j=0;j<tile.length;j++) {
+                    if(tile[i][j]==0) {
+                        row= i;
+                        col= j;
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag) break;
+            }
+            
+            if(row==-1 && col==-1) return true;
+            
+            for(int[][] move : moves) {
+                if(canPlaceTile(move,row,col,tile.length)) {
+                    placeTile(tile,ord,move,row,col);
+                    if(dfs(tile,ord)) return true;
+                    removeTile(tile,ord,move,row,col);
+                }
+            }
+            
+            return false;
+    }
+    
+    public static void tilling(int n,int[] missing) {
+            boolean[][] visited = new boolean[n][n];
+            int[][] tile = new int[n][n];
+            
+            visited[missing[0]][missing[1]] = true;
+            for(int[] t : tile) Arrays.fill(t,0);
+            tile[missing[0]][missing[1]] = -1;
+            int[] ord = {1};
+            
+            dfs(tile,ord);
+            
+            // display
+            for(int i=0;i<n;i++) {
+                for(int j=0;j<n;j++) {
+                    System.out.print(tile[i][j]+" ");
+                }
+                System.out.println("");
+            }
+    }
+    
+    public static void main(String[] args) {
+        int n=4;
+        int missing[] = {0,0};
+        
+        tilling(n,missing);
+    }
+}
