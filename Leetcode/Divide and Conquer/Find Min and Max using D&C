@@ -1,0 +1,43 @@
+class Solution {
+    
+    public ArrayList<Integer> formMinMax(int[] arr,int l,int r) {
+    
+        ArrayList<Integer> res = new ArrayList<>(Arrays.asList(0,0));
+        
+        if(l==r) {
+            res.set(0,arr[l]);
+            res.set(1,arr[l]);
+            
+            return res;
+        }
+        
+        if(r==l+1) {
+            if(arr[l] > arr[r]) {
+                res.set(0,arr[r]);
+                res.set(1,arr[l]);
+            }else {
+                res.set(0,arr[l]);
+                res.set(1,arr[r]);
+            }
+            
+            return res;
+        }
+        
+        int mid=(r+l)/2;
+        ArrayList<Integer> left_part = formMinMax(arr,l,mid);
+        ArrayList<Integer> right_part = formMinMax(arr,mid+1,r);
+        
+        int min= Math.min(left_part.get(0),right_part.get(0));
+        int max= Math.max(right_part.get(1),left_part.get(1));
+        
+        res.set(0,min);
+        res.set(1,max);
+        
+        return res;
+    }
+    
+    public ArrayList<Integer> getMinMax(int[] arr) {
+
+        return formMinMax(arr,0,arr.length-1);
+    }
+}
