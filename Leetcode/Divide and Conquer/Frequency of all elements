@@ -1,0 +1,46 @@
+import java.util.*;
+
+
+class Main {
+    
+    public static Map<Integer,Integer> getFrequency(int[] arr,int l,int r) {
+        
+        Map<Integer,Integer> res = new HashMap<>();
+        
+        if(l==r) {
+            res.put(arr[l],res.getOrDefault(arr[l],0)+1);
+            return res;
+        }    
+        
+        if(r==l+1) {
+            res.put(arr[l],res.getOrDefault(arr[l],0)+1);
+            res.put(arr[r],res.getOrDefault(arr[r],0)+1);
+            return res;
+        }
+        
+        int mid = l+(r-l)/2;
+        Map<Integer,Integer> left_part = getFrequency(arr,l,mid);
+        Map<Integer,Integer> right_part = getFrequency(arr,mid+1,r);
+        
+        for(Map.Entry<Integer,Integer> e : left_part.entrySet()) {
+            res.put(e.getKey(),
+                    res.getOrDefault(e.getKey(), 0) + e.getValue());
+        }
+        
+        for(Map.Entry<Integer,Integer> e : right_part.entrySet()) {
+            res.put(e.getKey(),
+                res.getOrDefault(e.getKey(), 0) + e.getValue());
+        }
+        
+        return res;
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {1,2,2,1,5,4,10,11,2};
+        Map<Integer,Integer> fMap = getFrequency(arr,0,arr.length-1);
+        
+        for(int key : fMap.keySet()) {
+            System.out.println(key + " " + fMap.get(key));
+        }
+    }
+}
