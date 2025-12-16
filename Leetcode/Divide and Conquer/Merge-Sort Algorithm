@@ -1,0 +1,44 @@
+class Solution {
+    
+    void merge(int[] arr,int left,int mid,int right) {
+        int[] left_part = new int[mid-left+1];
+        int[] right_part = new int[right-mid];
+        
+        for(int i=0;i<left_part.length;i++) {
+            left_part[i] = arr[left+i];
+        }
+        
+        for(int i=0;i<right_part.length;i++) {
+            right_part[i] = arr[mid+i+1];
+        }
+        
+        int l=0,r=0;
+        int idx=left;
+        while(l<left_part.length && r<right_part.length) {
+            if(left_part[l] <= right_part[r]) {
+                arr[idx++] = left_part[l++];
+            }else {
+                arr[idx++] = right_part[r++];
+            }
+        }
+        
+        
+        while(r<right_part.length) {
+            arr[idx++] = right_part[r++];
+        }
+        
+        while(l<left_part.length) {
+            arr[idx++] = left_part[l++];
+        }
+    }
+    
+    void mergeSort(int arr[], int l, int r) {
+       if(r<=l) return;
+       
+       int mid= l+(r-l)/2;
+       mergeSort(arr,l,mid);
+       mergeSort(arr,mid+1,r);
+       
+       merge(arr,l,mid,r);
+    }
+}
