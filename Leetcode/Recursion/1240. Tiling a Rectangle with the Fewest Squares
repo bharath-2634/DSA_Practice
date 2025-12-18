@@ -1,0 +1,65 @@
+Question: https://leetcode.com/problems/tiling-a-rectangle-with-the-fewest-squares/
+
+Solution:
+class Solution {
+    int min = Integer.MAX_VALUE;
+
+    public int tilingRectangle(int n, int m) {
+        int maxSize = Math.max(n, m);
+        int[][] vis = new int[n][m];
+        dfs(vis, 0, maxSize);
+        return min;
+    }
+
+    void dfs(int[][] vis, int cnt, int k) {
+        if (cnt >= min) return;
+        if (isFilled(vis)) {
+            min = Math.min(min, cnt);
+            return;
+        }
+        int i = 0, j = 0;
+        outer:
+        for (i = 0; i < vis.length; i++) {
+            for (j = 0; j < vis[0].length; j++) {
+                if (vis[i][j] == 0) break outer;
+            }
+        }
+        for (; k >= 1; k--) {
+            if (canPlace(i, j, k, vis)) {
+                placeSquare(i, j, k, vis);
+                dfs(vis, cnt + 1, Math.min(vis.length - i, vis[0].length - j));
+                removeSquare(i, j, k, vis);
+            }
+        }
+    }
+
+    boolean canPlace(int i, int j, int k, int[][] vis) {
+        for (int a = i; a < k + i; a++) {
+            for (int b = j; b < k + j; b++) {
+                if (a >= vis.length || b >= vis[0].length || vis[a][b] == 1) return false;
+            }
+        }
+        return true;
+    }
+
+    void placeSquare(int i, int j, int k, int[][] vis) {
+        for (int a = i; a < k + i; a++) {
+            for (int b = j; b < k + j; b++) vis[a][b] = 1;
+        }
+    }
+
+    void removeSquare(int i, int j, int k, int[][] vis) {
+        for (int a = i; a < i + k; a++) {
+            for (int b = j; b < j + k; b++) vis[a][b] = 0;
+        }
+    }
+
+    boolean isFilled(int[][] vis) {
+        for (int i = 0; i < vis.length; i++) {
+            for (int j = 0; j < vis[0].length; j++) {
+                if (vis[i][j] == 0) return false;
+            }
+        }
+        return true;
+    }
+}
