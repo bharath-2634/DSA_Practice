@@ -22,4 +22,38 @@ class Solution {
         }
         return slow;
     }
+    // This is my recursive Approach
+    private int counter=0;
+    private ListNode middle=null;
+    private int len=0;
+
+    public int getLen(ListNode node) {
+        if(node==null) return 0;
+        return 1+getLen(node.next);
+    }
+
+    public void getMiddleNode(ListNode node) {
+        if(node==null) return;
+
+        getMiddleNode(node.next);
+        counter++;
+        System.out.println(counter);
+        if(middle==null && counter==len) {
+            middle = node;
+        }
+    }
+
+    public ListNode middleNode(ListNode head) {
+        ListNode node = head;
+        int list_len = getLen(node);
+        
+        if(list_len%2!=0) {
+            len = list_len/2+1;
+        }else {
+            len = list_len/2;
+        }
+
+        getMiddleNode(head);
+        return middle;
+    }
 }
