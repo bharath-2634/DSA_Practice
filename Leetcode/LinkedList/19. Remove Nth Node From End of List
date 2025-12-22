@@ -68,4 +68,24 @@ class Solution {
         return dummy.next;
     }
 
+    // Next-Recursive Approach
+    int counter=0;
+
+    public ListNode getList(ListNode node,int n) {
+        if(node==null) return null;
+
+        node.next = getList(node.next,n);
+        counter++;
+
+        if(n==counter) {
+            return node.next;
+        }
+
+        return node;
+    }
+
+    public ListNode removeNthFromEnd(ListNode head,int n) {
+        return getList(head,n);
+    }
+
 }
