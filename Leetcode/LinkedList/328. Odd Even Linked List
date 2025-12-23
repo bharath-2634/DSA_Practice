@@ -54,4 +54,33 @@ class Solution {
         odd_tail.next = even_list.next;
         return odd_list.next;
     }
+
+// next recursive approach
+    private ListNode evenHead=null;
+    public void connectLists(ListNode odd,ListNode even) {
+        if(even==null || even.next==null) {
+            odd.next = evenHead;
+            return;
+        }
+
+        odd.next = even.next;  
+        odd = odd.next;
+
+        even.next = odd.next;
+        even = even.next;
+
+        connectLists(odd,even);
+    }
+
+    public ListNode oddEvenList(ListNode head) { 
+        if(head==null || head.next==null) return head;
+
+        ListNode odd_list = head;
+        ListNode even_list = head.next;
+        ListNode odd_tail= odd_list;
+        evenHead = even_list;
+
+        connectLists(odd_list,even_list);
+        return head;
+    }
 }
