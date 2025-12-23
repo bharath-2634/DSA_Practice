@@ -21,4 +21,37 @@ class Solution {
 
         return head;
     }
+
+    // Next approach
+    public ListNode oddEvenList(ListNode head) { 
+        ListNode odd_list = new ListNode(-1);
+        ListNode odd_tail = odd_list;
+        ListNode even_list = new ListNode(-1);
+        ListNode even_tail = even_list;
+        int idx=1;
+        while(head!=null) {
+            ListNode next_head = head.next;
+            head.next = null;
+            if(idx%2!=0) {
+                odd_tail.next= head;
+                odd_tail = odd_tail.next;
+            }else {
+                even_tail.next = head;
+                even_tail = even_tail.next;
+            }
+            idx++;
+            head = next_head;
+        }
+
+        if(even_list.next==null) {
+            return odd_list.next;
+        }
+
+        if(odd_list.next==null) {
+            return even_list.next;
+        }
+
+        odd_tail.next = even_list.next;
+        return odd_list.next;
+    }
 }
