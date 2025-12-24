@@ -1,0 +1,65 @@
+Question: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+
+Solution:
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private TreeNode last = null;
+    public void flatten(TreeNode node) {
+        if(node==null) return;
+
+        // keep a pointer at the right and move deep to the left side and add that pointer !
+        flatten(node.right);
+        flatten(node.left);
+
+        node.right = last;
+        node.left = null;
+
+        last = node;
+    }
+}
+
+/*
+class Solution {
+
+    public void getPreOrder(TreeNode node,List<TreeNode> list) {
+        if(node==null) return;
+
+        list.add(node);
+        getPreOrder(node.left,list);
+        getPreOrder(node.right,list);
+    }
+
+    public void flatten(TreeNode node) {
+        List<TreeNode> pre_list = new ArrayList<>();
+        getPreOrder(node,pre_list);
+        // System.out.println()
+        TreeNode new_node = null;
+        for(TreeNode l : pre_list) {
+            if(new_node==null) {
+                new_node = l;
+                new_node.left = null;
+            }else {
+                new_node.right = l;
+                new_node.left = null;
+                new_node = new_node.right;
+            }
+        }
+        node= new_node;
+    }
+}
+*/
