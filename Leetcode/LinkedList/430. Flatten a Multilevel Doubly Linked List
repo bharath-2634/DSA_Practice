@@ -1,0 +1,102 @@
+Question: https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/description/
+
+Solution:
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node prev;
+    public Node next;
+    public Node child;
+};
+*/
+/*
+
+This is my iterative approach
+class Solution {
+
+    public Node getEndOfList(Node child) {
+        Node move=child;
+
+        while(move!=null) {
+            if(move.next==null) {
+                return move;
+            }
+            move = move.next;
+        }
+
+        return child;
+    }
+
+    // public void displayList(Node node) {
+    //     Node temp = node;
+
+    //     while(temp!=null) {
+    //         System.out.println(temp.val);
+    //         temp = temp.next;
+    //     }
+    // }
+
+    public Node flatten(Node head) {
+
+        if(head==null) return head;
+
+        Node current = head, tail_list = head.next;
+
+        while(tail_list!=null) {
+            if(current.child!=null) {
+                Node next_list = tail_list;
+                current.child.prev = current;
+                current.next = current.child;
+                Node end_list = getEndOfList(current.child);
+                current.child = null;
+                end_list.next = next_list;
+                next_list.prev = end_list;
+            }
+            current = current.next;
+            tail_list = current.next;
+        }
+
+        return head;
+    }
+}
+*/
+
+class Solution {
+
+    public Node dfs(Node current) {
+        Node curr = current;
+        Node last = current;
+
+        while (curr != null) {
+            Node next = curr.next;
+
+            if (curr.child != null) {
+                curr.child.prev = curr;
+                curr.next = curr.child;
+                Node childTail = dfs(curr.child);
+                curr.child = null;
+
+                childTail.next = next;
+                if (next != null) {
+                    next.prev = childTail;
+                }
+
+                last = childTail;
+            } else {
+                last = curr;
+            }
+
+            curr = next;
+        }
+
+        return last;
+    }
+
+
+    public Node flatten(Node head) {
+        if(head==null) return head;
+        dfs(head);
+        return head;
+    }
+}
