@@ -2,6 +2,48 @@ Question: https://leetcode.com/problems/longest-valid-parentheses/description/
 
 Solution:
 class Solution {
+    /*
+    public int getMaxValidParentheses(int idx,String s,int[] dp) {
+        int valid_len=0;
+
+        if(idx<0) return 0;
+
+        if(dp[idx]!=0) return dp[idx];
+
+        if(s.charAt(idx)=='(') {
+            valid_len=0;
+        }else {
+            if(idx>0 && s.charAt(idx-1)=='(') {
+                valid_len = 2 + getMaxValidParentheses(idx-2,s,dp);
+            }else if(idx>0 && s.charAt(idx-1)==')') {
+                int prev_len = getMaxValidParentheses(idx-1,s,dp);
+                int current_idx = idx - prev_len-1;
+                if(current_idx>=0 && s.charAt(current_idx)=='(') {
+                    valid_len = prev_len+2+getMaxValidParentheses(current_idx-1,s,dp);
+                }else {
+                    valid_len =0;
+                }
+            }else {
+                valid_len=0;
+            }
+        }
+
+        return dp[idx] = valid_len;
+    }
+
+    public int longestValidParentheses(String s) {
+        int max_len = Integer.MIN_VALUE;
+        int[] dp = new int[s.length()];
+
+        for(int i=0;i<s.length();i++) {
+            max_len = Math.max(max_len,getMaxValidParentheses(i,s,dp));
+        }
+
+        return max_len==Integer.MIN_VALUE ? 0 : max_len;
+    }
+    */
+
+    /*
     public int longestValidParentheses(String s) {
         Stack<Integer> st = new Stack<>();
         int max_len = Integer.MIN_VALUE;
@@ -19,6 +61,33 @@ class Solution {
             }
         }
 
+        return max_len==Integer.MIN_VALUE ? 0 : max_len;
+    }
+    */
+
+    public int longestValidParentheses(String s) {
+
+        if(s.equals("")) return 0;
+
+        int max_len = Integer.MIN_VALUE;
+        int[] dp = new int[s.length()];
+
+        for(int i=1;i<s.length();i++) {
+            if(s.charAt(i) == ')') {
+                if (s.charAt(i - 1) == '(') {
+                    dp[i] = 2 + (i >= 2 ? dp[i - 2] : 0);
+                } else {
+                    int prevLen = dp[i - 1];
+                    int j = i - prevLen - 1; 
+                    if (j >= 0 && s.charAt(j) == '(') {
+                        dp[i] = prevLen + 2 + (j >= 1 ? dp[j - 1] : 0);
+                    }
+                }
+
+                max_len = Math.max(max_len, dp[i]);
+            }
+        }
+           
         return max_len==Integer.MIN_VALUE ? 0 : max_len;
     }
 }
