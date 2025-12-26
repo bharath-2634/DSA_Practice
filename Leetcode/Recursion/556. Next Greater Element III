@@ -1,0 +1,59 @@
+Question: https://leetcode.com/problems/next-greater-element-iii/
+
+Solution:
+class Solution {
+    public int nextGreaterElement(int n) {
+        char[] sb = String.valueOf(n).toCharArray();
+
+        int idx1=-1;
+        for(int i=sb.length-2;i>=0;i--) {
+            int c1 = sb[i]-'0';
+            int c2 = sb[i+1]-'0';
+
+            if(c1<c2) {
+                idx1 = i;
+                break;
+            }
+        }
+
+        if(idx1==-1) {
+            return -1;
+        } 
+
+        int idx2=-1;
+        for(int i=sb.length-1;i>=0;i--) {
+            int target_chr = sb[idx1]-'0';
+            int curr = sb[i]-'0';
+
+            if(curr > target_chr) {
+                idx2 = i;
+                break;
+            }
+        }
+
+        char temp = sb[idx1];
+        sb[idx1] = sb[idx2];
+        sb[idx2] = temp;
+
+        reverse(sb,idx1+1,sb.length-1);
+        long res = Long.parseLong(new String(sb));
+
+        return res> Integer.MAX_VALUE ? -1 : (int)res;
+
+    }
+
+    public void reverse(char[] s,int start,int end) {
+        while(start<end) {
+            char temp = s[start];
+            s[start] = s[end];
+            s[end]= temp;
+            start++;
+            end--;
+        }
+    }
+}
+
+/*
+    n=124651
+
+ */
