@@ -1,0 +1,19 @@
+Notes:
+
+* A stack is for elements that are waiting for something in the future.
+
+* 1️⃣ Am I comparing elements with others on the left or right?
+
+If yes → potential stack.
+
+2️⃣ Do I need the first greater/smaller, not all of them?
+
+If yes → strong stack signal.
+
+3️⃣ Am I repeatedly scanning the array again and again?
+
+If yes → stack can likely optimize it.
+
+4️⃣ Does an element become “useless” once a better one appears?
+
+If yes → stack is perfect.
