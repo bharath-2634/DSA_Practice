@@ -1,0 +1,132 @@
+Question:https://leetcode.com/problems/remove-invalid-parentheses/description/
+
+Solution:
+/*
+
+This is my Limited Backtracking Approach
+
+class Solution {
+    public void getValidParentheses(String s,int idx,int openCount,int closeCount,int open_rem,int close_rem,StringBuilder sb,Set<String> res) {
+        if(idx==s.length()) {
+            if(openCount == closeCount && open_rem==0 && close_rem==0) {
+                res.add(sb.toString());
+            }
+            return;
+        }
+
+        // if(open_rem==0 && close_rem==0) {
+        //     res.add(sb.toString());
+        //     return;
+        // }
+
+        if(Character.isLetter(s.charAt(idx))) {
+            sb.append(s.charAt(idx));
+            getValidParentheses(s,idx+1,openCount,closeCount,open_rem,close_rem,sb,res);
+            sb.deleteCharAt(sb.length()-1);
+            return;
+        } 
+        
+        if(s.charAt(idx)=='(') {
+            if(open_rem>0) {
+                getValidParentheses(s,idx+1,openCount,closeCount,open_rem-1,close_rem,sb,res);
+            }
+
+            sb.append(s.charAt(idx));
+            getValidParentheses(s,idx+1,openCount+1,closeCount,open_rem,close_rem,sb,res);
+            sb.deleteCharAt(sb.length()-1);
+        }else {
+            if(close_rem>0) {
+                getValidParentheses(s,idx+1,openCount,closeCount,open_rem,close_rem-1,sb,res);
+            }
+
+            if(openCount>closeCount) {
+                sb.append(s.charAt(idx));
+                getValidParentheses(s,idx+1,openCount,closeCount+1,open_rem,close_rem,sb,res);
+                sb.deleteCharAt(sb.length()-1);
+            }
+
+        }
+    }
+
+    public List<String> removeInvalidParentheses(String s) {
+        Set<String> res = new HashSet<>();
+        int open_rem=0,close_rem=0;
+        
+        for(char c : s.toCharArray()) {
+            if(c=='(') {
+                open_rem++;
+            }else if(c==')') {
+                if(open_rem>0) open_rem--;
+                else close_rem++;
+            }
+        }
+
+        getValidParentheses(s,0,0,0,open_rem,close_rem,new StringBuilder(),res);
+        return new ArrayList<>(res);
+    }
+}
+
+*/
+
+class Solution {
+
+    public int getCountToBalance(String s) {
+        int balance = 0;
+        for(char c: s.toCharArray()) {
+            if(c == '(') balance += 1;
+            if(c == ')') balance -= 1;
+        }
+        return balance;
+    }
+
+    public boolean isStrictlyBalanced(String s) {
+        int balance = 0;
+        for(char c: s.toCharArray()) {
+            if(c == '(') balance += 1;
+            if(c == ')') balance -= 1;
+            if(balance < 0) return false;
+        }
+        return balance == 0;
+    }
+
+    public List<String> removeInvalidParentheses(String s) {
+        Set<String> res = new HashSet<>();
+        Queue<String> q = new LinkedList<>();
+        q.offer(s);
+        boolean found = false;
+
+        while(!q.isEmpty() && !found) {
+            Set<String> nextSet = new HashSet<>();
+            int size = q.size();
+
+            for(int i=0;i<size;i++) {
+                String word = q.poll();
+
+                int balance = getCountToBalance(word);
+                if(balance==0 && isStrictlyBalanced(word)) {
+                    found = true;
+                    res.add(word);
+                    continue;
+                }
+
+                if(found) continue;
+                char removeChr = balance>0 ? '(' : ')';
+
+                for(int idx=0;idx<word.length();idx++) {
+                    if(word.charAt(idx)==removeChr) {
+                        nextSet.add(new StringBuilder(word).deleteCharAt(idx).toString());
+                    }
+                }
+            }
+
+            if(!found) {
+                for(String word : nextSet) {
+                    q.offer(word);
+                }
+            }
+        }
+
+
+        return new ArrayList<>(res);
+    }
+}
