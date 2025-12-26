@@ -1,0 +1,94 @@
+Question: https://leetcode.com/problems/check-if-word-is-valid-after-substitutions/description/
+
+Solution:
+class Solution {
+
+    /*
+    public boolean isValid(String s) {
+        StringBuilder st = new StringBuilder();
+
+        for(char c : s.toCharArray()) {
+            if(st.length()>=3) {
+                StringBuilder sb = new StringBuilder();
+                int idx=0;
+                while(idx<3) {
+                    sb.append(st.charAt(st.length()-1-idx));
+                    idx++;
+                }
+            
+                // System.out.println("enterd: "+sb.toString());
+                idx=0;
+                if(sb.reverse().toString().equals("abc")) {
+                    while(idx<3) {
+                        st.deleteCharAt(st.length()-1);
+                        idx++;
+                    }
+                }
+            }
+            // System.out.println(st);
+            st.append(c);
+        }
+        if(st.toString().equals("abc")) return true;
+
+        return st.length()==0? true: false;
+    }
+    */
+    public boolean isFilled(String s) {
+        if(s.contains("t")) return false;
+
+        return true;
+    }
+
+    public boolean isValid(String s) {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<s.length();i++) {
+            sb.append('t');
+        }
+        // System.out.println(sb.length() +" "+ sb.toString());
+
+        while(true) {
+            int idx=0;
+            String target="abc";
+            int i=0;
+            while(i<target.length()) {
+                if(s.charAt(idx)==target.charAt(i) && sb.charAt(idx)=='t') {
+                    sb.setCharAt(idx,target.charAt(i));
+                    i++;
+                }
+                idx++;
+                if(idx>=s.length() && i<target.length()) return false;
+
+                System.out.println("Forming: "+sb.toString());
+            }
+            System.out.println(sb.toString());
+            if(isFilled(sb.toString())) return true;
+        }
+
+        // return true;
+    }
+
+}
+
+/*
+    s = "aabcbc"
+    t = "_abc__" -> 
+
+    abc->valid
+    acb || cba || cab -> invalid
+    s= "abccba" 
+    [a,b,c,_,_,a]
+
+    s = "aabcbc"
+    [a,_,b,c,_,_]
+    [a,a_b,c,b_c]
+
+    s= "abcabcababcc"
+    [a,b,c,_]
+
+    [c,b,a] ->!st.isEmpty()->true
+    [a,b,c,a,b,c,]
+
+    "aabcbc"
+    []
+
+ */
