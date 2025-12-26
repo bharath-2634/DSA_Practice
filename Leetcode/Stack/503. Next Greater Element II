@@ -1,0 +1,30 @@
+Question: https://leetcode.com/problems/next-greater-element-ii/
+
+Solution:
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int[] res = new int[nums.length];
+        Stack<Integer> st = new Stack<>();
+        Arrays.fill(res,-1);
+        
+        for(int i=0;i<2*nums.length;i++) {
+            int idx = i%nums.length;
+            while(!st.isEmpty() && nums[st.peek()] < nums[idx]) {
+                res[st.pop()] = nums[idx];
+            }
+
+            if(i<nums.length) st.push(idx);
+        }
+
+        return res;
+    }
+}
+
+/*
+    now the array is circular wright ! 
+    st=[5,4,3,2,1]
+    [-1,-1,-1,-1,5]
+
+    st=[5,]
+    res=[-1,5]
+ */
