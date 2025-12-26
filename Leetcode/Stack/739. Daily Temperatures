@@ -1,0 +1,26 @@
+Question: https://leetcode.com/problems/daily-temperatures/
+
+Solution:
+class Solution {
+    public int[] dailyTemperatures(int[] temp) {
+        Stack<Integer> st = new Stack<>();
+        int[] res = new int[temp.length];
+
+        for(int i=0;i<temp.length;i++) {
+            while(!st.isEmpty() && temp[st.peek()] < temp[i]) {
+                int idx = st.pop();
+                res[idx] = (i-idx);
+            }
+            
+            st.push(i);
+        }
+
+        return res;
+    }
+}
+
+/*
+    st=[1,]
+    res = [1,]
+    res[st.peek()] = (i-st.peek());
+ */
