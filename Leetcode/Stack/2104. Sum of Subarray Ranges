@@ -1,0 +1,77 @@
+Note:
+Analyzation why I can't make my optimized approach (stack-solution):
+
+1. What my brute-force solution tells me :
+		
+			Total = (sum of all subarray maximums) - (sum of all subarray minimums)
+			
+This convertion says:
+		nums[i] = How many sub-arrays takes nums[i] as min and how many takes nums[i] as max 
+
+Converting this statement to formula:
+		
+		Contribution of nums[i] = nums[i] * (#subarrays where it is max) - nums[i] * (#subarrays where it is min)
+
+finally we get : (nums[i]) * (i - left) * (right - i)
+
+
+Question:https://leetcode.com/problems/sum-of-subarray-ranges/description/
+
+Solution:
+class Solution {
+    /*
+    This is my naive solution which is O(n^2)
+
+    public long subArrayRanges(int[] nums) {
+        long sum=0;
+        for(int i=0;i<nums.length;i++) {
+            int min = Integer.MAX_VALUE;
+            int max = Integer.MIN_VALUE;
+            for(int j=i;j<nums.length;j++) {
+                min = Math.min(nums[j],min);
+                max = Math.max(nums[j],max);
+                int diff = max - min;
+                sum+=diff;
+            }
+            
+        }
+
+        return sum;
+    }
+    */
+
+    public long subArrayRanges(int[] nums) {
+        Stack<Integer> st = new Stack<>();
+        long res=0;
+
+        for(int i=0;i<=nums.length;i++) {
+            while(!st.isEmpty() && (i==nums.length || nums[st.peek()] >= nums[i])) {
+                int mid = st.pop();
+                int left = st.isEmpty() ? -1 : st.peek();
+                res -=(long)nums[mid]*(i-mid)*(mid-left); 
+                // System.out.println("res: "+res);
+            }
+            st.push(i);
+            // System.out.println(st);
+        }
+        st.clear();
+        
+        for(int i=0;i<=nums.length;i++) {
+            while(!st.isEmpty() && (i==nums.length || nums[st.peek()] <= nums[i])) {
+                int mid = st.pop();
+                int left = (st.isEmpty()) ? -1 : st.peek();
+                res+=(long)nums[mid]*(i-mid)*(mid-left);
+            }
+            st.push(i);
+        }
+
+        return res;
+    }
+
+
+}
+
+/*
+    nums = [1,2,3]
+    st = [1, ]
+ */
