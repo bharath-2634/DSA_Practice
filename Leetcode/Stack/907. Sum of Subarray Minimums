@@ -1,0 +1,67 @@
+Question: https://leetcode.com/problems/sum-of-subarray-minimums/description/
+
+Solution:
+/*
+
+This is my O(n^2) recursive approach to solve this problem
+class Solution {
+    private int total_sum=0;
+    private static final int MOD = 1_000_000_007;
+
+    public void getSubarrayMins(int[] arr,int idx) {
+        if(idx>=arr.length) return;
+
+        // if(dp[idx]!=0) return dp[idx];
+
+        int min = Integer.MAX_VALUE;
+
+        for(int i=idx;i<arr.length;i++) {
+            min = Math.min(min,arr[i]);
+            total_sum = (total_sum+min)%MOD;
+            // dp[i] = total_sum;
+        }
+
+        getSubarrayMins(arr,idx+1);
+    }
+
+    public int sumSubarrayMins(int[] arr) {
+        getSubarrayMins(arr,0);
+        return total_sum%MOD;
+    }
+}
+*/
+
+class Solution {
+    private static final int MOD = 1_000_000_007;
+    public int sumSubarrayMins(int[] arr) {
+        Stack<Integer> st = new Stack<>();
+        int[] left = new int[arr.length];
+        int[] right = new int[arr.length];
+
+        for(int i=0;i<arr.length;i++) {
+            while(!st.isEmpty() && arr[st.peek()] >= arr[i]) {
+                st.pop();
+            }
+            left[i] = (st.isEmpty()) ? i+1 : i-st.peek();
+            st.push(i);
+        }
+
+        st.clear();
+
+        for(int i=arr.length-1;i>=0;i--) {
+            while(!st.isEmpty() && arr[st.peek()] > arr[i]) {
+                st.pop();
+            }
+            right[i] = (st.isEmpty()) ? arr.length-i : st.peek()-i;
+            st.push(i);
+        }
+
+        long total=0;
+
+        for(int i=0;i<arr.length;i++) {
+            total = (total+ (long)arr[i]*left[i]*right[i])%MOD;
+        }
+
+        return (int)total%MOD;
+    }
+}
