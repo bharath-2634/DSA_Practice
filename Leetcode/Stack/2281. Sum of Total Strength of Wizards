@@ -1,0 +1,66 @@
+Question: https://leetcode.com/problems/sum-of-total-strength-of-wizards/
+
+Solution:
+// class Solution {
+//     private static final int MOD = 1_000_000_007;
+
+    /*
+    This is my brute force approach and its T.C : O(n^2)
+
+    public int totalStrength(int[] strength) {
+        int total_strength=0;
+
+        for(int i=0;i<strength.length;i++) {
+            int min=strength[i];
+            int total=0;
+            for(int j=i;j<strength.length;j++) {
+                total+=strength[j];
+                min = Math.min(min,strength[j]);
+            }
+
+            total_strength+=(total*min);
+        }
+
+        return total_strength;
+    }
+    */
+
+    // public int totalStrength(int[] strength) {
+    //     long[] prefix_arr = new long[strength.length];
+    //     prefix_arr[0] = strength[0];
+
+    //     for(int i=1;i<strength.length;i++) {
+    //         prefix_arr[i] = prefix_arr[i-1]+strength[i];
+    //     }
+
+    //     long[] prefix_prefix = new long[strength.length];
+    //     prefix_prefix[0] = prefix_arr[0];
+    //     for(int i=1;i<strength.length;i++) {
+    //         prefix_prefix[i] = prefix_prefix[i-1]+prefix_arr[i];
+    //     }
+
+    //     Stack<Integer> st = new Stack<>();
+    //     long res=0;
+
+    //     for(int i=0;i<=strength.length;i++) {
+    //         while(!st.isEmpty() && (i==strength.length || strength[st.peek()] >= strength[i])) {
+    //             int mid = st.pop();
+    //             int left = (st.isEmpty()) ? -1 : st.peek();
+
+    //             int left_count = mid-left;
+    //             int right_count = i-mid;
+
+    //             long right_sum = prefix_prefix[i-1] - (mid > 0 ? prefix_prefix[mid-1] : 0);
+    //             long left_sum = (mid > 0)
+    //                     ? prefix_prefix[mid - 1] - (left >= 0 ? prefix_prefix[left] : 0)
+    //                     : 0;
+
+    //             long contribution =  strength[mid] * (right_sum*left_count - left_sum*right_count);
+    //             res = (res+contribution)%MOD;
+    //         }
+    //         st.push(i);
+    //     }
+
+    //     return (int)((res % MOD + MOD) % MOD);
+    // }
+// }
