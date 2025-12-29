@@ -1,0 +1,41 @@
+Question: https://leetcode.com/problems/longest-continuous-increasing-subsequence/description/
+
+Solution:
+class Solution {
+    /*
+
+    This solution works for all continous increasing subsequence but not for all longest increasing subsequence
+    public int findLengthOfLCIS(int[] nums) {
+        int len=0,max_len=0;
+        
+        for(int i=1;i<nums.length;i++) {
+            if(nums[i-1] < nums[i]) {
+                len++;
+            }else {
+                max_len = Math.max(max_len,len);
+                len=0;
+            }
+        }
+        max_len = Math.max(max_len,len);
+
+        return max_len+1;
+    }
+    */
+
+    public int getLCS(int[] nums,int idx,int current_max,int best,int[] dp) {
+        if(idx==nums.length) return Math.max(best,current_max);
+
+        if(dp[idx]!=0) return dp[idx];
+
+        if(idx>0 && nums[idx-1]<nums[idx]) {
+            return dp[idx] = getLCS(nums,idx+1,current_max+1,Math.max(current_max+1,best),dp);
+        }else {
+            return dp[idx] = getLCS(nums,idx+1,1,best,dp);
+        }
+    }
+
+    public int findLengthOfLCIS(int[] nums) {
+        int[] dp = new int[nums.length];
+        return getLCS(nums,1,1,1,dp);
+    }
+}
