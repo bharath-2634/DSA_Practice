@@ -1,0 +1,84 @@
+Question:https://leetcode.com/problems/count-the-number-of-substrings-with-dominant-ones/
+
+Solution:
+class Solution {
+    /*
+
+    This is my brute-force approach -> O(n^2)
+
+    public int numberOfSubstrings(String s) {
+        int count=0;
+
+        for(int i=0;i<s.length();i++) {
+            int zero=0,ones=0;
+            for(int j=i;j<s.length();j++) {
+                if(s.charAt(j)=='0') zero++;
+                else ones++;
+
+                if((zero*zero)<=ones) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+    */
+
+    public int numberOfSubstrings(String s) {
+        int[] prefix_zero = new int[s.length()];
+        int[] prefix_one = new int[s.length()];
+
+        prefix_zero[0] = (s.charAt(0)=='0') ? 1 : 0;
+        prefix_one[0] = (s.charAt(0)=='1') ? 1 : 0;
+
+        for(int i=1;i<s.length();i++) {
+            if(s.charAt(i)=='0') {
+                prefix_zero[i] = prefix_zero[i-1]+1;
+                prefix_one[i] = prefix_one[i-1]+0;
+            }else {
+                prefix_zero[i] = prefix_zero[i-1]+0;
+                prefix_one[i] = prefix_one[i-1]+1;
+            }
+        }
+
+        int count=0;
+
+        for(int i=0;i<s.length();i++) {
+            int j=i;
+            while(j<s.length()) {
+                int zero_count = prefix_zero[j] - ((i==0)? 0: prefix_zero[i-1]);
+                int one_count = prefix_one[j] - ((i==0) ? 0: prefix_one[i-1]);
+
+                if(zero_count*zero_count<=one_count) {
+                    // still checking how many ones that I can handle to stay in this conditions
+                    int k = Math.max(1,((int)Math.sqrt(one_count) - zero_count));
+                    count+=Math.min(k,s.length()-j);
+                    j+=k;
+                }else {
+                    j+=zero_count*zero_count - one_count;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+
+/*
+    turning down this question to -> "grouping of valid patterns"
+
+    s = "00011"
+    grps = [1,1,01,011,0011] -> length=5
+
+    s = "101101"
+    grps = [10, 01, 011,0110,1,1,11,110,1101,1,01,101101, 101, 1011....]
+
+    s = "00011"
+    zero_idx = [0,1,2,5]
+
+    formula: z^2<= o
+    z^2-0 = skip 
+    z^2<= o + k
+    z^2-o<= k
+*/
