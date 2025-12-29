@@ -1,0 +1,35 @@
+🟢 Easy → Medium
+
+LeetCode 696 – Count Binary Substrings
+
+Count substrings with equal number of 0s and 1s in consecutive groups
+
+LeetCode 1446 – Consecutive Characters
+
+Find longest run of same character
+
+LeetCode 1869 – Longer Contiguous Segments of Ones than Zeros
+
+🟡 Medium (Same core idea, more logic)
+
+LeetCode 1578 – Minimum Time to Make Rope Colorful
+
+Group same colors, choose max cost in each group
+
+LeetCode 926 – Flip String to Monotone Increasing
+
+Track transitions and cumulative cost
+
+LeetCode 845 – Longest Mountain in Array
+
+Count increasing + decreasing sequences
+
+🔵 Advanced Pattern Evolution
+
+LeetCode 228 – Summary Ranges
+
+Group consecutive numbers
+
+LeetCode 795 – Number of Subarrays with Bounded Maximum
+
+Convert constraint → contribution counting
