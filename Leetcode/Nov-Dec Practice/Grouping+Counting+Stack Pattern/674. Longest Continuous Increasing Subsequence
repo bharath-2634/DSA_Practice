@@ -1,4 +1,4 @@
-Question: https://leetcode.com/problems/longest-continuous-increasing-subsequence/description/
+Question: https://leetcode.com/problems/longest-continuous-increasing-subsequence/
 
 Solution:
 class Solution {
@@ -22,6 +22,9 @@ class Solution {
     }
     */
 
+    /*
+
+    This is my recursive + memoization approach
     public int getLCS(int[] nums,int idx,int current_max,int best,int[] dp) {
         if(idx==nums.length) return Math.max(best,current_max);
 
@@ -38,4 +41,26 @@ class Solution {
         int[] dp = new int[nums.length];
         return getLCS(nums,1,1,1,dp);
     }
+    */
+
+    public int findLengthOfLCIS(int[] nums) {
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int ans=0;
+
+        for(int i=1;i<nums.length;i++) {
+            if(nums[i-1] < nums[i]) {
+                dp[i] = dp[i-1]+1;
+                ans = Math.max(dp[i],ans);
+            }else {
+                dp[i] = 1;
+            }
+        }
+
+        return Math.max(ans,dp[nums.length-1]);
+    }
 }
+
+/*
+    
+ */
