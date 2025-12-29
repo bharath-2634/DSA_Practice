@@ -1,0 +1,99 @@
+Question: https://leetcode.com/problems/pyramid-transition-matrix
+
+Solution:
+class Solution {
+
+    public void generateAdjList(List<String> allowed, Map<String,List<String>> adjList) {
+
+        for(String str : allowed) {
+            String s = str.substring(0,2);
+            adjList.computeIfAbsent(s,k->new ArrayList<>()).add(String.valueOf(str.charAt(2)));
+        } 
+    }
+
+    public boolean getPyramidTransition(String bottom, Map<String,List<String>> adjList,Map<String,Boolean> dp) {
+        if(bottom.length()==1) return true;
+
+        if(dp.containsKey(bottom)) return dp.get(bottom);
+
+        List<String> nextLevel = new ArrayList<>();
+        nextLevel.add("");
+
+        for(int i=0;i<bottom.length()-1;i++) {
+            String s = bottom.substring(i,i+2);
+
+            if(!adjList.containsKey(s)) {
+                dp.put(bottom,false);
+                return false;
+            }
+
+            List<String> temp = new ArrayList<>();
+            for(String prev : nextLevel) {
+                for(String node : adjList.get(s)) {
+                    temp.add(prev+node);
+                }
+            }
+            nextLevel = temp;
+        }
+
+        for(String next : nextLevel) {
+            if(getPyramidTransition(next,adjList,dp)) {
+                dp.put(bottom,true);
+                return true;
+            }
+        }
+
+        dp.put(bottom,false);
+        return false;
+    }
+
+    public boolean pyramidTransition(String bottom, List<String> allowed) {
+        Map<String,List<String>> adjList = new HashMap<>();
+        generateAdjList(allowed,adjList);
+
+        Map<String,Boolean> dp = new HashMap<>();
+        return getPyramidTransition(bottom,adjList,dp);
+    }
+}
+
+/*
+    bottom = "BCD"
+    allowed = ["BCC","CDE","CEA","FFF"]
+
+    BC->C, 
+    CD->E,
+    CE->A,
+    FF->F
+
+    E
+    CD
+    BCD
+    
+    // forming pyramid
+    BCD -> level 3
+    [BC, CD] -> possible formation available
+    BC->C
+    CD->E
+
+    BCD
+    BC -> level 2
+    [only available BCC but already used it !]
+    [go back]
+
+    BCD
+    CE
+    [CE->A (not used) so ]
+
+    BCD
+    CE
+    A
+    [possible] -> true
+
+    // testcase-2:
+    AAAA -> level-4
+    [AA, AA, AA -> possible pairs AAB, AAC]
+    [AB, AC ->will be the next level wright! but I want strings with length 3 ]
+
+
+
+ */
