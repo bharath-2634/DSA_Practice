@@ -1,0 +1,59 @@
+Question: https://leetcode.com/problems/count-binary-substrings/
+
+Solution:
+class Solution {
+    /*
+    Brute force approach O(n^2)
+
+    public int countBinarySubstrings(String s) {
+        int count=0;
+        for(int i=0;i<s.length()-1;i++) {
+            int zero=0,ones=0;
+            for(int tail=i;tail<s.length();tail++) {
+                if(s.charAt(tail)=='0') zero++;
+                else ones++;
+
+                if(zero==ones) {
+                    count++;
+                    break;
+                }
+            }
+        }
+
+        return count;
+    }
+    */
+
+    public int countBinarySubstrings(String s) {
+
+        if(s.length()==1) return 0;
+
+        int current_grp=1,prev_grp=0,count=0;
+
+        for(int i=1;i<s.length();i++) {
+            if(s.charAt(i)==s.charAt(i-1)) {
+                current_grp++;
+            }else {
+                count+=Math.min(current_grp,prev_grp);
+                prev_grp=current_grp;
+                current_grp=1;
+            }
+        }
+
+        count+=Math.min(current_grp,prev_grp);
+        return count;
+    }
+}
+
+/*
+    This is a standard pattern for Counting + grouping
+    s = "00110011"
+    zero=1+1
+    one=1+1
+
+    when both becomes equal-> count++ , zero=0,ones=0 ->count=1
+    zero=2
+    one=2
+    
+    if match is found I need to reset the values -> answer = Σ min(group[i], group[i+1]) // formula
+ */
