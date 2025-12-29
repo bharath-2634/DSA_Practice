@@ -1,0 +1,42 @@
+Question: https://leetcode.com/problems/consecutive-characters/
+
+
+Solution:
+class Solution {
+    public int maxPower(String s) {
+        int len=1,max_len = Integer.MIN_VALUE;
+
+        for(int i=1;i<s.length();i++) {
+            if(s.charAt(i)==s.charAt(i-1)) {
+                len++;
+                max_len = Math.max(max_len,len);
+            }else {
+                len=1;
+            }
+        }
+
+        return max_len==Integer.MIN_VALUE ? 1 : max_len;
+    }
+}
+
+/*
+    s="leetcode"
+    l!=e ->len=1
+    e==e -> len++ len=2
+    t!=e -> len=1
+    c!=t -> len=1
+    o!=c -> len=1
+    d!=o -> len=1
+    e!=d -> len=1
+
+    max_len = 2
+
+    s="abbcccddddeeeeedcba"
+    b!=a ->len=1
+    b==b ->len++ -> len=2
+    c!=b ->len=1
+    c==c ->len++ -> len=2
+    c==c ->len++ -> len=3
+
+
+ */
