@@ -1,8 +1,33 @@
 Question: https://leetcode.com/problems/consecutive-characters/
 
 
-Solution:
 class Solution {
+
+    /*
+
+    This is my recursion+Memoization approach
+    public int getMaxPower(String s,int idx,int current_max,int best,int[] dp) {
+        if(idx==s.length()) return Math.max(current_max,best);
+
+        if(dp[idx]!=0) return dp[idx];
+
+        if(idx>0 && s.charAt(idx-1)==s.charAt(idx)) {
+            return dp[idx] = getMaxPower(s,idx+1,current_max+1,Math.max(best,current_max+1),dp);
+        }else {
+            return dp[idx] = getMaxPower(s,idx+1,1,best,dp);
+        }
+    }
+
+    public int maxPower(String s) {
+        int[] dp = new int[s.length()];
+        return getMaxPower(s,0,0,0,dp);
+    }
+
+    */
+
+    /*
+
+    This is my iterative approach
     public int maxPower(String s) {
         int len=1,max_len = Integer.MIN_VALUE;
 
@@ -14,8 +39,26 @@ class Solution {
                 len=1;
             }
         }
-
         return max_len==Integer.MIN_VALUE ? 1 : max_len;
+    }
+    */
+
+    public int maxPower(String s) {
+        int[] dp = new int[s.length()];
+        dp[0] = 1;
+        int ans = Integer.MIN_VALUE;
+
+        for(int i=1;i<s.length();i++) {
+            if(s.charAt(i)==s.charAt(i-1)) {
+                dp[i] = dp[i-1]+1;
+                ans= Math.max(ans,dp[i]);
+            }else {
+                dp[i] = 1;
+            }
+        }
+
+        ans = Math.max(ans,dp[dp.length-1]);
+        return ans;
     }
 }
 
