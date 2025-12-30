@@ -1,0 +1,130 @@
+Question: https://leetcode.com/problems/minimum-time-to-make-rope-colorful/description/
+
+Solution: 
+/*
+class Solution {
+
+    public void shiftArray(int[] neededTime,int idx) {
+        for(int i=idx+1;i<neededTime.length;i++){
+            neededTime[i-1] = neededTime[i];
+        }
+    }
+
+    public int minCost(String colors, int[] neededTime) {
+        int min_cost = 0,i=1;
+        StringBuilder sb = new StringBuilder(colors);
+
+        while(i<sb.length()) {
+            if(sb.charAt(i)==sb.charAt(i-1)) {
+                if(neededTime[i] < neededTime[i-1]) {
+                    sb.deleteCharAt(i);
+                    min_cost+=neededTime[i];
+                    shiftArray(neededTime,i);
+                }else {
+                    sb.deleteCharAt(i-1);
+                    min_cost+=neededTime[i-1];
+                    shiftArray(neededTime,i-1);
+                }
+                System.out.println(sb + " " + min_cost);
+            }else {
+                i++;
+            }
+        }
+
+        return min_cost;
+    }
+}
+
+*/
+
+/*
+
+This is my greedy Approach for solving this problem O(n)
+class Solution {
+    public int minCost(String colors, int[] neededTime) {
+        int left=0,res=0,right=1;
+
+        while(right<colors.length()) {
+            if(colors.charAt(left)==colors.charAt(right)) {
+                res+=Math.min(neededTime[left],neededTime[right]);
+                if(neededTime[left] < neededTime[right]) {
+                    left = right;
+                    right++;
+                }else {
+                    right++;
+                }
+            }else {
+                left = right;
+                right++;
+            }
+        }
+
+        return res;
+    }
+}
+*/
+
+/*
+
+This is recursive + memoization 
+class Solution {
+    public int getMinCost(String colors,int[] neededTime,int left,int right,int[][] dp) {
+        if(right==neededTime.length) return 0;
+
+        if(dp[left][right]!=0) return dp[left][right];
+
+        if(colors.charAt(left)==colors.charAt(right)) {
+            // current_cost+=Math.min(neededTime[left],neededTime[right]);
+            if(neededTime[left] < neededTime[right]) {
+                return dp[left][right] = neededTime[left] + getMinCost(colors,neededTime,right,right+1,dp);
+            }else {
+                return dp[left][right] = neededTime[right] + getMinCost(colors,neededTime,left,right+1,dp);
+            } 
+        }else {
+            return dp[left][right] = getMinCost(colors,neededTime,right,right+1,dp);
+        }
+    }
+
+    public int minCost(String colors,int[] neededTime) {
+        int[][] dp = new int[colors.length()][colors.length()];
+        return getMinCost(colors,neededTime,0,1,dp);
+    }
+}
+*/
+
+class Solution {
+    public int minCost(String colors,int[] neededTime) {
+        int[][] dp = new int[colors.length()][colors.length()+1];
+        dp[0][0] = 0;
+
+        for(int right=colors.length()-1;right>=1;right--) {
+            for(int left=right-1;left>=0;left--) {
+                if(colors.charAt(left)==colors.charAt(right)) {
+                    dp[left][right] = Math.min(neededTime[left]+dp[right][right+1],neededTime[right]+dp[left][right+1]);
+                }else {
+                    dp[left][right] = dp[right][right+1];
+                }
+            }
+        }
+
+        return dp[0][1];
+    }
+}
+
+/*
+    colors = "abaac"
+    neededTime = [1,2,3,4,5]
+
+    blue<->red<->blue<->blue<->blue<->green<->
+
+    colors = "aabaa"
+    neededTime = [1,2,3,4,1] 
+    
+    colors = "bbbaaa"
+    [4,9,3,8,8,9]
+
+    colors = "bbaaa"
+    [9,3,8,8,9]
+
+
+*/
