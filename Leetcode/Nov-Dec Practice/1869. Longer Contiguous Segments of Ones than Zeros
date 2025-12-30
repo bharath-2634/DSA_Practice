@@ -1,0 +1,67 @@
+Question: https://leetcode.com/problems/longer-contiguous-segments-of-ones-than-zeros/
+
+Solution:
+class Solution {
+
+    /*
+    This is my recursive + Memoization approach 
+    public boolean getRes(String s,int idx,int count_zero,int count_one,int max_zero,int max_one,Map<String,Boolean> dp) {
+        
+        if(idx==s.length()) return max_zero>=max_one ? false : true;
+        
+        String key = idx+","+count_zero+","+count_one+","+max_zero+","+max_one;
+        if(dp.containsKey(key)) return dp.get(key);
+        boolean res;
+
+        if(s.charAt(idx)=='1') {
+            res = getRes(s,idx+1,0,count_one+1,max_zero,Math.max(max_one,count_one+1),dp);
+        }else{
+            res = getRes(s,idx+1,count_zero+1,0,Math.max(max_zero,count_zero+1),max_one,dp);
+        }
+
+        dp.put(key,res);
+        return res;
+    }
+
+    public boolean checkZeroOnes(String s) {
+        Map<String,Boolean> dp = new HashMap<>();
+        return getRes(s,0,0,0,Integer.MIN_VALUE,Integer.MIN_VALUE,dp);
+    }
+    */
+
+    /*
+    This is my iterative approach 
+    public boolean checkZeroOnes(String s) {
+        int count_zero=0,count_one=0;
+        int max_zero = Integer.MIN_VALUE, max_one = Integer.MIN_VALUE;
+
+        for(char c : s.toCharArray()) {
+            if(c=='1') {
+                count_one++;
+                count_zero=0;
+                max_one = Math.max(max_one,count_one);
+            }else {
+                count_zero++;
+                count_one=0;
+                max_zero = Math.max(max_zero,count_zero);
+            }
+        }
+
+        if(max_zero>=max_one) return false;
+
+        return true;
+    }
+
+    */
+
+}
+
+/*
+    s="1101"
+    count_one = 0 (max=2)
+    count_zero = 1 (max=1)
+
+    s = "111000"
+
+
+*/
