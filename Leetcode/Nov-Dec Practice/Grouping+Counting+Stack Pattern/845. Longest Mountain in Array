@@ -1,0 +1,45 @@
+Question: https://leetcode.com/problems/longest-mountain-in-array/description/
+
+Solution:
+class Solution {
+    public int longestMountain(int[] arr) {
+        int max_len = 0;
+
+        if(arr.length<3) return 0;
+
+        for(int i=0;i<arr.length;i++) {
+            int left=i,right=i;
+            int peek = arr[left];
+
+            boolean inc=true;
+            while(left>=1) {
+                if(arr[left] <= arr[left-1] || arr[left] > peek || arr[left-1] > peek) {
+                    inc = false;
+                    break;
+                }
+                left--;
+            }
+
+            if(left==i) continue;
+
+            boolean dec = true;
+            while(right<arr.length-1) {
+                if(arr[right] <= arr[right+1] || arr[right] > peek || arr[right+1] > peek) {
+                    dec = false;
+                    break;
+                }
+                right++;
+            }
+            if(right==i) continue;
+
+            max_len = Math.max(max_len,(right-left));
+        }
+
+        return max_len==0 ? 0 : max_len+1;
+    }
+}
+
+/*
+    arr = [2,1,4,7,3,2,5]
+    -> 
+*/
