@@ -1,0 +1,89 @@
+Q1. Best Value Item (Ratings / Price)
+You are given two arrays of equal length:
+•	prices[] — the price of each item
+•	ratings[] — the rating of each item (from 1 to 5)
+Each index represents the same item in both arrays.
+Find the index of the item that has the highest ratio of rating / price.
+If multiple items have the same highest ratio, return the one with the smallest index.
+________________________________________
+📥 Input
+•	prices: array of positive integers
+•	ratings: array of positive integers
+Constraints
+•	1 ≤ prices.length ≤ 100
+•	1 ≤ prices[i] ≤ 100
+•	1 ≤ ratings[i] ≤ 5
+•	prices.length == ratings.length
+________________________________________
+📤 Output
+•	Return an integer — the index of the item with the highest rating / price value.
+________________________________________
+🧪 Example 1
+Input
+prices = [6, 5, 4, 3]
+ratings = [4, 3, 2, 1]
+Calculations
+4 / 6 ≈ 0.66
+3 / 5 = 0.60
+2 / 4 = 0.50
+1 / 3 ≈ 0.33
+Output
+0
+________________________________________
+🧪 Example 2
+Input
+prices = [7, 5, 2, 11]
+ratings = [3, 4, 1, 3]
+Calculations
+3 / 7 ≈ 0.43
+4 / 5 = 0.80
+1 / 2 = 0.50
+3 / 11 ≈ 0.27
+Output
+1
+________________________________________
+✅ Notes
+•	You are not required to optimize heavily.
+•	A simple loop comparing ratios is sufficient.
+•	If two ratios are equal, return the smaller index.
+
+Solution:
+import java.util.*;
+
+class Main {
+    
+    public static int getMaxPItem(int[] ratings,int[] price) {
+        double max_item = -1;
+        int idx=0;
+
+        for(int i=0;i<ratings.length;i++) {
+            double score = (double) ratings[i]/price[i];
+
+            if(max_item < score) {
+                max_item = score;
+                idx=i;
+            }
+        }
+
+        return idx;
+    }
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        int[] ratings = new int[n];
+        int[] price = new int[n];
+
+        for(int i=0;i<n;i++) {
+            ratings[i] = sc.nextInt();
+        } 
+
+        for(int i=0;i<n;i++) {
+            price[i] = sc.nextInt();
+        }
+
+        int res = getMaxPItem(ratings,price);
+        System.out.println(res);
+    }
+}
