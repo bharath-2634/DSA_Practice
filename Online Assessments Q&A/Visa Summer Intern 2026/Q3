@@ -1,0 +1,107 @@
+Problem Description
+Imagine that your mobile phone is currently out of battery, but you need to use it for t minutes.
+You have a number of spare batteries.
+
+Each battery i has:
+•	capacity[i] → number of minutes the phone can be used once the battery is fully charged.
+•	recharge[i] → number of minutes required to fully recharge that battery after it is depleted.
+Rules
+•	You start at time t = 0 with the phone connected to battery 0.
+•	When a battery gets fully depleted, it immediately starts recharging.
+•	You may switch to another battery only if it is fully recharged.
+•	If the next battery is still recharging, you must skip it and try the next one cyclically.
+•	If at any moment all batteries are recharging, the phone cannot be used anymore.
+________________________________________
+Goal
+Return the number of full batteries used to keep the phone running for exactly t minutes.
+If it is not possible to keep the phone running for all t minutes, return -1.
+________________________________________
+Input
+•	t – integer, total minutes you need to use the phone
+•	capacity[] – integer array, capacity of each battery
+•	recharge[] – integer array, recharge time for each battery
+________________________________________
+Output
+•	An integer representing the number of fully used batteries
+•	Return -1 if the phone cannot be kept on for t minutes
+________________________________________
+Example
+Input:
+t = 16
+capacity = [2, 5, 6]
+recharge = [12, 1, 4]
+
+Output:
+3
+Explanation:
+•	Battery 0 used for 2 minutes → recharges until t = 14
+•	Battery 1 used for 5 minutes → recharges until t = 8
+•	Battery 2 used for 6 minutes → recharges until t = 13
+•	Battery 1 becomes available again and is used to finish the remaining time
+Total batteries used = 3
+
+Solution:
+	import java.util.*;
+
+class Main {
+
+    public static int getBatteryCount(int t,int[] capacity,int[] recharge) {
+        if(t==0) return 0;
+        int curr_time=0,count=0,last_idx=0;
+        int[] next_available = new int[capacity.length];
+        Arrays.fill(next_available,0);
+
+        while(curr_time<t) {
+            boolean found_battery=false;
+            
+            for(int i=0;i<capacity.length;i++) {
+                if(next_available[i]<=curr_time) {
+                    found_battery=true;
+                    // last_idx = i;
+                    break;
+                }
+            }
+
+            if(!found_battery) return -1; 
+
+            for(int k=0;k<capacity.length;k++) {
+                int idx = (last_idx+1+k)%capacity.length;
+                if(next_available[idx]<=curr_time) {
+                    curr_time+=capacity[idx];
+                    next_available[idx] = curr_time+recharge[idx];
+                    last_idx = idx;
+                    count++;
+                    break;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        int n = sc.nextInt();
+        int[] capacity = new int[n];
+        int[] recharge = new int[n];
+
+        for(int i=0;i<n;i++) {
+            capacity[i] = sc.nextInt();
+        }        
+
+        for(int i=0;i<n;i++) {
+            recharge[i] = sc.nextInt();
+        }
+
+        int res = getBatteryCount(t,capacity,recharge);
+        System.out.println(res);
+    }
+}
+
+/*  
+    current_time = 2 + 5 + 6 = 13
+    [2+12,7+1,13+4]
+    capacity[i] <= time[i-1] ->use the battery
+
+*/
