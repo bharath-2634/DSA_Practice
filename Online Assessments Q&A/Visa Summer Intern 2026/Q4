@@ -1,0 +1,129 @@
+Problem Description
+You are given a binary array state consisting of integers 0 and 1.
+You are also given an array of strings called operations, where each string represents one operation to be applied to state.
+Operations
+Each operation is one of the following two types:
+1.	"L"
+o	Find the smallest index i such that state[i] == 0
+o	Set state[i] = 1
+o	If no such index exists, do nothing
+2.	"C<index>"
+o	Set state[index] = 0
+o	This operation does not depend on the previous value at that index
+o	It is guaranteed that index is a valid index (i.e., 0 ≤ index < state.length)
+________________________________________
+Task
+After applying all operations in order, return the final state as a binary string.
+________________________________________
+Input Format
+•	state: integer array consisting only of 0 and 1
+•	operations: array of strings representing operations
+________________________________________
+Output Format
+•	A string representing the final state after all operations are applied
+________________________________________
+Constraints
+•	1 ≤ state.length ≤ 10^5
+•	All operations are valid
+________________________________________
+Example 1
+Input
+state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+operations = ["L", "L", "C0", "L", "C3"]
+Step-by-step
+1.	L → set smallest 0 index → state = [1,0,0,0,0,0,0,0,0,0]
+2.	L → set next 0 index → state = [1,1,0,0,0,0,0,0,0,0]
+3.	C0 → state[0] = 0 → [0,1,0,0,0,0,0,0,0,0]
+4.	L → set smallest 0 index → [1,1,0,0,0,0,0,0,0,0]
+5.	C3 → state[3] = 0 → unchanged at index 3
+Output
+"1100000000"
+________________________________________
+Example 2
+Input
+state = [1, 0]
+operations = ["L", "L", "C1"]
+Output
+"10"
+
+Solution: 
+Brute-force: O(m*n)
+
+class Main {
+    public static String getResult(int[] state,String[] operations) {
+        for(String op : operations) {
+            if(op.equals("L")) {
+                int idx=-1;
+                for(int i=0;i<state.length;i++) {
+                    if(state[i]==0) {
+                        idx=i;
+                        break;
+                    } 
+                }
+                state[idx] = 1;
+            }else {
+                int idx = Integer.parseInt(op.substring(1));
+                state[idx] = 0;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int st : state) {
+            sb.append(st);
+        }
+
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        int[] state = {0,0,0,0,0,0,0,0,0,0};
+        String[] operations = {"L","L","C0","L","C3"};
+        String res = getResult(state,operations);
+        System.out.println(res);
+    }
+}
+
+
+
+
+
+Optimized: O(nlogn+mlogn)
+import java.util.*;
+
+class Main {
+    public static String getResult(int[] state,String[] operations) {
+
+        TreeSet<Integer> zeros_idx = new TreeSet<>();
+        for(int i=0;i<state.length;i++) {
+            if(state[i]==0) zeros_idx.add(i);
+        }
+
+        for(String op : operations) {
+            if(op.equals("L")) {
+                if(!zeros_idx.isEmpty()) {
+                    int idx = zeros_idx.pollFirst();
+                    state[idx] = 1;
+                }
+            }else {
+                int idx = Integer.parseInt(op.substring(1));
+                state[idx] = 0;
+                zeros_idx.add(idx);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(int st : state) {
+            sb.append(st);
+        }
+
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        int[] state = {0,0,0,0,0,0,0,0,0,0};
+        String[] operations = {"L","L","C0","L","C3"};
+
+        String res = getResult(state,operations);
+        System.out.println(res);
+    }
+}
