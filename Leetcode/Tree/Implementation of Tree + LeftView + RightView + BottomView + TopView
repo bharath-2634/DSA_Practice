@@ -1,0 +1,154 @@
+Solution:
+import java.util.*;
+
+class TreeNode {
+    int data;
+    TreeNode left;
+    TreeNode right;
+
+    public TreeNode(int data) {
+        this.data = data;
+        this.left = this.right = null;
+    }
+}
+
+class View {
+    int dist;
+    TreeNode node;
+
+    public View(int x,TreeNode node) {
+        this.dist = x;
+        this.node = node;
+    }
+}
+
+class Main {
+    public static boolean helper(TreeNode root,TreeNode node) {
+        if(root==null) return false;
+
+        if(root.left==null) {
+            root.left=node;
+            return true;
+        }else if(root.right==null) {
+            root.right = node;
+            return true;
+        }else {
+            return helper(root.left,node) || helper(root.right,node);
+        }
+    }
+    
+    public static void display(TreeNode node) {
+        
+        if(node==null) return;
+
+        System.out.println(node.data);
+        display(node.left);
+        display(node.right);
+    }
+
+    /*This is right view of the tree*/
+    public static void right_view(TreeNode node,int level,List<Integer> visited) {
+        if(node==null) return;
+
+        if(visited.size()==level) {
+            System.out.println(node.data);
+            visited.add(level);
+        }
+
+        right_view(node.right,level+1,visited);
+        right_view(node.left,level+1,visited);
+    }
+    /*This is left view of the tree */
+    public static void left_view(TreeNode node,int level,List<Integer> visited) {
+        if(node==null) return;
+
+        if(visited.size()==level) {
+            System.out.println(node.data);
+            visited.add(level);
+        }
+
+        left_view(node.left,level+1,visited);
+        left_view(node.right,level+1,visited);
+    }
+
+    public static void top_view(TreeNode node,int x,Map<Integer,Integer> res) {
+        if(node==null) return;
+
+        // if(!res.containsKey(x)) {
+        //     res.put(x,node.data);
+        // }
+
+        // top_view(node.left,x-1,res);
+        // top_view(node.right,x+1,res);
+
+        Queue<View> q = new LinkedList<>();
+        q.offer(new View(0,node));
+
+        while(!q.isEmpty()) {
+            View v = q.poll();
+            int dist = v.dist;
+            TreeNode node_val = v.node;
+
+            if(!res.containsKey(dist)) {
+                res.put(dist,node_val.data);
+            }
+
+            if(node_val.left!=null) {
+                q.offer(new View(dist-1,node_val.left));
+            }
+
+            if(node_val.right!=null) {
+                q.offer(new View(dist+1,node_val.right));
+            }
+        }
+
+    }
+
+    public static void bottom_view(TreeNode node,int x,Map<Integer,Integer> res) {
+        if(node==null) return;
+
+        // if(!res.containsKey(x)) {
+        res.put(x,node.data);
+        // }
+
+        bottom_view(node.left,x-1,res);
+        bottom_view(node.right,x+1,res);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        TreeNode root = null;
+
+        while(n-->0) {
+            int data = sc.nextInt();
+            TreeNode node = new TreeNode(data);
+            if(root==null) {
+                root= node;
+            }else {
+                helper(root,node);
+            }
+        }
+
+        // display(root);
+        List<Integer> visited_right = new ArrayList<>();
+        right_view(root,0,visited_right);
+        
+        List<Integer> visited_left = new ArrayList<>();
+        left_view(root,0,visited_left);
+
+        Map<Integer,Integer> top_view_res = new HashMap<>();
+        top_view(root,0,top_view_res);
+        System.out.println("Top View of the tree");
+        for(int val : top_view_res.values()) {
+            System.out.println(val);
+        }
+
+        Map<Integer,Integer> bottom_view_res = new TreeMap<>();
+        bottom_view(root,0,bottom_view_res);
+        System.out.println("Bottom View of the tree");
+        for(int val : bottom_view_res.values()) {
+            System.out.println(val);
+        }
+    }
+}
