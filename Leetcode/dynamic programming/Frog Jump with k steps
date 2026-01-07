@@ -1,0 +1,30 @@
+Solution:
+class Main {
+
+    public int getMinHeight(int[] heights,int k,int idx,int[] dp) {
+        if(idx<0) return Integer.MAX_VALUE;
+        
+        if(dp[idx]!=0) return dp[idx];
+
+        int min_cost = Integer.MAX_VALUE;
+
+        for(int i=1;i<=k;i++) {
+            int curr_cost = (idx-i>=0) ? Math.abs(heights[idx] - heights[idx-i]) + getMinHeight(heights,k,idx-i,dp) : Integer.MAX_VALUE; 
+            min_cost = Math.min(min_cost,curr_cost);
+        } 
+
+        return dp[idx] = min_cost;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        int[] heights = new int[n];
+        for(int i=0;i<n;i++) {
+            heights[i] = sc.nextInt();
+        }
+        int[] dp = new int[n];
+        int res = getMinHeight(heights,k,heights.length-1,dp);
+    }
+}
