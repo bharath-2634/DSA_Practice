@@ -1,0 +1,33 @@
+Question: https://leetcode.com/problems/frog-jump/
+
+Solution:
+class Solution {
+
+    public boolean dfs(Set<Integer> stones_set,int pos,int jump,int last_stone,Set<String> visited) {
+        if(pos==last_stone) return true;
+
+        String key = pos+"|"+jump;
+        if(visited.contains(key)) return false;
+        visited.add(key);
+
+        for(int next_jump=jump-1;next_jump<=jump+1;next_jump++) {
+            if(next_jump>0) {
+                int cur_pos = pos+next_jump;
+                if(stones_set.contains(cur_pos)) {
+                    if(dfs(stones_set,cur_pos,next_jump,last_stone,visited)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean canCross(int[] stones) {
+        Set<Integer> stones_set = new HashSet<>();
+        for(int ston : stones) stones_set.add(ston);
+
+        if(!stones_set.contains(1)) return false;
+        Set<String> visited = new HashSet<>();
+        return dfs(stones_set,1,1,stones[stones.length-1],visited);
+    }
+}
