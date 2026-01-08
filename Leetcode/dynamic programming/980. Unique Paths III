@@ -37,3 +37,54 @@ class Solution {
         return getUniquePaths(grid,startRow,colRow,count-1);
     }
 }
+
+// one more solution but O(n*m)
+
+class Solution {
+    public boolean explored(int[][] grid) {
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==0) return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int getUniquePaths(int[][] grid,int start,int end) {
+        if(start<0 || end<0 || start>=grid.length || end>=grid[0].length) return 0;
+
+        if(grid[start][end]==2) {
+           if(explored(grid)) return 1;
+           else return 0;
+        }
+
+        if(grid[start][end]==-1) return 0;
+        int temp = grid[start][end];
+        grid[start][end] = -1;
+
+        int res = getUniquePaths(grid,start-1,end) + getUniquePaths(grid,start+1,end) + getUniquePaths(grid,start,end-1) + getUniquePaths(grid,start,end+1); 
+
+        grid[start][end] = temp;
+
+        return res;
+    }
+
+    public int uniquePathsIII(int[][] grid) {
+        int x_st=-1,y_st=-1;
+        for(int i=0;i<grid.length;i++) {
+            boolean found = false;
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    x_st=i;
+                    y_st=j;
+                    found = true;
+                    break;
+                }
+            }
+            if(found) break;
+        }
+
+        return getUniquePaths(grid,x_st,y_st);
+    }
+}
