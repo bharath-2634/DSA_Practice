@@ -1,0 +1,128 @@
+
+/*
+
+This is my naive recursive approach
+class Solution {
+    private int max_len = Integer.MIN_VALUE;
+    
+    public void getRes(String s1,String s2,int idx1,int idx2,int count) {
+        if(idx1>=s1.length() || idx2>=s2.length()) return;
+        
+        if(s1.charAt(idx1)==s2.charAt(idx2)) {
+            max_len = Math.max(max_len,count+1);
+            getRes(s1,s2,idx1+1,idx2+1,count+1);
+        }else {
+            // max_len = Math.max(max_len,count);
+            getRes(s1,s2,idx1+1,idx2,0);
+            getRes(s1,s2,idx1,idx2+1,0);
+        }
+    }
+    
+    public int longestCommonSubstr(String s1, String s2) {
+        getRes(s1,s2,0,0,0);
+        return max_len;
+    }
+}
+*/
+
+/*
+class Solution {
+    public int longestCommonSubstr(String s1, String s2) {
+        int max_len= Integer.MIN_VALUE;
+        
+        for(int i=0;i<s1.length();i++) {
+            for(int j=0;j<s2.length();j++) {
+                if(s1.charAt(i)==s2.charAt(j)) {
+                    int count=0;
+                    int idx1=i,idx2=j;
+                    while(idx1<s1.length() && idx2<s2.length() && s1.charAt(idx1)==s2.charAt(idx2)) {
+                        count++;
+                        idx1++;
+                        idx2++;
+                    }
+                    max_len = Math.max(max_len,count);
+                }
+            }
+        }
+        
+        return max_len==Integer.MIN_VALUE ? 0 : max_len;
+    }
+}
+*/
+
+/*
+
+This is my dfs approach 
+
+class Solution {
+    public int getLCS(String s1,String s2,int idx1,int idx2,int[][] dp) {
+        if(idx1>=s1.length() || idx2>=s2.length()) return 0;
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+        
+        if(s1.charAt(idx1)==s2.charAt(idx2)) {
+            return dp[idx1][idx2] = 1+getLCS(s1,s2,idx1+1,idx2+1,dp);
+        }else return dp[idx1][idx2] = 0;
+    }
+    
+    public int longestCommonSubstr(String s1, String s2) {
+        int max_len=0;
+        int[][] dp = new int[s1.length()][s2.length()];
+        for(int[] a : dp) {
+            Arrays.fill(a,-1);
+        }
+        
+        for(int i=0;i<s1.length();i++) {
+            for(int j=0;j<s2.length();j++) {
+                if(dp[i][j]==-1) {
+                    max_len = Math.max(max_len,getLCS(s1,s2,i,j,dp));
+                }else {
+                    max_len = Math.max(max_len,dp[i][j]);
+                }
+            }
+        }
+        
+        return max_len;
+    }
+}
+*/
+
+class Solution {
+    public int longestCommonSubstr(String s1, String s2) {
+        int[][] dp = new int[s1.length()][s2.length()];
+        
+        for(int i=0;i<s1.length();i++) {
+            if(s1.charAt(i)==s2.charAt(0)) {
+                dp[i][0] = 1;
+            }
+        }
+        
+        for(int i=0;i<s2.length();i++) {
+            if(s2.charAt(i)==s1.charAt(0)) {
+                dp[0][i] = 1;
+            }
+        }
+        
+        for(int i=1;i<s1.length();i++) {
+            for(int j=1;j<s2.length();j++) {
+                if(s1.charAt(i)==s2.charAt(j)) {
+                    dp[i][j] = 1+dp[i-1][j-1];
+                }else {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        
+        int max_len=0;
+        for(int[] d : dp) {
+            for(int v : d) {
+                max_len = Math.max(max_len,v);
+            }
+        }
+        
+        return max_len;
+    }
+}
+
+
+
+
