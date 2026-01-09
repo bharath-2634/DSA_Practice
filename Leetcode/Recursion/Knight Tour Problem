@@ -1,0 +1,71 @@
+Problem: https://www.geeksforgeeks.org/problems/the-knights-tour-problem/1
+
+Solution:
+import java.util.*;
+
+class Main {
+    private static int count=1;
+    private static int[][] moves = {{1,2},{2,1}, {1,-2},{-2,1}, {-1,2},{2,-1}, {-2,-1},{-1,-2}};
+    public static boolean isFilled(ArrayList<ArrayList<Integer>> res) {
+        for(List<Integer> ds : res) {
+            for(int d : ds) {
+                if(d==-1) return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean getKnightTour(int row,int col,int end_x,int end_y, ArrayList<ArrayList<Integer>> res,boolean[][] used) {
+        
+        if(row==end_x-1 && col==end_y-1) {
+            if(isFilled(res)) return true;
+            else return false;
+        }    
+        
+        if(row<0 || col<0 || row>=end_x || col>=end_y) return false;
+        
+        if(used[row][col]) return false;
+        
+        used[row][col] = true;
+        
+        for(int[] move : moves) {
+            int new_x = row+move[0];
+            int new_y = col+move[1];
+            if(new_x>=0 && new_x<end_x && new_y>=0 && new_y<end_y && !used[new_x][new_y]) {
+              
+                res.get(new_x).set(new_y,count++);
+                if(getKnightTour(new_x,new_y,end_x,end_y,res,used)) return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public static void knightTour(int n) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        boolean[][] used = new boolean[n][n];
+        for(int i=0;i<n;i++) {
+            ArrayList<Integer> ds = new ArrayList<>();
+            for(int j=0;j<n;j++) {
+                ds.add(-1);
+            }
+            res.add(ds);
+        }
+
+        res.get(0).set(0,0);
+        
+        getKnightTour(0,0,n,n,res,used);
+        
+        for(List<Integer> ds : res) {
+            System.out.println(ds);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        knightTour(n);
+
+    }
+}
