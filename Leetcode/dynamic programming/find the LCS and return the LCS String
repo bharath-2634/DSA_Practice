@@ -1,0 +1,23 @@
+Solution:
+class Solution {
+    public String getLCS(String s1,String s2,int idx1,int idx2,StringBuilder sb) {
+        if(idx1>=s1.length() || idx2>=s2.length()) return "";
+
+        if(s1.charAt(idx1)==s2.charAt(idx2)) {
+            
+            return s1.charAt(idx1)+getLCS(s1,s2,idx1+1,idx2+1,sb);
+        }
+        String a = getLCS(s1,s2,idx1+1,idx2,sb);
+        String b = getLCS(s1,s2,idx1,idx2+1,sb);
+
+        return a.length() > b.length() ? a : b; 
+    }
+
+    public int minimumDeleteSum(String s1, String s2) {
+        StringBuilder common_lcs = new StringBuilder();
+        String s = getLCS(s1,s2,0,0,common_lcs);
+        System.out.println(s);
+
+        return 0;
+    }
+}
