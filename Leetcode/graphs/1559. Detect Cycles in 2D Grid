@@ -1,6 +1,10 @@
 Question: https://leetcode.com/problems/detect-cycles-in-2d-grid/description/
 
 Solution:
+/*
+
+This is my DFS Solution
+
 class Solution {
     int[][] moves = {{0,1},{1,0},{0,-1},{-1,0}};
 
@@ -30,6 +34,62 @@ class Solution {
             for(int j=0;j<grid[0].length;j++) {
                 if(!visited[i][j]) {
                     if(dfs(grid,i,j,-1,-1,visited)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+*/
+
+class Pair {
+    int cr,cc;
+    int pr,pc;
+
+    public Pair(int cr,int cc,int pr,int pc) {
+        this.cc = cc;
+        this.cr = cr;
+        this.pr = pr;
+        this.pc = pc;
+    }
+}
+
+class Solution {
+    int[][] moves = {{0,-1},{-1,0},{0,1},{1,0}};
+
+    public boolean containsCycle(char[][] grid) {
+        Queue<Pair> q = new LinkedList<>();
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(!visited[i][j]) {
+                    q.offer(new Pair(i,j,-1,-1));
+                    visited[i][j] = true;
+
+                    while(!q.isEmpty()) {
+                        Pair p = q.poll();
+                        int cur_row = p.cr;
+                        int cur_col = p.cc;
+                        int parent_row = p.pr;
+                        int parent_col = p.pc;
+
+                        // if(visited[cur_row][cur_col]) continue;
+
+                        for(int[] move : moves) {
+                            int new_row = cur_row+move[0];
+                            int new_col = cur_col+move[1];
+
+                            if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length) continue;
+                            if(grid[new_row][new_col]!=grid[cur_row][cur_col]) continue;
+                            if(!visited[new_row][new_col]) {
+                                
+                                q.offer(new Pair(new_row,new_col,cur_row,cur_col));
+                                visited[new_row][new_col] = true;
+                            }else if((new_row!=parent_row || new_col!=parent_col)) return true;
+                        }
+                    }
                 }
             }
         }
