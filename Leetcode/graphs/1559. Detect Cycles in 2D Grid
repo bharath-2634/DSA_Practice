@@ -1,0 +1,39 @@
+Question: https://leetcode.com/problems/detect-cycles-in-2d-grid/description/
+
+Solution:
+class Solution {
+    int[][] moves = {{0,1},{1,0},{0,-1},{-1,0}};
+
+    public boolean dfs(char[][] grid,int cr,int cc,int pr,int pc,boolean[][] visited) {
+        visited[cr][cc] = true;
+
+        for(int[] move : moves) {
+            int new_row = cr+move[0];
+            int new_col = cc+move[1];
+
+            if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length) continue;
+
+            if(grid[new_row][new_col]!=grid[cr][cc]) continue;
+
+            if(!visited[new_row][new_col]) {
+                if(dfs(grid,new_row,new_col,cr,cc,visited)) return true;
+            }else if(new_row!=pr || new_col!=pc) return true;
+        }
+
+        return false;
+    }
+
+    public boolean containsCycle(char[][] grid) {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(!visited[i][j]) {
+                    if(dfs(grid,i,j,-1,-1,visited)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
