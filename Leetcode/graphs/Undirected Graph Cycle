@@ -140,6 +140,95 @@ class Solution {
     }
 }
 
+// again in deep modification
+
+/*
+
+class Solution {
+    
+    public void generateAdjList(int[][] edges,HashMap<Integer,List<Integer>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }    
+    }
+    
+    public boolean dfs(int node,int parent,HashMap<Integer,List<Integer>> adjList,boolean[] visited) {
+        
+        visited[node] = true;
+        
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,node,adjList,visited)) return true;
+            }else if(adjNode!=parent) return true;
+        }
+        
+        return false;
+    }
+    
+    public boolean isCycle(int V, int[][] edges) {
+        HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+        
+        // System.out.println(adjList);
+        boolean[] visited = new boolean[V];
+        
+        for(int node : adjList.keySet()) {
+            if(!visited[node] && dfs(node,-1,adjList,visited)) return true;
+        }
+        
+        return false;
+    }
+}
+
+*/
+
+class Solution {
+    
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }    
+    }
+    
+    public boolean isCycle(int V,int[][] edges) {
+        HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(adjList,edges);
+        boolean[] visited = new boolean[V];
+        
+        Queue<int[]> q = new LinkedList<>();
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                q.offer(new int[]{node,-1});
+                
+                while(!q.isEmpty()) {
+                    int[] pair = q.poll();
+                    int n = pair[0];
+                    int parent = pair[1];
+                    visited[n]= true;
+                    
+                    for(int adjNode : adjList.get(n)) {
+                        if(!visited[adjNode]) {
+                            q.offer(new int[]{adjNode,n});
+                        }else if(adjNode!=parent) return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+
+
+
 
 
 
