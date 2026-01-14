@@ -1,7 +1,9 @@
 Question:https://www.geeksforgeeks.org/problems/number-of-distinct-islands/1
 
 Solution:
-// User function Template for Java
+/*
+
+This is my dfs solution
 
 class Solution {
     
@@ -38,3 +40,55 @@ class Solution {
         
     }
 }
+
+*/
+
+class Solution {
+    int countDistinctIslands(int[][] grid) {
+        HashSet<List<String>> dist_islands = new HashSet<>();
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        Queue<int[]> q = new LinkedList<>();
+        
+        int[][] moves = {{0,-1},{-1,0},{0,1},{1,0}};
+        
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1 && !visited[i][j]) {
+                    q.offer(new int[]{i,j,i,j});
+                    visited[i][j] = true;
+                    ArrayList<String> islands = new ArrayList<>();
+                    while(!q.isEmpty()) {
+                        int[] pair = q.poll();
+                        int row1 = pair[0];
+                        int col1 = pair[1];
+                        int row2 = pair[2];
+                        int col2 = pair[3];
+                        
+                        String key = (row2-row1)+"|"+(col2-col1);
+                        islands.add(key);
+                        // System.out.println(key);
+                        
+                        for(int[] move : moves) {
+                            int new_row = row2+move[0];
+                            int new_col = col2+move[1];
+                            
+                            if(new_row>=0 && new_col>=0 && new_row<grid.length && new_col<grid[0].length && !visited[new_row][new_col] && grid[new_row][new_col]==1) {
+                                q.offer(new int[]{row1,col1,new_row,new_col});
+                                visited[new_row][new_col] = true;
+                            }
+                        }
+                        
+                    }
+                    // System.out.println(dist_islands);
+                    if(islands.size()!=0) {
+                        dist_islands.add(islands);
+                    }
+                   
+                }
+            }
+        }
+        
+        return dist_islands.size();
+    }
+}
+
