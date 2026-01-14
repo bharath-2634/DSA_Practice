@@ -1,0 +1,93 @@
+Question:https://leetcode.com/problems/surrounded-regions/
+
+Solution:
+/*
+This is my DFS Solution
+class Solution {
+    public void dfs(char[][] board,int row,int col) {
+        if(row<0 || col<0 || row>=board.length || col>=board[0].length || board[row][col]=='X') return;
+        if(board[row][col]=='W') return;
+
+        board[row][col] = 'W';
+        dfs(board,row+1,col);
+        dfs(board,row-1,col);
+        dfs(board,row,col+1);
+        dfs(board,row,col-1); 
+    }
+
+    public void solve(char[][] board) {
+        
+        for(int i=0;i<board.length;i++) {
+            for(int j=0;j<board[0].length;j++) {
+                if((i==0 || j==0 || i==board.length-1 || j==board[0].length-1) && board[i][j]=='O') {
+                    dfs(board,i,j);
+                }
+            }
+        }
+
+        for(int i=0;i<board.length;i++) {
+            for(int j=0;j<board[0].length;j++) {
+                if(board[i][j]=='W') {
+                    board[i][j] = 'O';
+                }else {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+
+    }
+}
+*/
+class Pair {
+    int row;
+    int col;
+
+    public Pair(int r,int c) {
+        this.row = r;
+        this.col = c;
+    }
+}
+
+class Solution {
+    public void solve(char[][] board) {
+        boolean[][] visited = new boolean[board.length][board[0].length];
+        Queue<Pair> q = new LinkedList<>();
+
+        for(int i=0;i<board.length;i++) {
+            for(int j=0;j<board[0].length;j++) {
+                if((i==0 || j==0 || i==board.length-1 || j==board[0].length-1) && board[i][j]=='O') {
+                    visited[i][j] = true;
+                    q.offer(new Pair(i,j));
+                }
+            }
+        }
+
+        int[][] moves = {{0,-1},{-1,0},{0,1},{1,0}};
+
+        while(!q.isEmpty()) {
+            Pair p = q.poll();
+            int row= p.row;
+            int col = p.col;
+
+            for(int[] move : moves) {
+                int new_row = row+move[0];
+                int new_col = col+move[1];
+
+                if(new_row>=0 && new_col>=0 && new_row<board.length && new_col<board[0].length && !visited[new_row][new_col] && board[new_row][new_col]=='O') {
+                    visited[new_row][new_col] = true;
+                    q.offer(new Pair(new_row,new_col));
+                }
+            }
+        }
+
+        for(int i=0;i<board.length;i++) {
+            for(int j=0;j<board[0].length;j++) {
+                if(!visited[i][j]) {
+                    board[i][j] = 'X';
+                }else {
+                    board[i][j] = 'O';
+                }
+            }
+        }
+    }
+}
