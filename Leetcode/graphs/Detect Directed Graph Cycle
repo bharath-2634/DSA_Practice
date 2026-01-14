@@ -1,50 +1,98 @@
 Question: https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
 
 Solution:
+/*
+This is my DFS Solution
 class Solution {
     
-    public static void generateAdjList(int[][] edges, Map<Integer, List<Integer>> adjList, int V) {
-        
-        for (int i = 0; i < V; i++) {
-            adjList.put(i, new ArrayList<>());
-        }
-        
-        for (int[] edge : edges) {
+    public void generateAdjList(int[][] edges,HashMap<Integer,List<Integer>> adjList) {
+        for(int[] edge : edges) {
             int u = edge[0];
             int v = edge[1];
+            
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+            
             adjList.get(u).add(v);
-        }
+        }    
     }
     
-    public boolean dfs(Map<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited,int node) {
+    public boolean dfs(int node,HashMap<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited) {
         visited[node] = true;
         pathVisited[node] = true;
         
-        for(int adjNode : adjList.get(node)) {
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
             if(!visited[adjNode]) {
-                if(dfs(adjList,visited,pathVisited,adjNode)) return true;
+                if(dfs(adjNode,adjList,visited,pathVisited)) return true;
             }else if(pathVisited[adjNode]) return true;
         }
         
-        pathVisited[node]= false;
-        
+        pathVisited[node] = false;
         return false;
     }
     
     public boolean isCyclic(int V, int[][] edges) {
-        Map<Integer,List<Integer>> adjList = new HashMap<>();
-        
-        generateAdjList(edges,adjList,V);
+        HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
         
         boolean[] visited = new boolean[V];
         boolean[] pathVisited = new boolean[V];
         
         for(int node : adjList.keySet()) {
-            if(!visited[node] && !pathVisited[node]) {
-                if(dfs(adjList,visited,pathVisited,node)) return true;
+            if(!visited[node]) {
+                if(dfs(node,adjList,visited,pathVisited)) return true;
             }
         }
         
         return false;
     }
+}
+*/
+
+
+class Solution {
+    
+    public void generateAdjList(HashMap<Integer,List<Integer>> adjList,int[][] edges,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+                
+            }
+            inDegree[v]++;
+            adjList.get(u).add(v);
+        }    
+    }
+    
+    public boolean isCyclic(int V,int[][] edges) {
+        HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree  = new int[V];
+        generateAdjList(adjList,edges,inDegree);
+        Queue<Integer> q = new LinkedList<>();
+        
+        for(int i=0;i<V;i++) {
+            if(inDegree[i]==0) {
+                q.offer(i);
+            }
+        }
+        
+        int count=0;
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            count++;
+            
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) {
+                    q.offer(adjNode);
+                }
+            }
+        }
+        
+    
+        return count!=V;
+    }    
 }
