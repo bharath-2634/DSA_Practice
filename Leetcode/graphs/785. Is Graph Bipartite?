@@ -1,0 +1,73 @@
+Question: https://leetcode.com/problems/is-graph-bipartite/
+
+Solution:
+/*
+This is my DFS Solution
+class Solution {
+
+    public boolean dfs(int[][] graph,int node,int[] color,int color_val,boolean[] visited) {
+        
+        visited[node] = true;
+
+        for(int i=0;i<graph[node].length;i++) {
+            int adjNode = graph[node][i];
+            if(!visited[adjNode]) {
+                color[adjNode] = 1 - color[node];
+                if(!dfs(graph,adjNode,color,color_val,visited)) return false;
+            }else if(color[node]==color[adjNode]) return false;
+        }
+
+        return true;
+    }
+
+    public boolean isBipartite(int[][] graph) {
+        int[] color = new int[graph.length];
+        boolean[] visited = new boolean[graph.length];
+        int color_val = 0;
+        for(int i=0;i<graph.length;i++) {
+            if(!visited[i]) {
+                color[i] = color_val;
+                if(!dfs(graph,i,color,color_val,visited)) return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+*/
+
+class Solution {
+    public boolean isBipartite(int[][] graph) {
+        Queue<int[]> q = new LinkedList<>();
+        boolean[] visited = new boolean[graph.length];
+        int[] color = new int[graph.length];
+
+        for(int i=0;i<graph.length;i++) {
+            if(!visited[i]) {
+                visited[i] = true;
+                q.offer(new int[]{i,0});
+                color[i] = 0;
+
+                while(!q.isEmpty()) {
+                    int[] pair = q.poll();
+                    int node = pair[0];
+                    int cur_color = pair[1];
+
+                    for(int j=0;j<graph[node].length;j++) {
+                        int adjNode = graph[node][j];
+                        if(!visited[adjNode]) {
+                            visited[adjNode] = true;
+                            color[adjNode] = 1-cur_color;
+                            q.offer(new int[]{adjNode,1-cur_color});
+                        }else if(color[adjNode]==color[node]) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+}
