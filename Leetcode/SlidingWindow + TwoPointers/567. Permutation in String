@@ -1,0 +1,37 @@
+Question: https://leetcode.com/problems/permutation-in-string/
+
+Solution:
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        Map<Character,Integer> need = new HashMap<>();
+        for(char c : s1.toCharArray()) {
+            need.put(c,need.getOrDefault(c,0)+1);
+        }
+
+        int right=0,left=0,formed=0;
+        Map<Character,Integer> req = new HashMap<>();
+        while(right<s2.length()) {
+            char c = s2.charAt(right);
+            req.put(c,req.getOrDefault(c,0)+1);
+
+            if(need.containsKey(c) && need.get(c).equals(req.get(c))) {
+                formed++;
+            }
+            // shrink
+            if(right-left+1 > s1.length()) {
+                char chr = s2.charAt(left);
+                if(need.containsKey(chr) && need.get(chr).equals(req.get(chr))) {
+                    formed--;
+                }
+                req.put(chr,req.get(chr)-1);
+                left++;
+            }
+            if(formed==need.size()) return true;
+            right++;
+        }
+
+        
+
+        return false;
+    }
+}
