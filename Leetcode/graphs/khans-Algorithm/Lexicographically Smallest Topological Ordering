@@ -1,0 +1,62 @@
+Question: 
+Given a directed graph with N vertices and M edges that may contain cycles, the task is to find the lexicographically smallest topological ordering of the graph if it exists otherwise print -1 (if the graph has cycles). 
+Lexicographically smallest topological ordering means that if two vertices in a graph do not have any incoming edge then the vertex with the smaller number should appear first in the ordering. 
+For Example, in the image below many topological orderings are possible e.g 5 2 3 4 0 1, 5 0 2 4 3 1. 
+But the smallest ordering is 4 5 0 2 3 1.
+
+Solution:
+import java.util.*;
+
+class Main {
+
+    public static void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            inDegree[v]++;
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+
+    public static void topological_sort(int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[edges.length];
+        generateAdjList(adjList,edges,inDegree);
+
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for(int i=0;i<edges.length;i++) {
+            if(inDegree[i]==0) pq.offer(i);
+        }
+
+        while(!pq.isEmpty()) {
+            int node = pq.poll();
+            System.out.print(node+" ");
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) {
+                    pq.offer(adjNode);
+                }
+            }
+        }
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int V = sc.nextInt();
+        int[][] edges = new int[V][2];
+
+        for(int i=0;i<V;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        }
+
+        topological_sort(edges);
+    }
+}
