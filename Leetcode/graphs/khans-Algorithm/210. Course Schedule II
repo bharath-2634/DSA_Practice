@@ -1,0 +1,114 @@
+Question: https://leetcode.com/problems/course-schedule-ii/
+
+Solution:
+/*
+This is my dfs solution
+
+class Solution {
+
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            if(!adjList.containsKey(v)) {
+                adjList.put(v,new ArrayList<>());
+            }
+            adjList.get(v).add(u);
+        }
+    }
+    public boolean dfs(int node,Map<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited,List<Integer> res) {
+        visited[node] = true;
+        pathVisited[node] = true;
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,adjList,visited,pathVisited,res)) return true;
+            }else if(pathVisited[adjNode]) return true;
+        }
+
+        res.add(node);
+        pathVisited[node] = false;
+        return false;
+    }
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(adjList,prerequisites);
+
+        List<Integer> res = new ArrayList<>();
+        boolean[] visited = new boolean[numCourses];
+        boolean[] pathVisited = new boolean[numCourses];
+
+        for(int node=0;node<numCourses;node++) {
+            if(!visited[node]) {
+                if(dfs(node,adjList,visited,pathVisited,res)) return new int[0];
+            }
+        }
+
+        Collections.reverse(res);
+        int[] course_order = new int[numCourses];
+        int idx=0;
+        for(int course : res) {
+            course_order[idx++] = course;
+        }
+
+        return course_order;
+    }
+}
+
+*/
+
+class Solution {
+
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            inDegree[u]++;
+
+            if(!adjList.containsKey(v)) {
+                adjList.put(v,new ArrayList<>());
+            }
+            adjList.get(v).add(u);
+        }
+    }
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[numCourses];
+        generateAdjList(adjList,prerequisites,inDegree);
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<numCourses;i++) {
+            if(inDegree[i]==0) q.offer(i);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        int count=0;
+
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            count++;
+            res.add(node);
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) {
+                    q.offer(adjNode);
+                }
+            }
+        }
+
+        if(count!=numCourses) return new int[0];
+        // Collections.reverse(res);
+        
+        int[] courses = new int[numCourses];
+        int idx=0;
+        for(int a : res) {
+            courses[idx++] = a;
+        }
+
+        return courses;
+    }
+}
