@@ -1,0 +1,110 @@
+Question: https://leetcode.com/problems/parallel-courses-iii/description/
+
+Solution:
+/*
+
+class Solution {
+    public void generateAdjList(int[][] relations,Map<Integer,List<Integer>> adjList) {
+        for(int[] relation : relations) {
+            int start = relation[0]-1;
+            int end = relation[1]-1;
+
+            if(!adjList.containsKey(start)) {
+                adjList.put(start,new ArrayList<>());
+            }
+
+            adjList.get(start).add(end);
+        }
+    }
+    
+    public int dfs(int node,Map<Integer,List<Integer>> adjList,int[] time,int[] dp) {
+        if(!adjList.containsKey(node) || adjList.get(node).size()==0) {
+            return time[node];
+        }
+
+        if(dp[node]!=-1) return dp[node];
+
+        int ans=0;
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            ans = Math.max(ans,dfs(adjNode,adjList,time,dp));
+        }
+
+        return dp[node] = ans+time[node];
+    }
+
+    public int minimumTime(int n, int[][] relations, int[] time) {
+        if(n==1 && relations.length==0) return time[n-1];
+        if(n==2 && relations.length==0) return Math.max(time[n-1],time[n-2]);
+
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(relations,adjList);
+
+        int min_time = Integer.MIN_VALUE;
+        int[] dp = new int[n];
+        Arrays.fill(dp,-1);
+
+        for(int node=0; node<n; node++) {
+            min_time = Math.max(min_time,dfs(node,adjList,time,dp));
+        }
+
+        return min_time;
+    }
+}
+
+/*
+    Find the length of the longest path in a DAG, where node weight = time[i]
+*/
+
+class Solution {
+
+    public void generateAdjList(int[][] relations,Map<Integer,List<Integer>> adjList,int[] inDegree) {
+        for(int[] relation : relations) {
+            int start = relation[0]-1;
+            int end = relation[1]-1;
+
+            inDegree[end]++;
+
+            if(!adjList.containsKey(start)) {
+                adjList.put(start,new ArrayList<>());
+            }
+
+            adjList.get(start).add(end);
+        }
+    }
+
+    public int minimumTime(int n, int[][] relations, int[] time) {
+        if(n==1 && relations.length==0) return time[n-1];
+        if(n==2 && relations.length==0) return Math.max(time[n-1],time[n-2]);
+
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[n];
+        generateAdjList(relations,adjList,inDegree);
+
+        Queue<Integer> q = new LinkedList<>();
+        int[] dp = new int[n];
+
+        for(int i=0;i<n;i++) {
+            dp[i] = time[i];
+            if(inDegree[i]==0) {
+                q.offer(i);
+            }
+        }
+        int min_time=0;
+
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            min_time = Math.max(min_time,dp[node]);
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                dp[adjNode] = Math.max(dp[adjNode],dp[node]+time[adjNode]);
+                if(inDegree[adjNode]==0) {
+                    q.offer(adjNode);
+                }
+            }
+            // max_course = Math.max(max_course,cur_course);
+        }
+
+        return min_time;
+    }
+}
