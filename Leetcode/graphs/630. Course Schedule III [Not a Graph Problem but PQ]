@@ -1,0 +1,54 @@
+Question: https://leetcode.com/problems/course-schedule-iii/
+
+Solution:
+class Solution {
+    /*
+
+    My naive idea based solution but failed !
+    public int scheduleCourse(int[][] courses) {
+        int count=0;
+        int i=0;
+        Arrays.sort(courses, (a, b) -> a[1] - b[1]);
+        while(i<courses.length) {
+            int start = courses[i][0];
+            int end = courses[i][1];
+            int j=i;
+            while(j<courses.length && end>courses[j][0]) {
+                end = Math.max(end,courses[j][1]);
+                j++;
+            }
+            
+            if(j==i) {
+                i++;
+            }else {
+                count++;
+                i=j;
+            }
+        }
+
+        // System.out.println();
+        return courses.length-count;
+    }
+    */
+
+    public int scheduleCourse(int[][] courses) {
+        Arrays.sort(courses,(a,b)->a[1]-b[1]);
+
+        PriorityQueue<Integer> pq = new PriorityQueue<>((x,y)->y-x);
+
+        int time=0;
+        for(int i=0;i<courses.length;i++) {
+            int start = courses[i][0];
+            int deadline = courses[i][1];
+
+            time+=start;
+            pq.offer(start);
+
+            if(time>deadline) {
+                time-=pq.poll();
+            }
+        }
+
+        return pq.size();
+    }
+}
