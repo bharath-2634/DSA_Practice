@@ -1,0 +1,89 @@
+Question: https://leetcode.com/problems/course-schedule/description/
+
+Solution:
+/*
+This is my dfs approach (same as cycle detection in directed graph)
+
+class Solution {
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            if(!adjList.containsKey(v)) {
+                adjList.put(v,new ArrayList<>());
+            }
+            adjList.get(v).add(u);
+        }
+    }
+
+    public boolean dfs(int node,Map<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited) {
+        visited[node] = true;
+        pathVisited[node] = true;
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,adjList,visited,pathVisited)) return true;
+            }else if(pathVisited[adjNode]) return true;
+        }
+
+        pathVisited[node] = false;
+        return false;
+    }
+
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(adjList,prerequisites);
+
+        boolean[] visited = new boolean[numCourses];
+        boolean[] pathVisited= new boolean[numCourses];
+
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                if(dfs(node,adjList,visited,pathVisited)) return false;
+            }
+        }
+        return true;
+    }
+}
+
+*/
+
+class Solution {
+    public void generateAdjList(Map<Integer,List<Integer>> adjList,int[][] edges,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            inDegree[u]++;
+
+            if(!adjList.containsKey(v)) {
+                adjList.put(v,new ArrayList<>());
+            }
+            adjList.get(v).add(u);
+        }
+    }
+
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[numCourses];
+        generateAdjList(adjList,prerequisites,inDegree);
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<numCourses;i++) {
+            if(inDegree[i]==0) q.offer(i);
+        }
+
+        int count=0;
+        while(!q.isEmpty()) {
+            int node= q.poll();
+            count++;
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) q.offer(adjNode);
+            }
+        }
+
+        return count==numCourses;
+    }
+}
