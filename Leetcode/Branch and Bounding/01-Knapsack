@@ -1,0 +1,79 @@
+class Node {
+    int val;
+    int wt;
+    double ratio;
+
+    public Node(int val,int wt) {
+        this.val = val;
+        this.wt = wt;
+        this.ratio  = (double) val/wt;
+    }
+}
+
+class Solution {
+
+    private static int max_val=0;
+
+    public static double bound(int idx,int cur_val,int cur_w,int W,Node[] bags,int[] val,int[] wt) {
+        int capacity_left = W-cur_w;
+        double profit = cur_val;
+
+        for(int i=idx;i<val.length;i++) {
+            if(bags[i].wt <= capacity_left) {
+                profit+=bags[i].val;
+                capacity_left-=bags[i].wt;
+            }else {
+                profit+=bags[i].ratio*capacity_left;
+                break;
+            }
+        }
+
+        return profit;
+    }
+
+    public static void dfs(int idx,int cur_val,int cur_w,int W,Node[] bags,int[] val,int[] wt) {
+
+        
+
+        if(cur_w>W) return;
+
+        if(idx==val.length) {
+            max_val = Math.max(max_val,cur_val);
+            return;
+        }
+
+        max_val = Math.max(max_val,cur_val);
+
+        if(max_val>=bound(idx,cur_val,cur_w,W,bags,val,wt)) return;
+
+        // pick
+        dfs(idx+1,cur_val+ bags[idx].val,cur_w+bags[idx].wt,W,bags,val,wt);
+
+        // not-pick
+        dfs(idx+1,cur_val,cur_w,W,bags,val,wt);
+
+    }
+
+    public static int getKnapsack(int idx,int[] val,int[] wt,int W) {
+        Node[] bags = new Node[val.length];
+
+        for(int i=0;i<val.length;i++) {
+            Node node = new Node(val[i],wt[i]);
+            bags[i] = node;
+        }
+
+        Arrays.sort(bags,(a,b)->Double.compare(b.ratio,a.ratio));
+
+        dfs(0,0,0,W,bags,val,wt);
+
+        return max_val;
+    }
+
+    public static void main(String[] args) {
+        int[] val = {1,2,3};
+        int[] wt = {4,5,1};
+        int W=4;
+
+        System.out.print(getKnapsack(val.length-1,val,wt,W));
+    }
+}
