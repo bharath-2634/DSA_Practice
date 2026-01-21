@@ -1,0 +1,122 @@
+Question: https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/
+
+Solution:
+/*
+
+This is my Naive Approach without graph
+
+class Solution {
+    public void canMissedRecipeWork(Set<String> supplies,List<String> res,Map<String,Set<String>> missed) {
+        List<String> remove_list = new ArrayList<>();
+        for(String recipe : missed.keySet()) {
+            Set<String> need = missed.get(recipe);
+            boolean found = true;
+            for(String n : need) {
+                if(!supplies.contains(n)) {
+                    found = false;
+                    break;
+                }
+            }
+
+            if(found) {
+                remove_list.add(recipe);
+                res.add(recipe);
+            }
+        }
+
+        for(String remo : remove_list) {
+            missed.remove(remo);
+        }
+    }
+
+    public List<String> findAllRecipes(String[] recipes, List<List<String>> ingredients, String[] supplies) {
+        Set<String> my_supply = new HashSet<>();
+        for(String d : supplies) my_supply.add(d);
+
+        List<String> res = new ArrayList<>();
+        Map<String,Set<String>> missed = new HashMap<>();
+
+        for(int i=0;i<recipes.length;i++) {
+            String recipe = recipes[i];
+            List<String> req = ingredients.get(i);
+            boolean can_be_formed = true;
+            Set<String> not_found = new HashSet<>();
+            for(String r : req) {
+                if(!my_supply.contains(r)) {
+                    can_be_formed = false;
+                    not_found.add(r);
+                } 
+            }
+
+            if(can_be_formed) {
+                res.add(recipe);
+                my_supply.add(recipe);
+                canMissedRecipeWork(my_supply,res,missed);
+            }else {
+                missed.put(recipe,not_found);
+            }
+        }
+
+        return res;
+    }
+}
+
+*/
+
+class Solution {
+
+    public void generateAdjList(String[] recipes,List<List<String>> ingredients, Set<String> supplyList,Map<String,List<String>> adjList,Map<String,Integer> inDegree) {
+
+        for(int i=0;i<recipes.length;i++) {
+            String recipe = recipes[i];
+            for(String ingredient : ingredients.get(i)) {
+                if(!supplyList.contains(ingredient)) {
+                    adjList.computeIfAbsent(ingredient,k->new ArrayList<>()).add(recipe);
+                    inDegree.put(recipe,inDegree.get(recipe)+1);
+                }
+            }
+        }
+    }
+
+    public List<String> findAllRecipes(String[] recipes, List<List<String>> ingredients, String[] supplies) {
+
+        Set<String> supplyList = new HashSet<>();
+        for(String supply : supplies) supplyList.add(supply);
+
+        Map<String,List<String>> adjList = new HashMap<>();
+        Map<String,Integer> inDegree = new HashMap<>();
+
+        for(String recipe : recipes) {
+            inDegree.put(recipe,0);
+        }
+
+        generateAdjList(recipes,ingredients,supplyList,adjList,inDegree);
+
+        // System.out.println(inDegree);
+        // System.out.println(adjList);
+
+        Queue<String> q = new LinkedList<>();
+
+        for(String key : inDegree.keySet()) {
+            if(inDegree.get(key)==0) {
+                q.offer(key);
+            }
+        }
+
+        List<String> res = new ArrayList<>();
+
+        while(!q.isEmpty()) {
+            String recipe = q.poll();
+            res.add(recipe);
+
+            for(String adjNode : adjList.getOrDefault(recipe,new ArrayList<>())) {
+                inDegree.put(adjNode,inDegree.get(adjNode)-1);
+                if(inDegree.get(adjNode)==0) {
+                    q.offer(adjNode);
+                }
+            }
+        }
+
+        return res;
+    }
+}
