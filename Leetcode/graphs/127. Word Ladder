@@ -1,0 +1,146 @@
+Question: https://leetcode.com/problems/word-ladder/description/
+
+Solution:
+/*
+    This is my Brute Force Approach
+    // public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+    //     int count = 0; 
+        
+    //     Set<String> wordSet = new HashSet<>(wordList);
+
+    //     while(!beginWord.equals(endWord)) {
+    //         boolean changed = false;
+    //         for(int i=0;i<beginWord.length();i++) {
+    //             char[] chr = beginWord.toCharArray();
+
+    //             for (char c = 'a'; c <= 'z'; c++) {
+    //                 if (chr[i] == c) continue;
+    //                 chr[i] = c;
+    //                 String nextWord = new String(chr);
+
+    //                 if (wordSet.contains(nextWord)) {
+    //                     beginWord = nextWord;
+    //                     wordSet.remove(nextWord);
+    //                     count++;
+    //                     changed = true;
+    //                     break;
+    //                 }
+    //             }
+    //             if(changed) break;
+    //         }
+    //         if (!changed) return 0;
+    //     }
+
+    //     return count;
+    // }
+
+*/
+
+class Pair {
+
+    private String word;
+    private int level;
+
+    public Pair(String Word,int level) {
+        this.word = Word;
+        this.level = level;
+    }
+
+    public String getWord() {
+        return this.word;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+}
+
+class Solution {
+    
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+
+        Queue<Pair> queue = new LinkedList<>();
+        Set<String> wordSet = new HashSet<>(wordList);
+
+        queue.add(new Pair(beginWord,0));
+
+        while(!queue.isEmpty()) {
+            Pair p = queue.poll();
+            String str = p.getWord();
+            int level = p.getLevel();
+
+            if(str.equals(endWord)) {
+                return level+1;
+            }
+            
+            for(int i=0;i<str.length();i++) {
+                char[] chr = str.toCharArray();
+
+                for(char c='a';c<='z';c++) {
+                    if(chr[i]==c) continue;
+                    chr[i] = c;
+                    String nextWord = new String(chr);
+                    if(wordSet.contains(nextWord)) {
+                        wordSet.remove(nextWord);
+                        queue.add(new Pair(nextWord,level+1));
+                        // break;
+                    }
+                }
+            }
+
+            // queue.remove();
+        }
+
+        return 0;
+    }
+}
+
+
+/*
+
+This is DFS Solution
+
+class Solution {
+    private int min_level = Integer.MAX_VALUE;
+
+    public void dfs(String start, String target,Set<String> wordSet,int level) {
+        if(start.equals(target)) {
+            min_level = Math.min(min_level,level);
+            return;
+        }
+
+        if(min_level < level) {
+            return;
+        }
+
+        char[] chr = start.toCharArray();
+        
+        for(int i=0;i<chr.length;i++) {
+            char original = chr[i];
+            for(char c='a';c<='z';c++) {
+                if(original==c) continue;
+                chr[i] = c;
+                String nextWord = new String(chr);
+                if(wordSet.contains(nextWord)) {
+                    start = nextWord;
+                    wordSet.remove(nextWord);
+                    // level++;
+                    dfs(start,target,wordSet,level+1);
+                    wordSet.add(nextWord);
+                }
+            }
+            chr[i] = original;
+        }
+
+    }
+
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+
+        Set<String> wordSet = new HashSet<>(wordList);
+        dfs(beginWord,endWord,wordSet,0);
+
+        return min_level==Integer.MAX_VALUE ? 0 : min_level+1;
+    }
+}
+
+*/
