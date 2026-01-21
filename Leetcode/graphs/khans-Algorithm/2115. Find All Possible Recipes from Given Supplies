@@ -63,6 +63,7 @@ class Solution {
 
 */
 
+/*
 class Solution {
 
     public void generateAdjList(String[] recipes,List<List<String>> ingredients, Set<String> supplyList,Map<String,List<String>> adjList,Map<String,Integer> inDegree) {
@@ -114,6 +115,55 @@ class Solution {
                 if(inDegree.get(adjNode)==0) {
                     q.offer(adjNode);
                 }
+            }
+        }
+
+        return res;
+    }
+}
+
+*/
+
+class Solution {
+
+    public boolean dfs(String recipe, Map<String,List<String>> adjList,Map<String,Integer> state,Set<String> supply,List<String> res) {
+
+        if(state.get(recipe)==1) return false;
+        if(state.get(recipe)==2) return true;
+
+        state.put(recipe,1);
+        for(String ingredients : adjList.get(recipe)) {
+            if(supply.contains(ingredients)) continue;
+
+            if(!adjList.containsKey(ingredients)) return false;
+
+            if(!dfs(ingredients,adjList,state,supply,res)) return false;
+        }
+
+        state.put(recipe,2);
+        res.add(recipe);
+        return true;
+    }
+
+    public List<String> findAllRecipes(String[] recipes, List<List<String>> ingredients, String[] supplies) {
+        Map<String,List<String>> adjList = new HashMap<>();
+        
+        for(int i=0;i<recipes.length;i++) {
+            String recipe = recipes[i];
+            adjList.put(recipe,ingredients.get(i));
+        }
+
+        Map<String,Integer> state = new HashMap<>();
+        for(String re : recipes) {
+            state.put(re,0);
+        }
+
+        List<String> res = new ArrayList<>();
+        Set<String> supplyList = new HashSet<>(Arrays.asList(supplies));
+
+        for(String re : recipes) {
+            if(state.get(re)==0) {
+                dfs(re,adjList,state,supplyList,res);
             }
         }
 
