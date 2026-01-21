@@ -1,0 +1,43 @@
+Question: https://www.geeksforgeeks.org/problems/rat-in-a-maze-problem/1
+
+Solution:
+class Solution {
+    
+    public void solve(int[][] maze,int row,int col,StringBuilder sb,boolean[][] visited,ArrayList<String> res) {
+        
+        if(row<0 || col<0 || row>=maze.length || col>=maze[0].length || maze[row][col]==0 || visited[row][col]) return;
+        
+        if(row==maze.length-1 && col==maze[0].length-1) {
+            res.add(sb.toString());
+            return;
+        }    
+        
+        
+        visited[row][col] = true;
+        sb.append("D");
+        solve(maze,row+1,col,sb,visited,res);
+        sb.deleteCharAt(sb.length()-1);
+        
+        sb.append("U");
+        solve(maze,row-1,col,sb,visited,res);
+        sb.deleteCharAt(sb.length()-1);
+        
+        sb.append("L");
+        solve(maze,row,col-1,sb,visited,res);
+        sb.deleteCharAt(sb.length()-1);
+        
+        sb.append("R");
+        solve(maze,row,col+1,sb,visited,res);
+        sb.deleteCharAt(sb.length()-1);
+        
+        visited[row][col] = false;
+    }
+        
+    public ArrayList<String> ratInMaze(int[][] maze) {
+        ArrayList<String> res = new ArrayList<>();
+        boolean[][] visited = new boolean[maze.length][maze[0].length];
+        solve(maze,0,0,new StringBuilder(),visited,res);
+        Collections.sort(res);
+        return res;
+    }
+}
