@@ -1,0 +1,71 @@
+Solution:
+import java.util.*;
+
+
+class Main {
+
+    public static String alienDict(String[] words) {
+        Map<Integer,Set<Integer>> adjList = new HashMap<>();
+
+        for(String word : words) {
+            for(char c : word.toCharArray()) {
+                adjList.putIfAbsent((c-'a'),new HashSet<>());
+            }
+        }
+
+        for(int i=0;i<words.length-1;i++) {
+            char[] s1 = words[i].toCharArray();
+            char[] s2 = words[i+1].toCharArray();
+
+            if(words[i].length() > words[i+1].length() && words[i].startsWith(words[i+1])) return "";
+
+            int min_len = Math.min(s1.length,s2.length);
+
+            for(int j=0;j<min_len;j++) {
+                if(s1[j]!=s2[j]) {
+                    adjList.get((s1[j]-'a')).add((s2[j]-'a'));
+                    break;
+                }
+            }
+        }
+
+        // System.out.println(adjList);
+
+        int[] inDegree = new int[26];
+        for(int node : adjList.keySet()) {
+            for(int adjNode : adjList.get(node)) {
+                inDegree[adjNode]++;
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<inDegree.length;i++) {
+            if(adjList.containsKey(i) && inDegree[i]==0) q.offer(i);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            sb.append((char)(node+'a'));
+
+            for(int adjNode : adjList.get(node)) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) q.offer(adjNode);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.next());
+        String[] words = new String[n];
+
+        for(int i=0;i<n;i++) {
+            words[i] = sc.next();
+        }
+
+        System.out.println(alienDict(words));
+    }
+}
