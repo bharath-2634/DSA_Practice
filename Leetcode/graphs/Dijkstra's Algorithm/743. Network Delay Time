@@ -1,0 +1,69 @@
+Question: https://leetcode.com/problems/network-delay-time/
+
+Solution:
+class Pair {
+    int node;
+    int time;
+
+    public Pair(int n,int t) {
+        this.node = n;
+        this.time = t;
+    }
+}
+
+
+class Solution {
+
+    public void generateAdjList(int[][] times,Map<Integer,List<Pair>> adjList) {
+        
+        for(int[] time : times) {
+            int u = time[0]-1;
+            int v = time[1]-1;
+            int t = time[2];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new Pair(v,t));
+        }
+    }
+
+    public int networkDelayTime(int[][] times, int n, int k) {
+        Map<Integer,List<Pair>> adjList = new HashMap<>();
+        generateAdjList(times,adjList);
+
+        PriorityQueue<Pair> pq = new PriorityQueue<>((x,y)->x.time-y.time);
+        pq.offer(new Pair(k-1,0));
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[k-1] = 0;
+
+        while(!pq.isEmpty()) {
+            Pair p = pq.poll();
+            int node = p.node;
+            int cur_time = p.time;
+
+            if(cur_time > dist[node]) continue;
+            
+            for(Pair adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair.node;
+                int time = adjPair.time;
+
+                if(dist[adjNode] > dist[node]+time) {
+                    dist[adjNode] = dist[node]+time;
+                    pq.offer(new Pair(adjNode,dist[node]+time));
+                }
+            }
+        }
+
+        int min_time = Integer.MIN_VALUE;
+
+        for(int d :dist) {
+            // System.out.println(d);
+            min_time = Math.max(d,min_time);
+        }
+
+        return min_time==Integer.MAX_VALUE ? -1 : min_time;
+    }
+}
