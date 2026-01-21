@@ -1,0 +1,166 @@
+Question: https://leetcode.com/problems/minimum-height-trees/
+
+Solution:
+/*
+
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);    
+        }
+    }
+
+    public int dfs(int node,int parent,Map<Integer,List<Integer>> adjList) {
+        
+        int count=0;
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(adjNode!=parent) {
+                count = Math.max(count,1+dfs(adjNode,node,adjList));
+            }
+        }
+        return count;
+    }
+
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int min_height = Integer.MAX_VALUE;
+        List<Integer> mhtList = new ArrayList<>();
+        for(int i=0;i<n;i++) {
+            int height = dfs(i,-1,adjList);
+            if(height < min_height) {
+                min_height = height;
+                mhtList.clear();
+                mhtList.add(i);
+            }else if(height==min_height) mhtList.add(i);
+        }
+
+        return mhtList;
+    }
+}
+
+*/
+
+/*
+
+Leaf Removal Concept applied 
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,Set<Integer>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            adjList.computeIfAbsent(u,k->new HashSet<>()).add(v);
+            adjList.computeIfAbsent(v,k->new HashSet<>()).add(u);    
+        }
+    }
+
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        Map<Integer,Set<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<n;i++) {
+            if(adjList.getOrDefault(i,new HashSet<>()).size()==1) {
+                q.offer(i);
+            }
+        }
+
+        int remaining_nodes = n;
+        while(remaining_nodes>2) {
+            int nodes_count= q.size();
+            remaining_nodes-=nodes_count;
+            for(int i=0;i<nodes_count;i++) {
+                int node = q.poll();
+                for(int adjNode : adjList.getOrDefault(node,new HashSet<>())) {
+                    if(adjList.containsKey(adjNode)) {
+                        adjList.get(adjNode).remove(node);
+                        if(adjList.get(adjNode).size()==1) {
+                            q.offer(adjNode);
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Integer> res = new ArrayList<>();
+
+        if(n==1) {
+            res.add(0);
+            return res;
+        }
+
+        while(!q.isEmpty()) {
+            res.add(q.poll());
+        }
+
+        return res;
+
+    }
+}
+
+*/
+
+class Solution {
+    public void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            inDegree[u]++;
+            inDegree[v]++;
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);    
+        }
+    }
+
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[n];
+        generateAdjList(edges,adjList,inDegree);
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<n;i++) {
+            if(inDegree[i]==1) {
+                q.offer(i);
+            }
+        }
+
+        int remaining_nodes = n;
+        while(remaining_nodes>2) {
+            int nodes_count = q.size();
+            remaining_nodes-=nodes_count;
+
+            for(int i=0;i<nodes_count;i++) {
+                int node = q.poll();
+                for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                    inDegree[adjNode]--;
+                    if(inDegree[adjNode]==1) {
+                        q.offer(adjNode);
+                    }
+                }
+            }
+        }
+
+        List<Integer> res= new ArrayList<>();
+
+        if(n==1) {
+            res.add(0);
+            return res;
+        }
+
+        while(!q.isEmpty()) {
+            res.add(q.poll());
+        }
+
+        return res;
+    }
+}
