@@ -1,0 +1,52 @@
+Question: https://www.geeksforgeeks.org/problems/prerequisite-tasks/1
+
+Solution:
+
+// User function Template for Java
+
+class Solution {
+    
+    public void generateAdjList(int[][] courses,HashMap<Integer,List<Integer>> adjList) {
+        for(int[] course : courses) {
+            int x = course[0];
+            int y = course[1];
+            
+            if(!adjList.containsKey(y)) {
+                adjList.put(y,new ArrayList<>());
+            }
+            
+            adjList.get(y).add(x);
+        }
+    }
+    
+    public boolean dfs(int node,HashMap<Integer,List<Integer>> adjList,boolean[] visited,boolean[] pathVisited) {
+        visited[node] = true;
+        pathVisited[node] = true;
+        
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,adjList,visited,pathVisited)) return true;
+            }else if(pathVisited[adjNode]) return true;
+        }
+        
+        pathVisited[node] = false;
+        return false;
+    }
+    
+    
+    public boolean isPossible(int N, int P, int[][] prerequisites) {
+        HashMap<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(prerequisites,adjList);
+        
+        boolean[] visited = new boolean[N];
+        boolean[] pathVisited = new boolean[N];
+        
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                if(dfs(node,adjList,visited,pathVisited)) return false;
+            }
+        }
+        
+        return true;
+    }
+}
