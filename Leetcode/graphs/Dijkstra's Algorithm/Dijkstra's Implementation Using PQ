@@ -1,0 +1,78 @@
+import java.util.*;
+
+class Pair {
+    int node;
+    int dist;
+
+    public Pair(int n,int d) {
+        this.node = n;
+        this.dist = d;
+    }
+}
+
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Pair>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new Pair(v,w));
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new Pair(u,w));
+        }
+    }
+
+    public static void dijkstras(int[][] edges) {
+        Map<Integer,List<Pair>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        // System.out.println(adjList);
+
+        PriorityQueue<Pair> pq = new PriorityQueue<>((x,y)->x.dist-y.dist);
+
+        pq.offer(new Pair(2,0));
+        int[] dist = new int[edges.length];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+
+        dist[2] = 0;
+
+        while(!pq.isEmpty()) {
+            Pair pair = pq.poll();
+            int node = pair.node;
+            int d = pair.dist;
+
+            for(Pair adjPair : adjList.get(node)) {
+                int adjNode = adjPair.node;
+                int weight = adjPair.dist;
+                if(dist[adjNode] > dist[node]+weight) {
+                    dist[adjNode] = dist[node]+weight;
+                    pq.offer(new Pair(adjNode,dist[node]+weight));
+                }
+            }
+        }
+
+        for(int i=0;i<edges.length;i++) {
+            System.out.println(i+" " + dist[i]);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int V = sc.nextInt();
+        int[][] edges = new int[V][3];
+
+        for(int i=0;i<V;i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            int d = sc.nextInt();
+            edges[i][0] = u;
+            edges[i][1] = v;
+            edges[i][2] = d;
+        }
+
+        dijkstras(edges);
+    }
+}
