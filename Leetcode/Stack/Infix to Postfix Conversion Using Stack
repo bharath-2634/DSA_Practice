@@ -1,0 +1,54 @@
+Solution:
+import java.util.*;
+
+class Pair {
+    char c;
+    int p;
+
+    public Pair(char c,int p) {
+        this.c = c;
+        this.p = p;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String exp = sc.next();
+
+        Stack<Pair> st = new Stack<>();
+        Map<Character,Integer> pMap = new HashMap<>();
+        pMap.put('+',1);
+        pMap.put('-',1);
+        pMap.put('*',2);
+        pMap.put('/',2);
+        pMap.put('^',3);
+
+        for(int i=0;i<exp.length();i++) {
+            char c = exp.charAt(i);
+
+            if(Character.isLetterOrDigit(c)) {
+                System.out.print(c);
+            }else if(c=='(') {
+                st.push(new Pair(c,-1));
+            }else if(c==')') {
+                while(!st.isEmpty() && st.peek().c!='(') {
+                    Pair p = st.pop();
+                    System.out.print(p.c);
+                }
+                st.pop();
+            }else {
+                while(!st.isEmpty() && st.peek().p>=pMap.get(c)) {
+                    Pair p = st.pop();
+                    System.out.print(p.c);
+                }
+                st.push(new Pair(c,pMap.get(c)));
+            }
+        }
+
+        while(!st.isEmpty()) {
+            Pair p = st.pop();
+            System.out.print(p.c);
+        }
+    }
+}
