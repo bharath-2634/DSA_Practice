@@ -1,0 +1,121 @@
+Question: https://leetcode.com/problems/cheapest-flights-within-k-stops/description/
+
+Solution:
+/*
+
+This is my BFS Solution
+
+class Solution {
+    public void generateAdjList(int[][] flights,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] flight : flights) {
+            int u = flight[0];
+            int v = flight[1];
+            int w = flight[2];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(flights,adjList);
+
+        int[][] price = new int[n][k+2];
+        for(int[] p : price) {
+            Arrays.fill(p,Integer.MAX_VALUE);
+        }
+
+        price[src][0] = 0;
+
+        Queue<int[]> pq = new LinkedList<>();
+        pq.offer(new int[]{src,0,0});
+
+        while(!pq.isEmpty()) {
+            int[] pair = pq.poll();
+            int node = pair[0];
+            int cur_price = pair[1];
+            int cur_steps= pair[2];
+
+            if(cur_steps>k) continue;
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+
+                if(price[adjNode][cur_steps+1] > price[node][cur_steps] +weight) {
+                    price[adjNode][cur_steps+1] = price[node][cur_steps] +weight;
+                    pq.offer(new int[]{adjNode,price[adjNode][cur_steps],cur_steps+1});
+                }
+            }
+        }
+
+       
+        int ans = Integer.MAX_VALUE;
+        for(int i=0;i<=k+1;i++) {
+            ans = Math.min(ans, price[dst][i]);
+        }
+
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+}
+*/
+
+class Solution {
+
+    public void generateAdjList(int[][] flights,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] flight : flights) {
+            int u = flight[0];
+            int v = flight[1];
+            int w = flight[2];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+
+    public void dfs(int node,Map<Integer,List<int[]>> adjList,int[][] price,int cur_step,int k) {
+        if(cur_step>k) return;
+
+        for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjPair[0];
+            int weight = adjPair[1];
+
+            if(price[adjNode][cur_step+1] > price[node][cur_step]+weight) {
+                // System.out.println(price[adjNode][cur_step]+weight);
+                price[adjNode][cur_step+1] = price[node][cur_step]+weight;
+                dfs(adjNode,adjList,price,cur_step+1,k);
+            }
+        }
+    }
+
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(flights,adjList);
+
+        int[][] price = new int[n][k+2];
+        for(int[] p : price) {
+            Arrays.fill(p,Integer.MAX_VALUE);
+        }
+
+        price[src][0] = 0;
+
+        dfs(src,adjList,price,0,k);
+
+        int min_dist = Integer.MAX_VALUE;
+        for(int i=0;i<=k+1;i++) {
+            min_dist = Math.min(min_dist,price[dst][i]);
+        }
+
+        return min_dist==Integer.MAX_VALUE ? -1 : min_dist;
+ 
+    }
+}
