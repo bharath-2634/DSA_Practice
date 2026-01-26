@@ -1,0 +1,69 @@
+Solution:
+
+Note: Its impossible to create the pure Dijkstra's algo using DFS
+
+class Pair {
+    
+    private int Node;
+    private int dist;
+    
+    public Pair(int node,int dist) {
+        this.Node = node;
+        this.dist = dist;
+    }
+    
+    public int getNode() {
+        return this.Node;
+    }
+    
+    public int getDist() {
+        return this.dist;
+    }
+    
+}
+
+
+class Solution {
+    
+    public static void getAdjList(Map<Integer,List<Pair>> adjList, int[][] edges) {
+        
+        for(int i=0;i<edges.length;i++) {
+            int u= edges[i][0];
+            int v = edges[i][1];
+            int d = edges[i][2];
+            
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new Pair(v,d));
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new Pair(u,d));
+        }
+            
+    }
+    
+    public void dfs(int node,Map<Integer,List<Pair>> adjList,int[] dist) {
+        
+        for(Pair adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjPair.getNode();
+            int weight = adjPair.getDist();
+            
+            if(dist[adjNode] > dist[node]+weight) {
+                dist[adjNode] = dist[node]+weight;
+                dfs(adjNode,adjList,dist);
+            }
+            
+        }
+    }
+    
+    public int[] dijkstra(int V, int[][] edges, int src) {
+        
+        Map<Integer,List<Pair>> adjList = new HashMap<>();
+        getAdjList(adjList,edges);
+        
+        int[] dist = new int[V];
+        for(int i=0;i<V;i++) dist[i] = Integer.MAX_VALUE;
+        
+        dist[src] = 0;
+        
+        dfs(src,adjList,dist);
+        
+        return dist;
+    }
+}
