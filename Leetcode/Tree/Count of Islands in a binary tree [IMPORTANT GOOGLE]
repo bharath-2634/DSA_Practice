@@ -1,0 +1,105 @@
+Solution:
+import java.util.*;
+
+class Node {
+    int data;
+    Node left,right;
+
+    public Node(int d) {
+        this.data = d;
+        this.left = this.right = null;
+    }
+}
+
+class Main {
+    private static int count=0;
+
+    public static boolean buildTree(Node root,Node node) {
+        if(root==null) {
+            root=node;
+            return true;
+        }else if(root.left==null) {
+            root.left = node;
+            return true;
+        }else if(root.right==null) {
+            root.right = node;
+            return true;
+        }else {
+            return buildTree(root.left,node) || buildTree(root.right,node);
+        }
+    }
+
+    public static void displayTree(Node node) {
+
+        if(node==null) return;
+
+        System.out.println(node.data);
+        displayTree(node.left);
+        displayTree(node.right);
+    }
+
+    /*
+
+    First Approach 
+    public static void dfs(Node node) {
+        if(node==null) return;
+
+        if(node.data==0) return;
+
+        node.data=0;
+        dfs(node.left);
+        dfs(node.right);
+    }
+
+    public static void getCount(Node node) {
+        if(node==null) return;
+
+        if(node.data==1) {
+            count++;
+            dfs(node);
+        }
+
+        getCount(node.left);
+        getCount(node.right); 
+    }
+    */
+
+    public static int getCount(Node node,Node parent) {
+        if(node==null) return 0;
+
+        int islands=0;
+
+        if(node.data==1 && (parent==null || parent.data==0)) {
+            islands=1;
+        }
+
+        // node.data=0;
+        islands+=getCount(node.left,node);
+        islands+=getCount(node.right,node);
+
+        return islands;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        Node root = null,tail= null;
+
+        while(n-->0) {
+            int d = sc.nextInt();
+            Node node = new Node(d);
+
+            if(root==null) {
+                root=node;
+            }else {
+                buildTree(root,node);
+            }
+        }
+
+        // displayTree(root);
+        int i_count = getCount(root,null);
+        System.out.println(i_count);
+        
+    }
+}
