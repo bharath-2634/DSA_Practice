@@ -1,0 +1,156 @@
+Question: https://leetcode.com/problems/bus-routes/
+
+Solution:
+/*
+
+This is my Path enumeration DFS with cost minimization
+/// -> (TLE)
+class Solution {
+
+    private int min_count=Integer.MAX_VALUE;
+
+    public void generateAdjList(int[][] routes,Map<Integer,List<int[]>> adjList) {
+
+        for(int i=0;i<routes.length;i++) {
+            int parent = i;
+            for(int j=1;j<routes[i].length;j++) {
+                int node = routes[i][j-1];
+                int adjNode = routes[i][j];
+
+                if(!adjList.containsKey(node)) {
+                    adjList.put(node,new ArrayList<>());
+                }
+
+                adjList.get(node).add(new int[]{adjNode,parent});
+            }
+            
+            if(!adjList.containsKey(routes[i][routes[i].length-1])) {
+                List<int[]> pair = new ArrayList<>();
+                pair.add(new int[]{routes[i][0],parent});
+                adjList.put(routes[i][routes[i].length-1],pair);
+            }else {
+                adjList.get(routes[i][routes[i].length-1]).add(new int[]{routes[i][0],parent});
+            }
+        }
+    }
+
+    public void dfs(int node,int parent,int count,Map<Integer,List<int[]>> adjList,int target,Set<String> visited) {
+
+        if(node==target) {
+            min_count = Math.min(min_count,count);
+            return;
+        }
+
+        if(count>=min_count) return;
+
+        for(int[] adjPair: adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjPair[0];
+            int adjBus = adjPair[1];
+
+            String key = adjNode +" | " + adjBus;
+
+            if(visited.contains(key)) continue;
+
+            visited.add(key);
+            if(adjBus!=parent) {
+                count++;
+            }
+
+            dfs(adjNode,adjBus,count,adjList,target,visited);
+
+            if(adjBus!=parent) {
+                count--;
+            }
+            visited.remove(key);
+        }
+
+    }
+    
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(routes,adjList);
+
+        for(int node : adjList.keySet()) {
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                System.out.println(node + " " + adjPair[0]+" "+adjPair[1]);
+            }
+        }
+
+        Set<String> visited = new HashSet<>();
+        dfs(source,-1,0,adjList,target,visited);
+
+        return min_count==Integer.MAX_VALUE ? -1 :min_count;
+    }
+}
+*/
+
+class Solution {
+
+    // public void generateAdjList(int[][] routes,Map<Integer,List<Integer>> adjList) {
+
+    //     for (int bus = 0; bus < routes.length; bus++) {
+    //         for (int stop : routes[bus]) {
+    //             adjList.computeIfAbsent(stop, k -> new ArrayList<>()).add(bus);
+    //         }
+    //     }
+    // }
+
+    // public int numBusesToDestination(int[][] routes, int source, int target) {
+    //     Map<Integer,List<Integer>> adjList = new HashMap<>();
+    //     generateAdjList(routes,adjList);
+
+    //     System.out.println(adjList);
+    //     Set<Integer> busTrack = new HashSet<>();
+    //     Set<Integer> busStop = new HashSet<>();
+
+    //     return -1;
+    // }
+
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        if (source == target) return 0;
+
+        Map<Integer, List<Integer>> stopToBus = new HashMap<>();
+
+        for (int bus = 0; bus < routes.length; bus++) {
+            for (int stop : routes[bus]) {
+                stopToBus.computeIfAbsent(stop, k -> new ArrayList<>()).add(bus);
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        Set<Integer> visitedBus = new HashSet<>();
+        Set<Integer> visitedStop = new HashSet<>();
+
+        // initialize BFS with buses that contain source
+        for (int bus : stopToBus.getOrDefault(source, new ArrayList<>())) {
+            q.offer(bus);
+            visitedBus.add(bus);
+        }
+
+        int busesTaken = 1;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            while (size-- > 0) {
+                int bus = q.poll();
+
+                for (int stop : routes[bus]) {
+                    if (stop == target) return busesTaken;
+
+                    if (visitedStop.add(stop)) {
+                        for (int nextBus : stopToBus.get(stop)) {
+                            if (visitedBus.add(nextBus)) {
+                                q.offer(nextBus);
+                            }
+                        }
+                    }
+                }
+            }
+            busesTaken++;
+        }
+
+        return -1;
+    }
+
+}
