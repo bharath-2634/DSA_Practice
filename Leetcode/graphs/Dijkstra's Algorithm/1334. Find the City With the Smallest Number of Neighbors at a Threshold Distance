@@ -1,0 +1,136 @@
+Question: https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/
+
+Solution:
+/*
+
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            adjList.computeIfAbsent(edge[0],k->new ArrayList<>()).add(new int[]{edge[1],edge[2]});
+            adjList.computeIfAbsent(edge[1],k->new ArrayList<>()).add(new int[]{edge[0],edge[2]});
+        }
+    }
+    
+    public void dfs(int node,int parent,int cur_weight,int count,int[] state,Map<Integer,List<int[]>> adjList,int dt,boolean[] visited) {
+        if(state[parent]<count) {
+            state[parent] = count;
+        }
+
+        for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjPair[0];
+            int weight = adjPair[1];
+
+            if(visited[adjNode]) continue;
+
+            if(cur_weight+weight<=dt) {
+                visited[adjNode] = true;
+                dfs(adjNode,parent,cur_weight+weight,count+1,state,adjList,dt,visited);
+                visited[adjNode] = false;
+            }
+        }
+    }
+
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+
+        // if(n==5 && distanceThreshold==2) return 0;
+
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int[] state = new int[n];
+        Arrays.fill(state,Integer.MIN_VALUE);
+        
+        for(int i=0;i<n;i++) {
+            boolean[] visited= new boolean[n];
+            visited[i] = true;
+            dfs(i,i,0,0,state,adjList,distanceThreshold,visited);
+        }
+        
+        int max_state= Integer.MIN_VALUE,pos=0;
+        for(int i=0;i<n;i++) {
+            if(max_state<=state[i]) {
+                pos=Math.max(pos,i);
+                max_state = state[i];
+            }
+            System.out.println(i+" "+state[i]);
+        }
+
+        return pos;
+    }
+}
+
+*/
+
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            adjList.computeIfAbsent(edge[0],k->new ArrayList<>()).add(new int[]{edge[1],edge[2]});
+            adjList.computeIfAbsent(edge[1],k->new ArrayList<>()).add(new int[]{edge[0],edge[2]});
+        }
+    }
+
+    public int[] dijkstra(int n,int src,Map<Integer,List<int[]>> adjList,int dt) {
+        
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[src] = 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((x,y)->x[1]-y[1]);
+        pq.offer(new int[]{src,0});
+
+        while(!pq.isEmpty()) {
+            int[] pair = pq.poll();
+            int node = pair[0];
+            int d = pair[1];
+
+            if(d>dist[node]) continue;
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+
+                // if(weight+dist<=dt) {
+                //     dist[node] = weight+dt;
+                //     pq.offer(new int[]{adjNode,weight});
+                // }
+
+                if(dist[adjNode] > dist[node]+weight) {
+                    dist[adjNode] = dist[node]+weight;
+                    pq.offer(new int[]{adjNode,dist[adjNode]});
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+        
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int minCity=-1,minCount = Integer.MAX_VALUE;
+
+        for(int city=0;city<n;city++) {
+            int[] dist = dijkstra(n,city,adjList,distanceThreshold);
+
+            int count=0;
+            for(int i=0;i<dist.length;i++) {
+                if(i!=city && dist[i]<=distanceThreshold) {
+                    count++;
+                }
+            }
+
+            if(minCount>=count) {
+                minCount = count;
+                minCity = city;
+            }
+        }
+
+        return minCity;
+    }
+}
