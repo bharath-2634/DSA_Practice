@@ -1,0 +1,140 @@
+Question: https://leetcode.com/problems/shortest-path-with-alternating-colors/
+
+Solution:
+/*
+
+This is my DFS Solution 
+
+class Solution {
+    public void generateAdjList(int[][] redEdges,int[][] blueEdges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] node : redEdges) {
+            int u = node[0];
+            int v = node[1];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,0});
+        }
+
+        for(int[] node : blueEdges) {
+            int u = node[0];
+            int v = node[1];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,1});
+        }
+    }
+
+    public void dfs(int node,int color,int count,int[] dist,Map<Integer,List<int[]>> adjList,boolean[][] visited) {
+        
+        if(count < dist[node]) {
+            dist[node] = count;
+        }
+
+        for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode= adjPair[0];
+            int adjColor = adjPair[1];
+
+            if(color==adjColor) continue;
+
+            if(visited[adjNode][adjColor]) continue;
+            
+            visited[adjNode][adjColor] = true;
+            dfs(adjNode,adjColor,count+1,dist,adjList,visited);
+            visited[adjNode][adjColor] = false;
+        }
+    }
+
+    public int[] shortestAlternatingPaths(int n, int[][] redEdges, int[][] blueEdges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(redEdges,blueEdges,adjList);
+
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[0] = 0;
+
+        boolean[][] visited = new boolean[n][2];
+        dfs(0,-1,0,dist,adjList,visited);
+
+        for(int i=0;i<dist.length;i++) {
+            if(dist[i]==Integer.MAX_VALUE) dist[i] = -1;
+        }
+        
+        return dist;
+    }
+}
+*/
+
+class Solution {
+
+    public void generateAdjList(int[][] redEdges,int[][] blueEdges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] node : redEdges) {
+            int u = node[0];
+            int v = node[1];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+            adjList.get(u).add(new int[]{v,0});
+        }
+
+        for(int[] node : blueEdges) {
+            int u = node[0];
+            int v = node[1];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+            adjList.get(u).add(new int[]{v,1});
+        }
+    }
+
+    public int[] shortestAlternatingPaths(int n, int[][] redEdges, int[][] blueEdges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(redEdges,blueEdges,adjList);
+
+        int[][] dist = new int[n][2];
+        for(int[] d : dist) Arrays.fill(d,Integer.MAX_VALUE);
+        dist[0][0] = 0;
+        dist[0][1] = 0;
+
+        boolean[][] visited = new boolean[n][2];
+
+        Queue<int[]> pq = new LinkedList<>();
+        pq.offer(new int[]{0,0});
+        pq.offer(new int[]{0,1});
+
+        while(!pq.isEmpty()) {
+            int[] adjPair = pq.poll();
+            int node = adjPair[0];
+            int color = adjPair[1];
+
+            for(int[] pair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = pair[0];
+                int adjColor = pair[1];
+
+                if(color==adjColor) continue;
+                if(dist[adjNode][adjColor]==Integer.MAX_VALUE) {
+                    dist[adjNode][adjColor] = dist[node][color]+1;
+                    pq.offer(new int[]{adjNode,adjColor});
+                }
+            }
+        }
+
+        int[] res = new int[n];
+        for(int i=0;i<dist.length;i++) {
+            int d = Math.min(dist[i][0],dist[i][1]);
+            if(d == Integer.MAX_VALUE) res[i] = -1;
+            else res[i] = d;
+        }
+
+        return res;
+    }
+}
