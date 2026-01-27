@@ -1,0 +1,55 @@
+Question: https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/
+
+Solution:
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int t = edge[2];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,t});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,t});
+        }
+    }
+
+    public int minCost(int maxTime, int[][] edges, int[] passingFees) {
+
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        PriorityQueue<int[]> pq= new PriorityQueue<>((x,y)->x[2]-y[2]);
+        pq.offer(new int[]{0,0,passingFees[0]}); // node, time, fee
+
+        int[][] dp = new int[passingFees.length][maxTime+1];
+        for(int[] t : dp) Arrays.fill(t,Integer.MAX_VALUE);
+        dp[0][0] = passingFees[0];
+
+        while(!pq.isEmpty()) {
+            int[] pair = pq.poll();
+            int node = pair[0];
+            int cur_time = pair[1];
+            int cur_fee= pair[2];
+
+            if(node==passingFees.length-1) return cur_fee;
+
+            if(cur_fee>dp[node][cur_time]) continue;
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int time = adjPair[1];
+
+                if(cur_time+time<=maxTime) {
+                    if(dp[adjNode][cur_time+time] > cur_fee+passingFees[adjNode]) {
+                        dp[adjNode][cur_time+time] = cur_fee+passingFees[adjNode];
+                        pq.offer(new int[]{adjNode,cur_time+time,cur_fee+passingFees[adjNode]});
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+}
