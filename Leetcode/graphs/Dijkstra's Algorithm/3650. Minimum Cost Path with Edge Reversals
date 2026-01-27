@@ -1,0 +1,48 @@
+Question: https://leetcode.com/problems/minimum-cost-path-with-edge-reversals/description/
+
+Solution:
+class Solution {
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,w});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,2*w});
+        }
+    }
+
+    public int minCost(int n, int[][] edges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[0]= 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((x,y)->x[1]-y[1]);
+        pq.offer(new int[]{0,0});
+
+        while(!pq.isEmpty()) {
+            int[] pair = pq.poll();
+            int node = pair[0];
+            int cur_dist = pair[1];
+
+            if(node==n-1) return cur_dist;
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+
+                if(dist[adjNode] > dist[node]+weight) {
+                    dist[adjNode] = dist[node]+weight;
+                    pq.offer(new int[]{adjNode,dist[adjNode]});
+                }
+            }
+        }
+
+        return -1;
+    }
+}
