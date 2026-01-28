@@ -1,6 +1,5 @@
 Question :https://leetcode.com/problems/binary-tree-level-order-traversal-ii/
 
-Solution : 
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -16,28 +15,64 @@ Solution :
  *     }
  * }
  */
+
 class Solution {
+    /*
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
 
-    public void getLevelOrder(TreeNode node,int level, List<List<Integer>> res) {
-        if(node==null) return;
+        if(root==null) return res;
 
-        List<Integer> data = null;
-        if(res.size() <= level) {
-            data = new ArrayList<>();
-            res.add(0,data);
+        queue.offer(root);
+
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            List<Integer> sub_res = new ArrayList<>();
+
+            for(int i=0;i<size;i++) {
+                TreeNode node = queue.poll();
+                sub_res.add(node.val);
+
+                if(node.left!=null) {
+                    queue.offer(node.left);
+                }
+                if(node.right!=null) {
+                    queue.offer(node.right);
+                }
+            }
+
+            res.add(sub_res);
         }
 
-        data = res.get(res.size()-level-1);
-        data.add(node.val);
+        Collections.reverse(res);
+        return res;
+    }
+    */
 
-        getLevelOrder(node.left,level+1,res);
-        getLevelOrder(node.right,level+1,res);
+    public void getLevelOrderBottom(TreeNode node,List<List<Integer>> res,int level) {
+
+        if(node==null) return;
+        List<Integer> ds = new ArrayList<>();
+        if(level==res.size()) {
+            ds = new ArrayList<>();
+            res.add(0,ds);
+        }else {
+            ds = res.get(res.size()-level-1);
+        }
+
+        ds.add(node.val);
+
+        getLevelOrderBottom(node.left,res,level+1);
+        getLevelOrderBottom(node.right,res,level+1);
     }
 
     public List<List<Integer>> levelOrderBottom(TreeNode root) {
-        
         List<List<Integer>> res = new ArrayList<>();
-        getLevelOrder(root,0,res);
+        if(root==null) return res;
+
+        getLevelOrderBottom(root,res,0);
+
         return res;
     }
 }
