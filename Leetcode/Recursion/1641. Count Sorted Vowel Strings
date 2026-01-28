@@ -1,0 +1,60 @@
+Question: https://leetcode.com/problems/count-sorted-vowel-strings/
+
+Solution:
+class Solution {
+    /*
+    public int countVowelStrings(int n) {
+        int d1=5,d2=10,d3=10,d4=5;
+
+        while(n>1) {
+            d4+=d3;
+            d3+=d2;
+            d2+=d1;
+            d1++;
+            n--;
+        }
+
+        return d4;
+    }
+    */
+    
+    /*
+
+    This is my backtracking solution
+    public int getCount(int idx,String[] vowels,StringBuilder sb,int n) {
+        if(sb.length()==n) {
+            return 1;
+        }
+
+        int count=0;
+        for(int i=idx;i<vowels.length;i++) {
+            sb.append(vowels[i]);
+            count+=getCount(i,vowels,sb,n);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        return count;
+    }
+
+    public int countVowelStrings(int n) {
+
+        if(n==1) return 5;
+
+        String[] vowels = {"a","e","i","o","u"};
+        return getCount(0,vowels,new StringBuilder(),n);
+    }
+    */
+}
+
+/*
+
+    total number of vowels = 5
+    n=1 -> 5
+    n=2 -> 25 - 10
+
+    a,e,i,o,u
+    [a,e,i,o,u]
+    i=0;
+
+    sb = a if sb.length()==1
+*/
