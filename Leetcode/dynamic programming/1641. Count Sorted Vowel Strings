@@ -1,0 +1,116 @@
+Question: https://leetcode.com/problems/count-sorted-vowel-strings/description/
+
+Solution:
+class Solution {
+    /*
+
+    This my Combinatorics solution
+    public int countVowelStrings(int n) {
+        int d1=5,d2=10,d3=10,d4=5;
+
+        while(n>1) {
+            d4+=d3;
+            d3+=d2;
+            d2+=d1;
+            d1++;
+            n--;
+        }
+
+        return d4;
+    }
+    */
+    
+    /*
+
+    This is my backtracking solution
+    public int getCount(int idx,String[] vowels,StringBuilder sb,int n) {
+        if(sb.length()==n) {
+            return 1;
+        }
+
+        int count=0;
+        for(int i=idx;i<vowels.length;i++) {
+            sb.append(vowels[i]);
+            count+=getCount(i,vowels,sb,n);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        return count;
+    }
+
+    public int countVowelStrings(int n) {
+
+        if(n==1) return 5;
+
+        String[] vowels = {"a","e","i","o","u"};
+        return getCount(0,vowels,new StringBuilder(),n);
+    }
+    */
+
+    /*
+
+    This is my memoization solution
+    public int getCount(int idx,String[] vowels,StringBuilder sb,int n,int[][] dp) {
+        if(sb.length()==n) {
+            return 1;
+        }
+
+        if(dp[idx][sb.length()]!=0) return dp[idx][sb.length()];
+
+        int count=0;
+        for(int i=idx;i<vowels.length;i++) {
+            sb.append(vowels[i]);
+            count+=getCount(i,vowels,sb,n,dp);
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        return dp[idx][sb.length()] = count;
+    }
+
+    public int countVowelStrings(int n) {
+
+        if(n==1) return 5;
+
+        String[] vowels = {"a","e","i","o","u"};
+        int[][] dp = new int[5][n];
+        return getCount(0,vowels,new StringBuilder(),n,dp);
+    }
+    */
+
+    public int countVowelStrings(int n) {
+
+        if(n==1) return 5;
+
+        String[] vowels = {"a","e","i","o","u"};
+        int[][] dp = new int[5][n+1];
+
+        for(int i=0;i<5;i++) {
+            dp[i][n] = 1;
+        }
+
+        for(int len=n-1;len>=0;len--) {
+            for(int idx=4;idx>=0;idx--) {
+                if(idx==4) {
+                    dp[idx][len] = dp[idx][len+1];
+                }else {
+                    dp[idx][len] = dp[idx+1][len] + dp[idx][len+1];
+                }
+            }
+        }
+
+        return dp[0][0];
+    }
+}
+
+/*
+
+    total number of vowels = 5
+    n=1 -> 5
+    n=2 -> 25 - 10
+
+    a,e,i,o,u
+    [a,e,i,o,u]
+    i=0;
+
+    sb = a if sb.length()==1
+*/
