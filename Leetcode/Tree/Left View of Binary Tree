@@ -1,0 +1,64 @@
+Question: https://www.geeksforgeeks.org/problems/left-view-of-binary-tree/1
+
+Solution:
+/*
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val) {
+        this.data = val;
+        this.left = null;
+        this.right = null;
+    }
+}
+*/
+
+class Solution {
+    /*
+    This is my Iterative Version of my left view of tree
+    public ArrayList<Integer> leftView(Node root) {
+        
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        Queue<Node> q = new LinkedList<>();
+        q.offer(root);
+        ArrayList<Integer> final_ds = new ArrayList<>();
+        while(!q.isEmpty()) {
+            int n = q.size();
+            ArrayList<Integer> ds = new ArrayList<>();
+            for(int i=0;i<n;i++) {
+                Node node = q.poll();
+                ds.add(node.data);
+                if(i==0) final_ds.add(node.data);
+                if(node.left!=null) {
+                    q.offer(node.left);
+                }
+                if(node.right!=null) {
+                    q.offer(node.right);
+                }
+            }
+            res.add(ds);
+        }
+        
+        return final_ds;
+    }
+    */
+    
+    public void getLeftView(Node node,ArrayList<Integer> ds,int level) {
+        if(node==null) return;
+        
+        if(level==ds.size()) {
+            ds.add(node.data);
+        }
+        
+        getLeftView(node.left,ds,level+1);
+        getLeftView(node.right,ds,level+1);
+    }
+    
+    public ArrayList<Integer> leftView(Node root) {
+        ArrayList<Integer> ds = new ArrayList<>();
+        getLeftView(root,ds,0);
+        
+        return ds;
+    }
+}
