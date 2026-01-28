@@ -62,3 +62,32 @@ class Solution {
        
     }
 }
+
+/*********************************************************\
+This is my DFS Solution
+/********************************************\
+
+public void getTopView(Node node,int dist,int level,TreeMap<Integer,int[]> res) {
+        if(node==null) return;
+        
+        getTopView(node.left,dist-1,level+1,res);
+        
+        if(!res.containsKey(dist) || level<res.get(dist)[0]) {
+            res.put(dist,new int[]{level,node.data});
+        }
+        
+        
+        getTopView(node.right,dist+1,level+1,res);
+    }
+    
+    public ArrayList<Integer> topView(Node root) {
+        TreeMap<Integer,int[]> res = new TreeMap<>(); // key = dist, value = {level,data}
+        getTopView(root,0,0,res);
+        
+        ArrayList<Integer> ds = new ArrayList<>();
+        for(int[] val : res.values()) {
+            ds.add(val[1]);
+        }
+        
+        return ds;
+    }
