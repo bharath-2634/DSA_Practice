@@ -2,72 +2,35 @@ Question : https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1
 
 Solution :
 /*
-class Node{
+class Node {
     int data;
-    Node left;
-    Node right;
-    Node(int data){
-        this.data = data;
-        left=null;
-        right=null;
+    Node left, right;
+
+    Node(int val) {
+        this.data = val;
+        this.left = null;
+        this.right = null;
     }
 }
 */
 
 class Pair {
-    int col;
     Node node;
+    int level;
+    int dist;
     
-    Pair(int col,Node node) {
-        this.col = col;
-        this.node = node;
+    public Pair(Node n,int l,int d) {
+        this.node = n;
+        this.level = l;
+        this.dist = d;
     }
 }
 
 class Solution {
-
-    static ArrayList<Integer> topView(Node root) {
-       
-       ArrayList<Integer> res = new ArrayList<>();
-       
-       if(root==null) return res;
-       
-       Queue<Pair> queue = new LinkedList<>();
-       queue.offer(new Pair(0,root));
-       
-        Map<Integer,Integer> cMap = new TreeMap<>();
-       
-       while(!queue.isEmpty()) {
-           
-           Pair p = queue.poll();
-           Node node = p.node;
-           
-           if(!cMap.containsKey(p.col)) {
-               cMap.put(p.col,p.node.data);
-           }
-           
-           if(node.left!=null) {
-               queue.offer(new Pair(p.col-1,node.left));
-           }
-           
-           if(node.right!=null) {
-               queue.offer(new Pair(p.col+1,node.right));
-           }
-           
-       }
-       
-       res.addAll(cMap.values());
-       
-       return res;
-       
-    }
-}
-
-/*********************************************************\
-This is my DFS Solution
-/********************************************\
-
-public void getTopView(Node node,int dist,int level,TreeMap<Integer,int[]> res) {
+    
+    /*
+    This is my DFS Solution
+    public void getTopView(Node node,int dist,int level,TreeMap<Integer,int[]> res) {
         if(node==null) return;
         
         getTopView(node.left,dist-1,level+1,res);
@@ -91,3 +54,41 @@ public void getTopView(Node node,int dist,int level,TreeMap<Integer,int[]> res) 
         
         return ds;
     }
+    */
+    
+    public ArrayList<Integer> topView(Node root) {
+        
+        ArrayList<Integer> res = new ArrayList<>();
+        if(root==null) return res;
+        
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(root,0,0));
+        TreeMap<Integer,int[]> tMap = new TreeMap<>();
+        
+        while(!q.isEmpty()) {
+            Pair p = q.poll();
+            Node node = p.node;
+            int level = p.level;
+            int dist = p.dist;
+            
+            if(!tMap.containsKey(dist) || tMap.get(dist)[0]>level) {
+                tMap.put(dist,new int[]{level,node.data});
+            }
+            
+            if(node.left!=null) {
+                q.offer(new Pair(node.left,level+1,dist-1));
+            }
+            
+            if(node.right!=null) {
+                q.offer(new Pair(node.right,level+1,dist+1));
+            }
+        }
+        
+        for(int[] values : tMap.values()) {
+            res.add(values[1]);
+        }
+        
+        return res;
+        
+    }
+}
