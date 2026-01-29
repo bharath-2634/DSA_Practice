@@ -1,0 +1,97 @@
+Question: https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1
+
+
+Solution:
+
+/*
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+class Pair {
+    Node node;
+    int level;
+    int dist;
+    
+    public Pair(Node node,int l,int d) {
+        this.node = node;
+        this.level = l;
+        this.dist = d;
+    }
+}
+
+class Solution {
+    
+    /*
+    This my DFS Approach
+    
+    public void generateBottomView(Node node,TreeMap<Integer,int[]> tMap,int level,int dist) {
+        
+        if(node==null) return;
+        
+        if(!tMap.containsKey(dist) || tMap.get(dist)[0]<=level) {
+            tMap.put(dist,new int[]{level,node.data});
+        }
+        
+        generateBottomView(node.left,tMap,level+1,dist-1);
+        generateBottomView(node.right,tMap,level+1,dist+1);
+    }
+    
+    public ArrayList<Integer> bottomView(Node root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if(root==null) return res;
+        
+        TreeMap<Integer,int[]> tMap = new TreeMap<>();
+        generateBottomView(root,tMap,0,0);
+        
+        for(int[] val : tMap.values()) {
+            res.add(val[1]);
+        }
+        
+        return res;
+    }
+    */
+    
+    public ArrayList<Integer> bottomView(Node root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if(root==null) return res;
+        
+        TreeMap<Integer,int[]> tMap = new TreeMap<>();
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(root,0,0));
+        
+        while(!q.isEmpty()) {
+            Pair p = q.poll();
+            Node node = p.node;
+            int level = p.level;
+            int dist = p.dist;
+            
+            if(!tMap.containsKey(dist) || tMap.get(dist)[0]<=level) {
+                tMap.put(dist,new int[]{level,node.data});
+            }
+            
+            if(node.left!=null) {
+                q.offer(new Pair(node.left,level+1,dist-1));
+            }
+            
+            if(node.right!=null) {
+                q.offer(new Pair(node.right,level+1,dist+1));
+            }
+        }
+        
+        for(int[] val : tMap.values()) {
+            res.add(val[1]);
+        }
+        
+        return res;
+    }
+}
