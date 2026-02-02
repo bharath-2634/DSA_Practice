@@ -1,0 +1,36 @@
+Question: https://leetcode.com/problems/last-stone-weight-ii/
+
+Solution:
+class Solution {
+
+    public int getLastStoneWeight(int idx,int cur_sum,int total,int target,int[] stones,int[][] dp) {
+        if(idx==stones.length || cur_sum>=target) {
+            return Math.abs(cur_sum - (total-cur_sum));
+        }
+
+        if(dp[idx][cur_sum]!=0) return dp[idx][cur_sum];
+
+        int not_pick = getLastStoneWeight(idx+1,cur_sum,total,target,stones,dp);
+        int pick = getLastStoneWeight(idx+1,cur_sum+stones[idx],total,target,stones,dp);
+
+        return dp[idx][cur_sum] = Math.min(pick,not_pick);
+    }
+
+    public int lastStoneWeightII(int[] stones) {
+        int total=0;
+        for(int stone : stones) total+=stone;
+        int target = Math.abs(total/2);
+
+        int[][] dp = new int[stones.length][target+1];
+
+        return getLastStoneWeight(0,0,total,target,stones,dp);
+    }
+}
+
+/*
+    [2,7,4,1,8,1]
+    [5,4,1,8,1]
+    []
+
+    -> pick and not-pick
+*/
