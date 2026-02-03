@@ -1,0 +1,156 @@
+Solution:
+import java.util.*;
+
+class Node  {
+    int data;
+    Node left;
+    Node right;
+
+    public Node(int d) {
+        this.data = d;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class Main {
+
+    public static boolean buildTree(Node root,Node node) {
+        if(root==null) {
+            root = node;
+            return true;
+        }else if(root.left==null) {
+            root.left = node;
+            return true;
+        }else if(root.right==null) {
+            root.right = node;
+            return true;
+        }else {
+            return buildTree(root.left,node) || buildTree(root.right,node);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        Node root = null, tail = null;
+
+        while(n-->0) {
+            int data = sc.nextInt();
+            Node node = new Node(data);
+            if(root==null) {
+                root = node;
+                tail = root;
+            }else {
+                buildTree(root,node);
+            }
+        }
+
+        levelOrderTraversal(root);
+
+    }
+
+    /*
+    public static void preOrderTraversal(Node node) {
+        List<Integer> res = new ArrayList<>();
+        if(node==null) return;
+        Stack<Node> st = new Stack<>();
+        st.push(node);
+
+        while(!st.isEmpty()) {
+            Node n = st.pop();
+            res.add(n.data);
+
+            if(n.right!=null) st.push(n.right);
+            if(n.left!=null) st.push(n.left);
+        }
+
+        for(int d : res) {
+            System.out.println(d);
+        }
+    }
+    */
+
+    /*
+    public static void inOrderTraversal(Node node) {
+        Stack<Node> st = new Stack<>();
+        if(node==null) return;
+
+        List<Integer> res = new ArrayList<>();
+        while(node!=null || !st.isEmpty()) {
+            while(node!=null) {
+                st.push(node);
+                node = node.left;
+            }
+
+            Node n = st.pop();
+            res.add(n.data);
+            if(n.right!=null) {
+                node = n.right;
+            }
+        }
+
+        for(int d : res) {
+            System.out.println(d);
+        }
+    }
+    */
+
+    /*
+    public static void postOrderTraversal(Node node) {
+        List<Integer> res = new ArrayList<>();
+        // if(node==null) return;
+        // System.out.println(node.data);
+        Node cur = node,prev = null;
+        Stack<Node> st = new Stack<>();
+
+        while(cur!=null || !st.isEmpty()) {
+            while(cur!=null) {
+                st.push(cur);
+                cur = cur.left;
+            }
+
+            Node n = st.peek();
+            
+            if(n.right!=null && n.right!=prev) {
+                cur = n.right;
+            }else {
+                st.pop();
+                prev = n;
+                res.add(n.data);
+            }
+        }
+
+        for(int d : res) {
+            System.out.println(d);
+        }
+        
+    }
+    */
+
+    public static void levelOrderTraversal(Node node) {
+        List<List<Integer>> ds = new ArrayList<>();
+        getLevelOrderTraversal(node,ds,0);
+
+        System.out.println(ds);
+    } 
+
+    public static void getLevelOrderTraversal(Node node,List<List<Integer>> ds,int level) {
+        if(node==null) return;
+
+        List<Integer> lv = null;
+        if(ds.size()==level) {
+            lv = new ArrayList<>();
+            // lv.add(node.data);
+            ds.add(0,lv);
+        }else {
+            lv = ds.get(ds.size()-level-1);
+        }
+
+        lv.add(node.data);
+        getLevelOrderTraversal(node.left,ds,level+1);
+        getLevelOrderTraversal(node.right,ds,level+1);
+    }
+}
+
