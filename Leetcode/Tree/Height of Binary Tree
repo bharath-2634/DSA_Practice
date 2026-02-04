@@ -1,0 +1,30 @@
+Question: https://www.geeksforgeeks.org/problems/height-of-binary-tree/1
+
+Solution:
+
+/*
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val)
+    {
+        data = val;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    public int getHeight(Node node) {
+        if(node==null) return 0;
+        int left_height = 1+getHeight(node.left);
+        int right_height = 1+getHeight(node.right);
+        
+        return Math.max(left_height,right_height);
+    }
+    
+    public int height(Node root) {
+        return getHeight(root)-1;
+    }
+}
