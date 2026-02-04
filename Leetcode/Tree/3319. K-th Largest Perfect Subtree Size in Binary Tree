@@ -1,0 +1,120 @@
+Question: https://leetcode.com/problems/k-th-largest-perfect-subtree-size-in-binary-tree/
+
+Solution:
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+/*
+
+This is my brute force idea of framing the solution ! 
+
+class Solution {
+    public void getResult(TreeNode node,Map<TreeNode,Integer> dMap,List<Integer> res) {
+        if(node==null) return;
+
+        if(isPerfectSubTree(node)!=-1) {
+            res.add(dMap.get(node));
+        }
+
+        getResult(node.left,dMap,res);
+        getResult(node.right,dMap,res);
+    }
+
+    public void getHeight(TreeNode node,Map<TreeNode,Integer> dMap) {
+
+        if(node==null) {
+            return;
+        }
+
+        dMap.put(node,count(node));
+        getHeight(node.left,dMap);
+        getHeight(node.right,dMap);
+    }
+
+    public int count(TreeNode node) {
+        if(node==null) return 0;
+        return 1+count(node.left)+count(node.right);
+    }
+
+    public int isPerfectSubTree(TreeNode node) {
+        if(node==null) return 0;
+
+        int left = isPerfectSubTree(node.left);
+        int right = isPerfectSubTree(node.right);
+
+        if(left!=-1 && left==right) {
+            return left+1;
+        }
+
+        return -1;
+    }
+
+    public int kthLargestPerfectSubtree(TreeNode root, int k) {
+        if(root==null) return 0;
+
+        Map<TreeNode,Integer> count_map = new HashMap<>();
+        getHeight(root,count_map);
+
+        List<Integer> res = new ArrayList<>();
+        getResult(root,count_map,res);
+
+        Collections.sort(res,Collections.reverseOrder());
+        return res.size()<k ? -1 : res.get(k-1);
+    }
+}
+
+*/
+
+class NodeInfo {
+    int height;
+    int size;
+    boolean isPerfect;
+
+    public NodeInfo(int h,int s,boolean f) {
+        this.height = h;
+        this.size = s;
+        this.isPerfect = f;
+    }
+}
+
+class Solution {
+
+    public NodeInfo dfs(TreeNode node,List<Integer> res) {
+        if(node==null) return new NodeInfo(0,0,true);
+
+        NodeInfo left = dfs(node.left,res);
+        NodeInfo right = dfs(node.right,res);
+
+        if(left.isPerfect && right.isPerfect && left.height == right.height) {
+            int height = left.height+1;
+            int size = left.size + right.size +1;
+            res.add(size);
+
+            return new NodeInfo(height,size,true);
+        }
+
+        return new NodeInfo(0,0,false);
+    }
+
+    public int kthLargestPerfectSubtree(TreeNode root, int k) {
+        if(root==null) return 0;
+        List<Integer> res = new ArrayList<>();
+        dfs(root,res);
+        Collections.sort(res,Collections.reverseOrder());
+        return res.size()<k ? -1 : res.get(k-1);
+    }
+}
