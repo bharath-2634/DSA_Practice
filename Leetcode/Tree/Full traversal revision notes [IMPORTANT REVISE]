@@ -47,7 +47,7 @@ class Main {
             }
         }
 
-        levelOrderTraversal(root);
+        VerticalView(root);
 
     }
 
@@ -129,6 +129,7 @@ class Main {
     }
     */
 
+    /*
     public static void levelOrderTraversal(Node node) {
         List<List<Integer>> ds = new ArrayList<>();
         getLevelOrderTraversal(node,ds,0);
@@ -142,7 +143,6 @@ class Main {
         List<Integer> lv = null;
         if(ds.size()==level) {
             lv = new ArrayList<>();
-            // lv.add(node.data);
             ds.add(0,lv);
         }else {
             lv = ds.get(ds.size()-level-1);
@@ -152,5 +152,46 @@ class Main {
         getLevelOrderTraversal(node.left,ds,level+1);
         getLevelOrderTraversal(node.right,ds,level+1);
     }
-}
+    */
 
+    /*
+    public static void topView(Node node) {
+        Map<Integer,int[]> dMap = new HashMap<>();
+        getTopView(node,dMap,0,0);
+
+        for(int[] val : dMap.values()) {
+            System.out.println(val[1]);
+        }
+    }
+
+    public static void getTopView(Node node,Map<Integer,int[]> dMap,int dist,int level) {
+        if(node==null) return;
+
+        getTopView(node.left,dMap,dist-1,level+1);
+
+        if(!dMap.containsKey(dist) || dMap.get(dist)[0]>level) {
+            dMap.put(dist,new int[]{level,node.data});
+        }
+
+        getTopView(node.right,dMap,dist+1,level+1);
+    }
+    */
+
+    public static void VerticalView(Node node) {
+        Map<Integer,List<Integer>> dMap = new TreeMap<>();
+        getVerticalView(node,dMap,0,0);
+
+        for(List<Integer> val : dMap.values()) {
+            System.out.println(val);
+        }
+    }
+
+    public static void getVerticalView(Node node,Map<Integer,List<Integer>> dMap,int dist,int level) {
+        if(node==null) return;
+
+        dMap.computeIfAbsent(dist,k->new ArrayList<>()).add(node.data);
+
+        getVerticalView(node.left,dMap,dist-1,level+1);
+        getVerticalView(node.right,dMap,dist+1,level+1);
+    }
+}
