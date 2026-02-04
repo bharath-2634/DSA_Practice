@@ -1,0 +1,14 @@
+Solution:
+
+public static int isPerfectSubTree(Node node) {
+        if(node==null) return 0;
+
+        int left = isPerfectSubTree(node.left);
+        int right = isPerfectSubTree(node.right);
+
+        if(left!=-1 && left==right) {
+            return left+1;
+        }
+
+        return -1;
+}
