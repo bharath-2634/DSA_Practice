@@ -1,0 +1,27 @@
+Question: https://www.geeksforgeeks.org/problems/level-of-a-node-in-binary-tree/1
+
+Solution:
+
+class Solution {
+    /* Returns level of given data value */
+    private int cur_level=-1;
+    
+    boolean getRes(Node node,int target,int level) {
+        if(node==null) return false;
+        
+        if(node.data==target) {
+            cur_level = level;
+            return true;
+        }
+        
+        return getRes(node.left,target,level+1) || getRes(node.right,target,level+1);
+    }
+    
+    int getLevel(Node node, int data) {
+        if(node==null) return 0;
+            
+        getRes(node,data,0);
+        
+        return cur_level+1;
+    }
+}
