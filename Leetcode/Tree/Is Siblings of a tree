@@ -1,0 +1,24 @@
+public static void dfs(Node node,Node parent,int a,int b,int level) {
+        if(node==null) return;
+
+        if(node.data==a) {
+            parent_a = parent;
+            depth_a= level;
+        }
+
+        if(node.data==b) {
+            parent_b = parent;
+            depth_b= level;
+        }
+
+        dfs(node.left,node,a,b,level+1);
+        dfs(node.right,node,a,b,level+1);
+    }
+
+    public static boolean isSibiling(Node node,int a,int b) {
+        if(node==null) return false;
+        /* sibilings only if same parent and same level*/
+        dfs(node,node,a,b,0);
+
+        return parent_a==parent_b && depth_a==depth_b;
+    }
