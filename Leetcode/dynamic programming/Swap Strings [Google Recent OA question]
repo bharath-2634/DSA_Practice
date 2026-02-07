@@ -1,0 +1,102 @@
+Question: 
+
+Problem Statement
+
+You are given a string s of length n consisting of lowercase English letters.
+
+You are allowed to perform the following operation any number of times (including zero):
+
+Choose an index i (0-based) such that 0 ≤ i < n - 1
+
+Swap the characters at positions i and i + 1
+
+Constraint: If you perform a swap at index i, then you are not allowed to perform a swap at index i + 1 (i.e., swaps cannot be adjacent)
+
+Two strings are considered different if they differ at any position.
+
+Task
+
+Return the number of distinct strings that can be obtained by performing the above operations on s.
+
+Input
+
+A single string s
+
+Output
+
+An integer representing the number of distinct strings that can be formed
+
+Constraints
+
+1 ≤ s.length ≤ 15
+
+s consists of lowercase English letters
+
+Examples
+Example 1
+Input:  s = "ab"
+Output: 2
+Explanation:
+- No swap → "ab"
+- Swap at index 0 → "ba"
+
+Example 2
+Input:  s = "aa"
+Output: 1
+Explanation:
+- Swapping identical characters does not change the string.
+
+Example 3
+Input:  s = "abc"
+Output: 3
+Explanation:
+- No swap → "abc"
+- Swap at index 0 → "bac"
+- Swap at index 1 → "acb"
+- Swapping at both indices is not allowed since swaps cannot be adjacent.
+
+
+Solution:
+
+import java.util.*;
+
+class Main {
+    
+    private static Set<String> set = new HashSet<>();
+    
+    public static void swap(char[] s,int start,int end) {
+        char temp = s[start];
+        s[start] = s[end];
+        s[end]= temp;
+    }
+
+    public static void swapCount(char[] s,int idx,Set<String> visited) {
+        if(idx>=s.length) {
+            set.add(new String(s));
+            return;
+        }
+
+        String key = idx+"|"+new String(s);
+        if(visited.contains(key)) {
+            return;
+        }
+
+        visited.add(key);
+
+        swapCount(s,idx+1,visited);
+
+        if(idx+1<s.length && s[idx]!=s[idx+1]) {
+            swap(s,idx,idx+1);
+            swapCount(s,idx+2,visited);
+            swap(s,idx,idx+1);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.next();
+        Set<String> visited = new HashSet<>();
+        swapCount(s.toCharArray(),0,visited);
+        System.out.println(set.size());
+    }
+}
