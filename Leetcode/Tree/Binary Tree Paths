@@ -63,3 +63,47 @@ class Solution {
         return res;
     }
 }
+
+-------------------------------Alternate Approach------------------------------------------
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    public void getPaths(TreeNode node,List<String> res,StringBuilder sb) {
+        if(node==null) return;
+        
+        int len = sb.length();
+        sb.append(node.val);
+
+        if(node.left==null && node.right==null) {
+            res.add(sb.toString());
+        }else {
+            sb.append("->");
+            getPaths(node.left,res,sb);
+            getPaths(node.right,res,sb);
+        }
+
+        sb.setLength(len);
+    }
+
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new ArrayList<>();
+        getPaths(root,res,new StringBuilder());
+
+        return res;
+    }
+}
