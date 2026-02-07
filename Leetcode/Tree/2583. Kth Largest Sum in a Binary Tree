@@ -1,0 +1,41 @@
+Question: https://leetcode.com/problems/kth-largest-sum-in-a-binary-tree/
+
+Solution:
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    public void levelOrderTraversal(TreeNode node,int level,List<Long> res) {
+        if(node==null) return;
+
+        if(level>=res.size()) res.add(0L);
+
+        long al_sum = res.get(level);
+        res.set(level,al_sum+node.val);
+        levelOrderTraversal(node.left,level+1,res);
+        levelOrderTraversal(node.right,level+1,res);
+    }
+
+    public long kthLargestLevelSum(TreeNode root, int k) {
+        List<Long> res = new ArrayList<>();
+        levelOrderTraversal(root,0,res);
+        Collections.sort(res);
+        if(res.size()<k) return -1;
+
+        return res.get(res.size()-k);
+    }
+}
