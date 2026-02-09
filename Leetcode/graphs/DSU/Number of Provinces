@@ -1,0 +1,218 @@
+Question: https://leetcode.com/problems/number-of-provinces/
+
+Solution:
+
+import java.util.*;
+
+/* This is my dfs approach
+
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+        for(int i=0;i<edges.length;i++) {
+            adjList.put(i,new ArrayList<>());
+            for(int j=0;j<edges[i].length;j++) {
+                if(i!=j && edges[i][j]==1) {
+                    adjList.get(i).add(j);
+                }
+            }
+        }
+    }
+
+    public static void dfs(int node,Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        visited[node] = true;
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(!visited[adjNode]) {
+                dfs(adjNode,adjList,visited);
+            }
+        }
+    }
+
+    public static int numberOfProvinces(int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int count=0;
+        boolean[] visited = new boolean[edges.length];
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                count++;
+                dfs(node,adjList,visited);
+            }
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[n][n];
+
+        for(int i=0;i<n;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        System.out.println(numberOfProvinces(edges));
+    }
+}
+
+*/
+
+/*
+
+This is my dfs approach
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+        for(int i=0;i<edges.length;i++) {
+            adjList.put(i,new ArrayList<>());
+            for(int j=0;j<edges[i].length;j++) {
+                if(i!=j && edges[i][j]==1) {
+                    adjList.get(i).add(j);
+                }
+            }
+        }
+    }
+
+    public static int numberOfProvinces(int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        boolean[] visited = new boolean[edges.length];
+        Queue<Integer> q = new LinkedList<>();
+        int count=0;
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                q.offer(node);
+                count++;
+                visited[node]= true;
+                while(!q.isEmpty()) {
+                    int p = q.poll();
+                
+                    for(int adjNode : adjList.getOrDefault(p,new ArrayList<>())) {
+                        if(!visited[adjNode]) {
+                            visited[adjNode] = true;
+                            q.offer(adjNode);
+                        }
+                    }
+                }
+            }
+        }
+
+        return count;
+    } 
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[n][n];
+
+        for(int i=0;i<n;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        System.out.println(numberOfProvinces(edges));
+    }
+}
+*/
+
+class DSU {
+    List<Integer> parent;
+    List<Integer> rank;
+    List<Integer> size;
+
+    public DSU(int n) {
+        parent = new ArrayList<>();
+        rank =new ArrayList<>();
+        size = new ArrayList<>();
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int getUltimateParent(int node) {
+        if(parent.get(node)==node) return node;
+
+        int ulp_parent = getUltimateParent(parent.get(node));
+        parent.set(node,ulp_parent);
+
+        return ulp_parent;
+    }
+
+    public void dsu_by_rank(int x,int y) {
+        int ulp_x = getUltimateParent(x);
+        int ulp_y = getUltimateParent(y);
+
+        if(ulp_x==ulp_y) return;
+
+        if(rank.get(ulp_x) <= rank.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+            rank.set(ulp_y,rank.get(ulp_y)+1);
+        }else {
+            parent.set(ulp_y,ulp_x);
+            rank.set(ulp_x,rank.get(ulp_x)+1);
+        }
+    }
+
+    public void dsu_by_size(int x,int y) {
+        int ulp_x = getUltimateParent(x);
+        int ulp_y = getUltimateParent(y);
+
+        if(ulp_x==ulp_y) return;
+
+        if(size.get(ulp_x) <= size.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+            size.set(ulp_y,size.get(ulp_y)+size.get(ulp_x));
+        }else {
+            parent.set(ulp_y,ulp_x);
+            size.set(ulp_x,size.get(ulp_x)+size.get(ulp_y));
+        }
+    }
+}
+
+class Main {
+
+    public static int numberOfProvinces(int[][] edges) {
+        DSU dsu = new DSU(edges.length);
+
+        for(int i=0;i<edges.length;i++) {
+            for(int j=0;j<edges[i].length;j++) {
+                if(edges[i][j]==1) {
+                    dsu.dsu_by_size(i,j);
+                }
+            }
+        }
+
+        int count=0;
+        for(int i=0;i<edges.length;i++) {
+            if(dsu.parent.get(i)==i) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[n][n];
+
+        for(int i=0;i<n;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        System.out.println(numberOfProvinces(edges));
+    }
+}
+
