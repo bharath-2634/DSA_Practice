@@ -1,0 +1,193 @@
+Solution:
+
+import java.util.*;
+
+/*This is my DFS Approach
+class Main {
+    
+    public static void dfs(int[][] grid,boolean[][] visited,int row,int col) {
+        if(row<0 || col<0 || row>=grid.length || col>=grid[0].length || visited[row][col]) return;
+
+        if(grid[row][col]==0) return;
+
+        visited[row][col] = true;
+        dfs(grid,visited,row+1,col);
+        dfs(grid,visited,row-1,col);
+        dfs(grid,visited,row,col+1);
+        dfs(grid,visited,row,col-1);
+    }
+
+    public static int getNumberOfIslands(int[][] grid) {
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        int count=0;
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1 && !visited[i][j]) {
+                    
+                    count++;
+                    dfs(grid,visited,i,j);
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static List<Integer> numerOfIslands2(int n,int m,int[][] pos) {
+        int[][] grid = new int[n][m];
+        for(int[] d : grid) Arrays.fill(d,0);
+
+        List<Integer> res = new ArrayList<>();
+        for(int i=0;i<pos.length;i++) {
+            int row = pos[i][0];
+            int col = pos[i][1];
+
+            grid[row][col] = 1;
+            int count = getNumberOfIslands(grid);
+            res.add(count);
+        }
+
+        // System.out.println(res);
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        int k = sc.nextInt();
+        int[][] pos=  new int[k][2];
+        for(int i=0;i<k;i++) {
+            pos[i][0] = sc.nextInt();
+            pos[i][1] = sc.nextInt();
+        }
+
+        System.out.println(numerOfIslands2(n,m,pos));
+    }
+}
+*/
+
+class DSU {
+    List<Integer> parent;
+    List<Integer> rank;
+    List<Integer> size;
+
+    public DSU(int n) {
+        parent = new ArrayList<>();
+        rank = new ArrayList<>();
+        size =new ArrayList<>();
+
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int findUltimateParent(int n) {
+        if(parent.get(n)==n) return n;
+
+        int ulp = findUltimateParent(parent.get(n));
+        parent.set(n,ulp);
+
+        return ulp;
+    }
+
+    public boolean dsu_by_rank(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(ulp_x==ulp_y) return false;
+
+        if(rank.get(ulp_x) < rank.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+        }else if(rank.get(ulp_x) > rank.get(ulp_y)) {
+            parent.set(ulp_y,ulp_x);
+        }else {
+            parent.set(ulp_y,ulp_x);
+            rank.set(ulp_x,rank.get(ulp_x)+1);
+        }
+
+        return true;
+    }
+
+    public void dsu_by_size(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(size.get(ulp_x) <= size.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+            size.set(ulp_y,size.get(ulp_x)+size.get(ulp_y));
+        }else {
+            parent.set(ulp_y,ulp_x);
+            size.set(ulp_y,size.get(ulp_y)+size.get(ulp_x));
+        }
+    }
+}
+
+class Main {
+
+    public static List<Integer> numerOfIslands2(int n,int m,int[][] pos) {
+        
+        boolean[][] visited = new boolean[n][m];
+
+        DSU dsu = new DSU(n*m);
+        List<Integer> res = new ArrayList<>();
+        int count=0;
+
+        for(int[] p : pos) {
+            int row = p[0];
+            int col = p[1];
+            
+            if(visited[row][col]) {
+                res.add(count);
+                continue;
+            }
+
+            visited[row][col] = true;
+            count++;
+            int idx1 = row*m+col;
+            int[][] moves = {{1,0},{-1,0},{0,1},{0,-1}};
+            for(int[] move : moves) {
+                int new_row = row+move[0];
+                int new_col = col+move[1];
+
+                if(new_row>=0 && new_col>=0 && new_row<n && new_col<m && visited[new_row][new_col]) {
+                    int idx2 = new_row*m+new_col;
+                    if(dsu.dsu_by_rank(idx1,idx2))
+                        count--;
+                }
+            }
+            res.add(count);
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        int k = sc.nextInt();
+        int[][] pos=  new int[k][2];
+        for(int i=0;i<k;i++) {
+            pos[i][0] = sc.nextInt();
+            pos[i][1] = sc.nextInt();
+        }
+
+        System.out.println(numerOfIslands2(n,m,pos));
+    }
+}
+
+testcase:
+
+n=3
+m=3
+k=4
+0 0
+0 1
+1 2
+2 1
