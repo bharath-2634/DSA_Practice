@@ -1,0 +1,223 @@
+Question: https://leetcode.com/problems/number-of-islands/description/
+
+Solution:
+
+import java.util.*;
+
+/*
+
+This is my dfs approach 
+class Main {
+    
+    public static void dfs(int[][] grid,int row,int col) {
+        if(row<0 || col<0 || row>=grid.length || col>=grid[0].length) return;
+
+        if(grid[row][col]==0) return;
+
+        grid[row][col] = 0;
+
+        dfs(grid,row+1,col);
+        dfs(grid,row-1,col);
+        dfs(grid,row,col+1);
+        dfs(grid,row,col-1);
+    }
+
+    public static int numberOfIslands(int[][] grid) {
+        
+        int count=0;
+        for(int i=0;i<grid.length;i++){
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    count++;
+                    dfs(grid,i,j);
+                }
+            }
+        }
+
+        return count;
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid = new int[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+
+        System.out.println(numberOfIslands(grid));
+    }
+}
+
+*/
+
+/*
+class Main {
+
+    public static int numberOfIslands(int[][] grid) {
+        int count=0;
+
+        Queue<int[]> q = new LinkedList<>();
+
+        int[][] moves = {{1,0},{-1,0},{0,1},{0,-1}};
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    count++;
+                    q.offer(new int[]{i,j});
+                    grid[i][j]=0;
+                    while(!q.isEmpty()) {
+                        int[] pair = q.poll();
+                        int row = pair[0];
+                        int col = pair[1];
+                        
+                        for(int[] move : moves) {
+                            int new_row = row+move[0];
+                            int new_col = col+move[1];
+
+                            if(new_row>=0 && new_col>=0 && new_row<grid.length && new_col<grid[0].length && grid[new_row][new_col]==1) {
+                                q.offer(new int[]{new_row,new_col});
+                                grid[new_row][new_col] = 0;
+                            } 
+                        }
+
+                    }
+                }
+            }
+        } 
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid = new int[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+
+        System.out.println(numberOfIslands(grid));
+    }
+}
+
+*/
+
+class DSU {
+    List<Integer> parent;
+    List<Integer> size;
+    List<Integer> rank;
+
+    public DSU(int n) {
+        parent = new ArrayList<>();
+        size = new ArrayList<>();
+        rank = new ArrayList<>();
+
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int findUltimateParent(int n) {
+        if(parent.get(n)==n) return n;
+
+        int ulp = findUltimateParent(parent.get(n));
+        parent.set(n,ulp);
+
+        return ulp;
+    }
+
+    public void dsu_by_rank(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(ulp_x==ulp_y) return;
+
+        if(rank.get(ulp_x)<=rank.get(ulp_y)) {
+            rank.set(ulp_y,rank.get(ulp_y)+1);
+            parent.set(ulp_x,ulp_y);
+        }else {
+            rank.set(ulp_x,rank.get(ulp_x)+1);
+            parent.set(ulp_y,ulp_x);
+        }
+    }
+
+    public void dsu_by_size(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(ulp_x==ulp_y) return;
+
+        if(size.get(ulp_x)<=size.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+            size.set(ulp_y,size.get(ulp_y)+size.get(ulp_x));
+        }else {
+            parent.set(ulp_y,ulp_x);
+            size.set(ulp_x,size.get(ulp_x)+size.get(ulp_y));
+        }
+    }
+}
+
+class Main {
+
+    public static int numberOfIslands(int[][] grid) {
+        DSU dsu = new DSU(grid.length*grid[0].length);
+
+        int[][] moves = {{1,0},{-1,0},{0,1},{0,-1}};
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    int idx1 = i*grid[0].length+j;
+                    for(int[] move : moves) {
+                        int new_row = i+move[0];
+                        int new_col = j+move[1];
+
+                        if(new_row>=0 && new_col>=0 && new_row<grid.length && new_col<grid[0].length && grid[new_row][new_col]==1) {
+                            int idx2 = new_row*grid[0].length + new_col;
+                            dsu.dsu_by_rank(idx1,idx2);
+                        }
+                    }
+                }
+            }
+        }
+
+        Set<Integer> set = new HashSet<>();
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    set.add(dsu.findUltimateParent(i*grid[0].length+j));
+                }
+            }
+        }
+
+        return set.size();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid = new int[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+
+        System.out.println(numberOfIslands(grid));
+    }
+}
