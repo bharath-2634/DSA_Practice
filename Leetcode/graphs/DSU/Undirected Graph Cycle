@@ -1,0 +1,129 @@
+Question: https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1
+
+Solution:
+
+import java.util.*;
+
+/*
+class Main {
+    
+    public static void generateAdjList(int[][] grid,Map<Integer,List<Integer>> adjList) {
+        for(int[] g : grid) {
+            int u = g[0];
+            int v = g[1];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }
+    }
+
+    public static boolean dfs(int node,int parent,Map<Integer,List<Integer>> adjList,boolean[] visited) {
+        visited[node] = true;
+
+        for(int adjNode : adjList.get(node)) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,node,adjList,visited)) return true;
+            }else if(adjNode !=parent) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean detectCycle(int[][] grid) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(grid,adjList);
+        boolean[] visited = new boolean[grid.length+1];
+        for(int node : adjList.keySet()) {
+            if(!visited[node]) {
+                if(dfs(node,-1,adjList,visited)) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] grid = new int[n][2];
+
+        for(int i=0;i<n;i++) {
+            grid[i][0] = sc.nextInt();
+            grid[i][1] = sc.nextInt();
+        }
+
+        System.out.println(detectCycle(grid));
+    }
+}
+
+*/
+
+class DSU {
+    List<Integer> parent;
+    List<Integer> rank;
+    List<Integer> size;
+
+    public DSU(int n) {
+        parent = new ArrayList<>();
+        rank= new ArrayList<>();
+        size = new ArrayList<>();
+
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int findUltimateParent(int n) {
+        if(parent.get(n)==n) return n;
+
+        int ulp = findUltimateParent(parent.get(n));
+        parent.set(n,ulp);
+
+        return ulp;
+    }
+
+    public boolean dsu_rank(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(ulp_x==ulp_y) return false;
+
+        if(rank.get(ulp_x)<rank.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+        }else if(rank.get(ulp_x) > rank.get(ulp_y)) {
+            parent.set(ulp_y,ulp_x);
+        }else {
+            parent.set(ulp_x,ulp_y);
+            rank.set(ulp_y,rank.get(ulp_y)+1);
+        }
+
+        return true;
+    }
+}
+
+class Main {
+    public static boolean detectCycle(int[][] grid) {
+        DSU dsu = new DSU(grid.length*grid[0].length);
+
+        for(int[] g : grid) {
+            if(!dsu.dsu_rank(g[0],g[1])) return true;
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] grid = new int[n][2];
+
+        for(int i=0;i<n;i++) {
+            grid[i][0] = sc.nextInt();
+            grid[i][1] = sc.nextInt();
+        }
+
+        System.out.println(detectCycle(grid));
+    }
+}
