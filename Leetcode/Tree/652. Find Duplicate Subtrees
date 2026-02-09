@@ -1,0 +1,46 @@
+Question: https://leetcode.com/problems/find-duplicate-subtrees/
+
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    public String findingDuplicateSubTrees(TreeNode node,Map<String,Integer> dMap,List<TreeNode> res) {
+        if(node==null) return "#";
+
+        String left = findingDuplicateSubTrees(node.left,dMap,res);
+        String right = findingDuplicateSubTrees(node.right,dMap,res);
+        
+        String key = node.val+"#"+left+"#"+right;
+
+        dMap.put(key,dMap.getOrDefault(key,0)+1);
+
+        if(dMap.get(key)==2) {
+            res.add(node);
+        }
+        
+        return key;
+    }
+
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        List<TreeNode> res = new ArrayList<>();
+        Map<String,Integer> dMap = new HashMap<>();
+        findingDuplicateSubTrees(root,dMap,res);
+    
+        return res;
+    }
+}
