@@ -1,0 +1,117 @@
+Question: https://leetcode.com/problems/making-a-large-island/
+
+Solution:
+
+class DSU {
+    List<Integer> parent = new ArrayList<>();
+    List<Integer> rank = new ArrayList<>();
+    List<Integer> size = new ArrayList<>();
+
+    public DSU(int n) {
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int findUltimateParent(int node) {
+        if(node == parent.get(node))  {
+            return node;
+        }
+        int ulp = findUltimateParent(parent.get(node));
+        parent.set(node,ulp);
+        return parent.get(node);
+    }
+
+    public void findUnionByRank(int u,int v) {
+        int ulp_u = findUltimateParent(u);
+        int ulp_v = findUltimateParent(v);
+
+        if(ulp_u == ulp_v) {
+            return;
+        }
+
+        if(rank.get(ulp_u) > rank.get(ulp_v)) {
+            parent.set(ulp_v,ulp_u);
+        }else if(rank.get(ulp_u) < rank.get(ulp_v)) {
+            parent.set(ulp_u,ulp_v);
+        }else {
+            parent.set(ulp_u,ulp_v);
+            rank.set(ulp_u,rank.get(ulp_u)+1);
+        }
+    }
+
+    public void findUnionBySize(int u,int v) {
+
+        int ulp_u = findUltimateParent(u);
+        int ulp_v = findUltimateParent(v);
+
+        if(ulp_u == ulp_v) {
+            return;
+        }
+        if(size.get(ulp_u) > size.get(ulp_v)) {
+            parent.set(ulp_v,ulp_u);
+            size.set(ulp_u,size.get(ulp_u)+size.get(ulp_v));
+        }else {
+            parent.set(ulp_u,ulp_v);
+            size.set(ulp_v,size.get(ulp_u)+size.get(ulp_v));
+        }
+    }
+}
+
+class Solution {
+    public int largestIsland(int[][] grid) {
+        int n = grid.length;
+
+        DSU dsu = new DSU(n*n);
+
+        int[] delRow = {+1,0,-1,0};
+        int[] delCol = {0,+1,0,-1};
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid.length;j++) {
+                if(grid[i][j]==0) continue;
+                for(int move=0;move<4;move++) {
+                    int newRow = i+delRow[move];
+                    int newCol = j+delCol[move];
+                    if(newRow>=0 && newRow<n && newCol>=0 && newCol<n && grid[newRow][newCol]==1) {
+                        int node = i*n+j;
+                        int adjNode = newRow*n+newCol;
+                        dsu.findUnionBySize(node,adjNode);
+                    }
+
+                }
+            }  
+        }
+
+        int maxLand=0;
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<n;j++) {
+                if(grid[i][j]==1) continue;
+                Set<Integer> components = new HashSet<>();
+                for(int move=0;move<4;move++) {
+                    int newRow = i+delRow[move];
+                    int newCol = j+delCol[move];
+
+                    if(newRow>=0 && newRow<n && newCol>=0 && newCol<n && grid[newRow][newCol]==1) {
+                        components.add(dsu.findUltimateParent(newRow*n+newCol));
+                    }
+                }
+
+                int size=1;
+                for(Integer com : components) {
+                    size+=dsu.size.get(com);
+                }
+
+                maxLand = Math.max(maxLand,size);
+            }
+        }
+
+        for(int cell=0;cell<n*n;cell++) {
+            maxLand = Math.max(maxLand,dsu.size.get(dsu.findUltimateParent(cell)));
+        }
+
+        return maxLand;
+    }
+}
