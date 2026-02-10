@@ -1,0 +1,76 @@
+Question: https://leetcode.com/problems/longest-balanced-subarray-i/
+
+Solution:
+
+/*
+class Solution {
+    public int longestBalanced(int[] nums) {
+        if(nums.length==0) return 0;
+        int max_len = 0;
+        
+        for(int i=0;i<nums.length;i++) {
+            Set<Integer> odd_set = new HashSet<>();
+            Set<Integer> even_set = new HashSet<>();
+            
+            for(int j=i;j<nums.length;j++) {
+                if(nums[j]%2==0) even_set.add(nums[j]);
+                else odd_set.add(nums[j]);
+
+                if(even_set.size() == odd_set.size()) {
+                    max_len = Math.max(max_len,(j-i+1));
+                }
+            }
+        }
+
+        return max_len;
+    }
+}
+
+/*
+    nums-> balanced dist(even)==dist(odd) -> max_len
+
+    [2,5,4,3] -> i=0, 2
+*/
+
+class Solution {
+    public int find_balanced(int[] nums,int l,int mid,int r) {
+        int max_len=0;
+        Set<Integer> left_even = new HashSet<>();
+        Set<Integer> left_odd = new HashSet<>();
+
+        for(int i=mid;i>=l;i--) {
+            if(nums[i]%2==0) left_even.add(nums[i]);
+            else left_odd.add(nums[i]);
+
+            Set<Integer> right_even = new HashSet<>();
+            Set<Integer> right_odd = new HashSet<>();
+
+            for(int j=mid+1;j<=r;j++) {
+                if(nums[j]%2==0) right_even.add(nums[j]);
+                else right_odd.add(nums[j]);
+
+                if(left_even.size()+right_even.size() == left_odd.size()+right_odd.size()) {
+                    max_len= Math.max(max_len,j-i+1);
+                }
+            }    
+
+        }
+
+        return max_len;
+    }
+
+    public int getLongestBalanced(int[] nums,int l,int r) {
+        if(l>=r) return 0;
+
+        int mid = l+(r-l)/2;
+        int left_side = getLongestBalanced(nums,l,mid);
+        int right_side = getLongestBalanced(nums,mid+1,r);
+        int cross_mid = find_balanced(nums,l,mid,r);
+
+        return Math.max(left_side,Math.max(right_side,cross_mid));
+    }
+
+    public int longestBalanced(int[] nums) {
+        return getLongestBalanced(nums,0,nums.length-1);
+    }
+}
