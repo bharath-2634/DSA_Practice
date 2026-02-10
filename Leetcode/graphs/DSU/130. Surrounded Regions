@@ -1,0 +1,179 @@
+Question: https://leetcode.com/problems/surrounded-regions/description/
+
+Solution:
+
+import java.util.*;
+
+/*
+public class Main {
+
+    public static void dfs(int row,int col,char[][] grid) {
+        if(row<0 || col<0 || row>=grid.length || col>=grid[0].length) return;
+
+        if(grid[row][col]!='O') return;
+
+        grid[row][col] = 'W';
+        dfs(row+1,col,grid);
+        dfs(row-1,col,grid);
+        dfs(row,col+1,grid);
+        dfs(row,col-1,grid);
+    }
+
+    public static char[][] surroundedRegions(char[][] grid) {
+        
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if((i==0 || j==0 || i==grid.length-1 || j==grid[0].length-1) && grid[i][j]=='O') {
+                    dfs(i,j,grid);
+                }
+            }
+        }
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]!='W') {
+                    grid[i][j] = 'X';
+                }else {
+                    grid[i][j] = 'O';
+                }
+            }
+        }
+        return grid;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.next());
+        int m = Integer.parseInt(sc.next());
+        char[][] grid = new char[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                grid[i][j] = sc.next().charAt(0);
+            }
+        }
+
+        char[][] res = surroundedRegions(grid);
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                System.out.print(grid[i][j]+" ");
+            }
+            System.out.println("");
+        }
+    }
+}
+
+*/
+
+class DSU {
+    List<Integer> parent;
+    List<Integer> rank;
+    List<Integer> size;
+
+    public DSU(int n) {
+        parent = new ArrayList<>();
+        rank = new ArrayList<>();
+        size =new ArrayList<>();
+
+        for(int i=0;i<n;i++) {
+            parent.add(i);
+            rank.add(1);
+            size.add(1);
+        }
+    }
+
+    public int findUltimateParent(int n) {
+        if(parent.get(n)==n) return n;
+
+        int ulp = findUltimateParent(parent.get(n));
+        parent.set(n,ulp);
+
+        return ulp;
+    }
+
+    public void dsu_by_rank(int x,int y) {
+        int ulp_x = findUltimateParent(x);
+        int ulp_y = findUltimateParent(y);
+
+        if(rank.get(ulp_x)<rank.get(ulp_y)) {
+            parent.set(ulp_x,ulp_y);
+        }else if(rank.get(ulp_y) < rank.get(ulp_x)) {
+            parent.set(ulp_y,ulp_x);
+        }else {
+            rank.set(ulp_x,rank.get(ulp_x)+1);
+            parent.set(ulp_y,ulp_x);
+        }
+    }
+}
+
+class Main {
+
+    public static char[][] surroundedRegions(char[][] grid) {
+        
+        DSU dsu = new DSU(grid.length*grid[0].length+1);
+        int dummy = grid.length *grid[0].length;
+        int[][] moves = {{0,1},{0,-1},{1,0},{-1,0}};
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]=='O') {
+                    int idx1 = i*grid[0].length+j;
+
+                    for(int[] move : moves) {
+                        int new_row = i+move[0];
+                        int new_col = j+move[1];
+
+                        if(new_row>=0 && new_col>=0 && new_row<grid.length && new_col<grid[0].length && grid[new_row][new_col]=='O') {
+                            int idx2 = new_row*grid[0].length + new_col;
+                            dsu.dsu_by_rank(idx1,idx2);
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if((i==0 || j==0 || i==grid.length-1 ||j==grid[0].length-1) && grid[i][j]=='O') {
+                    int idx = i*grid[0].length +j;
+                    dsu.dsu_by_rank(idx,dummy);
+                }
+            }
+        }
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]=='O') {
+                    int idx = i*grid[0].length+j;
+                    if(dsu.findUltimateParent(idx)!=dsu.findUltimateParent(dummy)) {
+                        grid[i][j] = 'X';
+                    }
+                }
+                
+            }
+        }
+
+        return grid;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.next());
+        int m = Integer.parseInt(sc.next());
+        char[][] grid = new char[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                grid[i][j] = sc.next().charAt(0);
+            }
+        }
+
+        char[][] res = surroundedRegions(grid);
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                System.out.print(grid[i][j]+" ");
+            }
+            System.out.println("");
+        }
+    }
+}
