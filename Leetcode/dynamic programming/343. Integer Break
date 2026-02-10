@@ -1,0 +1,96 @@
+Question: https://leetcode.com/problems/integer-break/
+
+Solution:
+
+/*
+
+class Solution {
+ 
+    public int getIntegerBreak(int n,int count,int product,Map<String,Integer> memo) {
+        if(n==0) {
+            if(count>=2) {
+                return product;
+            }else return Integer.MIN_VALUE;
+        }
+
+        String key = n+"#"+count;
+        if(memo.containsKey(key)) return memo.get(key);
+
+        int max_product = Integer.MIN_VALUE;
+
+        for(int i=1;i<=n;i++) {
+            max_product = Math.max(max_product,getIntegerBreak(n-i,count+1,product*i,memo));
+        }
+
+        memo.put(key,max_product);
+        return max_product;
+    }
+
+    public int integerBreak(int n) {
+        Map<String,Integer> memo = new HashMap<>();
+        return getIntegerBreak(n,0,1,memo);
+    }
+}
+
+/*
+    n=2
+    i = 1->n
+    n-i = 1 -> fun(n-i,1*i) fun(1,1)
+    i=1->n
+
+    n=2
+    val=1
+
+    not_pick = fun(n,val+1,product = 1);
+    pick = fun(n-val,val,product*val)
+
+
+*/
+
+class Solution {
+
+    /*
+    public int breakInteger(int n,int val,int count,int product,int[][] dp) {
+        if(n==0) {
+            if(count>=2) {
+                return product;
+            }else return Integer.MIN_VALUE;
+        }
+
+        if(val > n) return Integer.MIN_VALUE;
+
+        if(dp[n][val]!=0) return dp[n][val];
+
+        int not_pick = breakInteger(n,val+1,count,product,dp);
+        int pick = 0;
+        if(n>=val) {
+            pick = breakInteger(n-val,val,count+1,product*val,dp);
+        }
+
+        return dp[n][val] = Math.max(pick,not_pick);
+    }
+
+    public int integerBreak(int n) {
+        int[][] dp = new int[n+1][n+1];
+        return breakInteger(n,1,0,1,dp);
+    }
+
+    */
+
+    public int integerBreak(int n) {
+
+        /* Found the important state changer -> n  dp[num] = max product can be formed */
+        if(n<2) return 0;
+
+        int[] dp = new int[n+1];
+        dp[1] = 1;
+
+        for(int num=2;num<=n;num++) {
+            for(int p=1;p<num;p++) {
+                dp[num] = Math.max(dp[num],Math.max(p*dp[num-p], p*(num-p)));
+            }
+        }
+
+        return dp[n];
+    }
+}
