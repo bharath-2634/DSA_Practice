@@ -1,0 +1,80 @@
+Question: https://leetcode.com/problems/build-a-matrix-with-conditions/
+
+Solution:
+
+class Solution {
+    
+    public void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+
+    public int[] getResult(int[][] conditions,int k) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(conditions,adjList);
+
+        int[] inDegree = new int[k+1];
+
+        for(int node : adjList.keySet()) {
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]++;
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=1;i<=k;i++) {
+            if(inDegree[i]==0) {
+                q.offer(i);
+            }
+        }
+
+        int count=0;
+        int[] order= new int[k];
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            order[count++] = node;
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) {
+                    q.offer(adjNode);
+                }
+            }
+        }
+
+        if(count!=k) return null;
+
+        return order;
+    }
+
+    public int[][] buildMatrix(int k, int[][] rowConditions, int[][] colConditions) {
+        int[] buildRow = getResult(rowConditions,k);
+        int[] buildCol = getResult(colConditions,k);
+
+        if(buildRow==null || buildCol==null) return new int[0][0];
+
+        int[] rowIdx = new int[k+1];
+        int[] colIdx = new int[k+1];
+        
+        for(int i=0;i<k;i++) {
+            rowIdx[buildRow[i]] = i;
+            colIdx[buildCol[i]] = i;
+        }
+
+        int[][] res = new int[k][k];
+
+        for(int i=1;i<=k;i++) {
+            res[rowIdx[i]][colIdx[i]] = i;
+        }  
+
+        return res;
+    }
+}
