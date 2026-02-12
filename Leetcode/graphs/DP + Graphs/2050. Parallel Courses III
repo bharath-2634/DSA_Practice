@@ -1,0 +1,149 @@
+Question: https://leetcode.com/problems/parallel-courses-iii/
+
+Solution:
+
+import java.util.*;
+
+/*
+
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0]-1;
+            int v = edge[1]-1;
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+
+    public static int dfs(int node,Map<Integer,List<Integer>> adjList,int[] time,int[] dp) {
+        if(!adjList.containsKey(node) || adjList.get(node).size()==0) {
+            // System.out.println(node);
+            return time[node];
+        }
+
+        if(dp[node]!=-1) return dp[node];
+
+        int cur_time=0;
+        for(int adjNode: adjList.getOrDefault(node,new ArrayList<>())) {
+            cur_time = Math.max(cur_time,dfs(adjNode,adjList,time,dp));
+        }
+
+        return dp[node] = cur_time+time[node];
+    }
+
+    public static int parallelCourses(int n,int[][] edges,int[] time) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int min_time = Integer.MIN_VALUE;
+        int[] dp = new int[n];
+        Arrays.fill(dp,-1);
+
+        for(int node : adjList.keySet()) {
+            min_time = Math.max(min_time,dfs(node,adjList,time,dp));
+        }
+
+        return min_time;
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[2][2];
+
+        for(int i=0;i<2;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        }
+
+        int[] time = new int[n];
+        for(int i=0;i<n;i++) {
+            time[i] = sc.nextInt();
+        }
+
+        System.out.println(parallelCourses(n,edges,time));
+    }
+}
+
+*/
+
+class Solution {
+    
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList,int[] inDegree) {
+
+        for(int[] edge : edges) {
+            int u = edge[0]-1;
+            int v = edge[1]-1;
+
+            inDegree[v]++;
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+    
+    public static int parallelCourses(int n,int[][] edges,int[] time) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[]  inDegree = new int[n];
+        generateAdjList(edges,adjList,inDegree);
+        int[] dp = new int[n];
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<n;i++) {
+            if(inDegree[i]==0) {
+                dp[i] = time[i];    
+                q.offer(i);
+            }
+        }
+
+
+        int min_time = Integer.MIN_VALUE;
+
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            min_time = Math.max(min_time,dp[node]);
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                dp[adjNode] = Math.max(dp[adjNode],dp[node]+time[adjNode]);
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) {
+                    q.offer(adjNode);
+                }
+            }
+        }
+
+        return min_time;
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[2][2];
+
+        for(int i=0;i<2;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        }
+
+        int[] time = new int[n];
+        for(int i=0;i<n;i++) {
+            time[i] = sc.nextInt();
+        }
+
+        System.out.println(parallelCourses(n,edges,time));
+    }
+}
+
+
+
