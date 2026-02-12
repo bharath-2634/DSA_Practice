@@ -1,0 +1,67 @@
+Question: https://leetcode.com/problems/delete-operation-for-two-strings/
+
+Solution:
+
+class Solution {
+    /*
+
+    This is my memo solution
+
+    public int getLCS(String s1,String s2,int idx1,int idx2,int[][] dp) {
+        if(idx1<0 || idx2<0) return Integer.MIN_VALUE;
+
+        if(dp[idx1][idx2]!=0) return dp[idx1][idx2];
+
+        char c1 = s1.charAt(idx1);
+        char c2 = s2.charAt(idx2);
+
+        if(c1==c2) {
+            return dp[idx1][idx2] = 1+getLCS(s1,s2,idx1-1,idx2-1,dp);
+        }else {
+            return dp[idx1][idx2] = Math.max(getLCS(s1,s2,idx1-1,idx2,dp),getLCS(s1,s2,idx1,idx2-1,dp));
+        }
+    }
+
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length()][word2.length()];
+        int lcs = getLCS(word1,word2,word1.length()-1,word2.length()-1,dp);
+
+        int n = word1.length();
+        int m = word2.length();
+
+        return n+m - 2*lcs; 
+    }
+    */
+
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length()+1][word2.length()+1];
+        
+        dp[0][0] = (word1.charAt(0)==word2.charAt(0) ? 1 : 0);
+
+        for(int i=0;i<word1.length();i++) {
+            dp[i][0] = 0;
+        }
+
+        for(int i=0;i<word2.length();i++) {
+            dp[0][i] = 0;
+        }
+
+        for(int i=1;i<=word1.length();i++) {
+            for(int j=1;j<=word2.length();j++) {
+                char c1 = word1.charAt(i-1);
+                char c2 = word2.charAt(j-1);
+
+                if(c1==c2) {
+                    dp[i][j] = 1+dp[i-1][j-1];
+                }else {
+                    dp[i][j] = Math.max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+
+        int n = word1.length();
+        int m = word2.length();
+
+        return n+m - 2*dp[n][m]; 
+    }
+}
