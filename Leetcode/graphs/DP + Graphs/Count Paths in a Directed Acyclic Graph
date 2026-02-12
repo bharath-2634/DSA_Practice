@@ -1,0 +1,292 @@
+Question: 
+
+
+Love this request. If you can frame a problem clearly, you really understand it.
+
+Here’s your problem rewritten in proper LeetCode style.
+
+🔷 Count Paths in a Directed Acyclic Graph
+🧩 Problem
+
+You are given:
+
+An integer n representing the number of nodes labeled from 0 to n - 1.
+
+A list of directed edges edges, where each edge is represented as [u, v], meaning there is a directed edge from node u to node v.
+
+An integer target.
+
+The graph is guaranteed to be a Directed Acyclic Graph (DAG).
+
+You may start from any node with indegree 0.
+
+Return the number of distinct paths that end at node target.
+
+📝 Notes
+
+A path is a sequence of nodes connected by directed edges.
+
+Two paths are different if their sequences of nodes differ.
+
+You must count all distinct paths that end at target.
+
+The graph contains no cycles.
+
+📌 Example 1
+Input:
+n = 5
+edges = [[1,3],[2,3],[3,4]]
+target = 4
+
+Graph Structure:
+1 → 3
+2 → 3
+3 → 4
+
+Explanation:
+
+Nodes with indegree 0:
+
+1 and 2
+
+
+Possible paths ending at 4:
+
+1 → 3 → 4
+
+2 → 3 → 4
+
+Total distinct paths = 2
+
+Output:
+2
+
+📌 Example 2
+Input:
+n = 5
+edges = [[1,3],[2,3],[3,4],[1,4]]
+target = 4
+
+Graph Structure:
+1 → 3
+2 → 3
+3 → 4
+1 → 4
+
+Explanation:
+
+Nodes with indegree 0:
+
+1 and 2
+
+
+Possible paths ending at 4:
+
+1 → 4
+
+1 → 3 → 4
+
+2 → 3 → 4
+
+Total distinct paths = 3
+
+Output:
+3
+
+📌 Example 3
+Input:
+n = 4
+edges = [[0,1],[1,2],[2,3]]
+target = 3
+
+Graph Structure:
+0 → 1 → 2 → 3
+
+
+Nodes with indegree 0:
+
+0
+
+
+Only one path:
+
+0 → 1 → 2 → 3
+
+Output:
+1
+
+📌 Example 4 (No Path)
+Input:
+n = 4
+edges = [[0,1],[2,3]]
+target = 3
+
+Explanation:
+
+Nodes with indegree 0:
+
+0 and 2
+
+
+Paths ending at 3:
+
+2 → 3
+
+Total = 1
+
+If target = 1, output would be:
+
+1
+
+
+If target = 3 and edge [2,3] did not exist → output would be:
+
+0
+
+🔒 Constraints
+
+1 ≤ n ≤ 10^5
+
+0 ≤ edges.length ≤ 2 * 10^5
+
+0 ≤ u, v < n
+
+The graph is a DAG.
+
+Solution:
+
+import java.util.*;
+
+/*
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList,int[] inDegree) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            inDegree[v]++;
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+
+    public static int dfs(int node,Map<Integer,List<Integer>> adjList,int target,int[] dp) {
+        if(node==target) {
+            return 1;
+        }
+        if(dp[node]!=0) return dp[node];
+
+        int count=0;
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            count+=dfs(adjNode,adjList,target,dp);
+        }
+
+        return dp[node] = count;
+    }
+
+    public static int countUniqueWays(int[][] edges,int target) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[4];
+        generateAdjList(edges,adjList,inDegree);
+        int[] dp = new int[4];
+        int count=0;
+        for(int i=0;i<4;i++) {
+            if(inDegree[i]==0) {
+                count+=dfs(i,adjList,target,dp);
+            }
+        }
+
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[3][2];
+
+        for(int i=0;i<3;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        } 
+
+        int target = sc.nextInt();
+        
+        System.out.println(countUniqueWays(edges,target));
+    }
+}
+
+*/
+
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList,int[] inDegree) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            inDegree[v]++;
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(v);
+        }
+    }
+
+    public static int countUniqueWays(int[][] edges,int target) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        int[] inDegree = new int[4];
+        generateAdjList(edges,adjList,inDegree);
+
+        Queue<Integer> q = new LinkedList<>();
+        int[] ways = new int[4];
+        for(int i=0;i<4;i++) {
+            if(inDegree[i]==0) {
+                ways[i]++;
+                q.offer(i);
+            }
+        }
+
+        int count=0;
+        while(!q.isEmpty()) {
+            int node = q.poll();
+
+            if(node==target) {
+                count = ways[node];
+                break;
+            }
+
+            for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+                ways[adjNode]+=ways[node];
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) q.offer(adjNode);
+            }
+        }
+
+        return count;
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges = new int[3][2];
+
+        for(int i=0;i<3;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        } 
+
+        int target = sc.nextInt();
+        
+        System.out.println(countUniqueWays(edges,target));
+    }
+}
