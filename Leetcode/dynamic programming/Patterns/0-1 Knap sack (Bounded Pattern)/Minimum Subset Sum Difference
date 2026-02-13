@@ -1,0 +1,138 @@
+Question: 
+
+Solution:
+
+🧩 Problem Statement
+
+Given an integer array nums of size n, partition it into two subsets such that the absolute difference between the sums of the two subsets is minimized.
+
+Return the minimum possible absolute difference.
+
+🔍 Explanation
+
+You need to divide the array into two subsets S1 and S2 such that:
+
+|sum(S1) - sum(S2)| is minimum
+
+
+Each element must belong to exactly one of the two subsets.
+
+📝 Constraints
+
+1 <= nums.length <= 100
+
+0 <= nums[i] <= 1000
+
+The sum of elements will not exceed 10^5
+
+💡 Example 1
+Input
+nums = [1, 2, 3, 9]
+
+Output
+3
+
+Explanation
+
+Possible partitions:
+
+{1, 2, 3} and {9}
+
+Sum1 = 6
+
+Sum2 = 9
+
+Difference = |6 - 9| = 3
+
+This is the minimum possible difference.
+
+💡 Example 2
+Input
+nums = [1, 2, 7]
+
+Output
+4
+
+Explanation
+
+Possible partitions:
+
+{1, 2} and {7}
+
+Sum1 = 3
+
+Sum2 = 7
+
+Difference = 4
+
+💡 Example 3
+Input
+nums = [1, 6, 11, 5]
+
+Output
+1
+
+Explanation
+
+{1, 6, 5} → Sum = 12
+
+{11} → Sum = 11
+
+Difference = 1
+
+This is the minimum achievable difference.
+
+import java.util.*;
+
+class Main {
+    
+    public static boolean canForm(int[] nums,int target,int idx) {
+        if(target==0) return true;
+
+        if(idx==0) {
+            if(nums[idx]==target) return true;
+            else return false;
+        }
+
+        boolean not_choose = canForm(nums,target,idx-1);
+        boolean choose = false;
+        if(nums[idx]<=target) {
+            choose= canForm(nums,target-nums[idx],idx-1);
+        }
+
+        return choose || not_choose;
+    }
+
+    public static int minimumSubsetSumDiff(int[] nums) {
+
+        int total = 0;
+        for(int num: nums) total+=num;
+
+        boolean[] dp = new boolean[total+1];
+        dp[0] = true;
+
+        for(int target=1;target<=total;target++) {
+            dp[target] = canForm(nums,target,nums.length-1);
+        }
+
+        int min_diff = Integer.MAX_VALUE;
+        for(int i=0;i<=total;i++) {
+            int s = (dp[i] ? i : 0);
+            int abs = Math.abs(2*s - total);
+            min_diff = Math.min(min_diff,abs);
+        }
+
+        return min_diff;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] val = new int[n];
+        for(int i=0;i<n;i++) {
+            val[i] = sc.nextInt();
+        }
+
+        System.out.println(minimumSubsetSumDiff(val));
+    }
+}
