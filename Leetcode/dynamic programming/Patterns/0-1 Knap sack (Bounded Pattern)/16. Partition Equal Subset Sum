@@ -1,0 +1,81 @@
+Problem: https://leetcode.com/problems/partition-equal-subset-sum/description/
+
+Solution:
+
+import java.util.*;
+
+class Main {
+
+    /*
+    public static boolean canPartition(int[] nums,int target,int idx,Boolean[][] dp) {
+        if(target==0) return true;
+        if(idx==0) {
+            if(nums[idx]==target) return true;
+            else return false;
+        }
+
+        if(dp[idx][target]!=null) return dp[idx][target];
+
+        boolean not_choose = canPartition(nums,target,idx-1,dp);
+        boolean choose = false;
+        if(nums[idx]<=target) {
+            choose = canPartition(nums,target-nums[idx],idx-1,dp);
+        }
+
+        return dp[idx][target] = choose || not_choose;
+    }
+
+    public static boolean partitionEqualSubset(int[] nums) {
+        int total=0;
+        for(int num :nums) total+=num;
+
+        if(total%2!=0) return false;
+
+        int target = total/2;
+        Boolean[][] dp = new Boolean[nums.length][target+1];
+        return canPartition(nums,target,nums.length-1,dp);
+    }
+    */
+
+    public static boolean partitionEqualSubset(int[] nums) {
+        int total=0;
+        for(int num :nums) total+=num;
+
+        if(total%2!=0) return false;
+
+        int target = total/2;
+        Boolean[][] dp = new Boolean[nums.length][target+1];
+
+        for(int i=0;i<nums.length;i++) {
+            dp[i][0]= true;
+        }
+
+        for(int t=0;t<=target;t++) {
+            dp[0][t] = nums[0]==t;
+        }
+
+        for(int i=1;i<nums.length;i++) {
+            for(int t=0;t<=target;t++) {
+                boolean not_choose = dp[i-1][t];
+                boolean choose = false;
+                if(nums[i]<=t) {
+                    choose = dp[i-1][t-nums[i]];
+                }
+
+                dp[i][t] = choose || not_choose;
+            }
+        }
+
+        return dp[nums.length-1][target];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] val = new int[n];
+        for(int i=0;i<n;i++) {
+            val[i] = sc.nextInt();
+        }
+        System.out.println(partitionEqualSubset(val));
+    }
+}
