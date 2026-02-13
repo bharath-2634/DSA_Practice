@@ -1,0 +1,70 @@
+problem : https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1
+
+Solution:
+
+import java.util.*;
+
+class Main {
+
+    /*
+    public static boolean getSubSet(int[] nums,int target,int idx,Boolean[][] dp) {
+        if(target==0) return true;
+
+        if(idx==0) {
+            if(nums[idx]==target) return true;
+            else return false;
+        }
+
+        if(dp[idx][target]!=null) return dp[idx][target];
+
+        boolean not_choose = getSubSet(nums,target,idx-1,dp);
+        boolean choose= false;
+        if(nums[idx]<=target) {
+            choose = getSubSet(nums,target-nums[idx],idx-1,dp);
+        }
+
+        return dp[idx][target] = choose || not_choose;
+    }
+
+    public static boolean subsetSum(int[] nums,int target) {
+        Boolean[][] dp = new Boolean[nums.length][target+1];
+        return getSubSet(nums,target,nums.length-1,dp);
+    }
+    */
+
+    public static boolean subsetSum(int[] nums,int target) {
+        Boolean[][] dp = new Boolean[nums.length][target+1];
+
+        for(int i=0;i<nums.length;i++) {
+            dp[i][0] = true;
+        }
+
+        for(int t=0;t<=target;t++) {
+            dp[0][t] = nums[0]==t;
+        }
+        
+        for(int i=1;i<nums.length;i++) {
+            for(int t=0;t<=target;t++) {
+                boolean not_choose = dp[i-1][t];
+                boolean choose = false;
+                if(nums[i]<=t) {
+                    choose = dp[i-1][t-nums[i]];
+                }
+                dp[i][t] = choose || not_choose;
+            }
+        }
+
+        return dp[nums.length-1][target];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] val = new int[n];
+        for(int i=0;i<n;i++) {
+            val[i] = sc.nextInt();
+        }
+        int target = sc.nextInt();
+        System.out.println(subsetSum(val,target));
+    }
+}
