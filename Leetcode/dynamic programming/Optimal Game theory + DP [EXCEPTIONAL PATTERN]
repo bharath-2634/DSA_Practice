@@ -1,0 +1,32 @@
+Solution:
+
+import java.util.*;
+
+class Main {
+
+    public static int getScore(int[] arr,int l,int r,int[][] dp) {
+        if(l>r) return 0;
+        if(dp[l][r]!=0) return dp[l][r];
+
+        int case1 = arr[l]+Math.min(getScore(arr,l+1,r-1,dp), getScore(arr,l+2,r,dp));
+
+        int case2 = arr[r]+Math.min(getScore(arr,l+1,r-1,dp),getScore(arr,l,r-2,dp));
+
+        return dp[l][r] = Math.max(case1,case2);
+    }
+
+    public static int Coins(int[] arr) {
+        int[][] dp = new int[arr.length][arr.length];
+        return getScore(arr,0,arr.length-1,dp);    
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] val = new int[4];
+        for(int i=0;i<4;i++) {
+            val[i] = sc.nextInt();
+        }
+
+        System.out.println(Coins(val));
+    }
+}
