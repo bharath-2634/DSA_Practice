@@ -1,0 +1,103 @@
+Question: 
+
+Create a data structure to process following types of queries
+- A manages B (A is direct manager of B)
+- A shares_team_with B (A and B are team member)
+- Is A manager of B (return boolean)
+- Is A team member of B (return boolean)
+Notes:
+A member can belong to only one team
+A manager can manage multiple telms at the same time If A manages B and C manages A then Calso manages B
+If A manages B and B phats team with S then A also manages C A member as well as a ream will alwavs have at most one direct manager
+
+
+Solution:
+
+import java.util.*;
+
+class DSU {
+    Map<String,String> parent= new HashMap<>();
+    Map<String,Integer> rank = new HashMap<>();
+
+    public void add(String A) {
+        parent.put(A,A);
+        rank.put(A,0);
+    }
+
+    public String findUltimateParent(String A) {
+        if(parent.get(A).equals(A)) return A;
+
+        String ulp = findUltimateParent(parent.get(A));
+        parent.put(A,ulp);
+
+        return ulp;
+    }
+
+    public void union(String A,String B) {
+        String ulp_a = findUltimateParent(A);
+        String ulp_b = findUltimateParent(B);
+
+        if(ulp_a==ulp_b) return;
+
+        if(rank.get(ulp_a) < rank.get(ulp_b)) {
+            parent.put(ulp_a,ulp_b);
+        }else if(rank.get(ulp_b) < rank.get(ulp_a)) {
+            parent.put(ulp_b,ulp_a);
+        }else {
+            parent.put(ulp_b,ulp_a);
+            rank.put(ulp_a,rank.get(ulp_a)+1);
+        }
+    }
+}
+
+class Relation {
+    Map<String,String> managerMap = new HashMap<>();
+    DSU dsu = new DSU();
+
+    public void addTeamMembers(String A,String B) {
+        dsu.add(A);
+        dsu.add(B);
+        dsu.union(A,B);
+    }
+
+    public void addManager(String A,String B) {
+        dsu.add(A);
+        dsu.add(B);
+
+        String ulp_a = dsu.findUltimateParent(A);
+        String ulp_b = dsu.findUltimateParent(B);
+        managerMap.put(ulp_b,ulp_a);
+    }
+
+    public boolean isManager(String A,String B) {
+        String ulp_a = dsu.findUltimateParent(A);
+        String ulp_b = dsu.findUltimateParent(B);
+
+        if(!managerMap.containsKey(ulp_b)) return false;
+
+        while(managerMap.containsKey(ulp_b)) {
+            ulp_b = managerMap.get(ulp_b);
+            if(ulp_b==ulp_a) return true;
+        }
+
+        return false;
+    }
+
+    public boolean isTeamMember(String A,String B) {
+        return dsu.findUltimateParent(A).equals(dsu.findUltimateParent(B));
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Relation team = new Relation();
+        team.addTeamMembers("B","C");
+        team.addManager("A","B");
+        team.addManager("D","A");
+
+        System.out.println(team.isManager("A","C"));
+        System.out.println(team.isManager("D","B"));
+        System.out.println(team.isTeamMember("B","C"));
+        System.out.println(team.isTeamMember("A","B"));
+    }
+}
