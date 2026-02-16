@@ -1,0 +1,17 @@
+Solution:
+
+public static int kthSmallest(Node root, int k) {
+    if (root == null) return -1;
+
+    int leftSize = (root.left != null) ? root.left.size : 0;
+
+    if (k == leftSize + 1) {
+        return root.data;
+    } 
+    else if (k <= leftSize) {
+        return kthSmallest(root.left, k);
+    } 
+    else {
+        return kthSmallest(root.right, k - leftSize - 1);
+    }
+}
