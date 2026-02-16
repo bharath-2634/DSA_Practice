@@ -1,0 +1,52 @@
+Question: https://www.geeksforgeeks.org/problems/floor-in-bst/1
+
+Solution:
+
+/*
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val)
+    {
+        data = val;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    
+    public static int floor(Node root, int x) {
+        if(root==null) return -1;
+        
+        if(root.data==x) return x;
+        
+        if(root.data > x) {
+            return floor(root.left,x);
+        }
+        
+        int found = floor(root.right,x);
+        return found!=-1 ? found : root.data;
+    }
+}
+
+
+/////////////////////// Iterative Approach
+
+public static int floor(Node root,int x) {
+        if(root==null) return -1;
+        int ans=-1;
+        while(root!=null) {
+            if(root.data==x) return x;
+            
+            if(root.data < x) {
+                ans = root.data;
+                root= root.right;
+            }else {
+                root = root.left;
+            }
+        }
+        
+        return ans;
+    }
