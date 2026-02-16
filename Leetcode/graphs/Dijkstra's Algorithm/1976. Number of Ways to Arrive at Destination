@@ -1,0 +1,55 @@
+Question: https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/
+
+
+Solution:
+
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int t = edge[2];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,t});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,t});
+        }
+    }
+
+    public int countPaths(int n, int[][] roads) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(roads,adjList);
+        // System.out.println(adjList);
+        long[] time = new long[n];
+        int[] ways = new int[n];
+        Arrays.fill(time,Long.MAX_VALUE);
+        time[0] = 0;
+        ways[0] = 1;
+        PriorityQueue<long[]> pq = new PriorityQueue<>((x,y)->Long.compare(x[1], y[1]));
+        pq.offer(new long[]{0,0L});
+
+        while(!pq.isEmpty()) {
+            long[] pair = pq.poll();
+            int node = (int)pair[0];
+            long cur_time= pair[1];
+
+            if(cur_time > time[node]) continue;
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+
+                if(time[adjNode] > time[node]+weight) {
+                    time[adjNode] = time[node]+weight;
+                    ways[adjNode] = ways[node];
+                    pq.offer(new long[]{adjNode,time[adjNode]});
+                }else if(time[adjNode]==time[node]+weight) {
+                    ways[adjNode] = (ways[node]+ways[adjNode])%1_000_000_007;
+                }
+            }
+        }
+
+       return ways[n-1];
+    }
+}
