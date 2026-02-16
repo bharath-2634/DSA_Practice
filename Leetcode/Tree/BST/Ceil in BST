@@ -1,0 +1,47 @@
+Question: https://www.geeksforgeeks.org/problems/implementing-ceil-in-bst/0
+
+Solution:
+
+/* class Node {
+    int data;
+    Node left, right;
+
+    Node(int data) {
+        this.data = data;
+        left = right = null;
+    }
+} */
+
+class Solution {
+    /*
+    int findCeil(Node root, int x) {
+        if(root==null) return -1;
+        
+        if(root.data==x) return x;
+        
+        if(root.data < x) {
+            return findCeil(root.right,x);
+        }
+        
+        int found = findCeil(root.left,x);
+        return found!=-1 ? found : root.data;
+    }
+    */
+    
+    int findCeil(Node node,int x) {
+        if(node==null) return -1;
+        int ans=-1;
+        while(node!=null) {
+            if(node.data==x) return x;
+            
+            if(node.data <x) {
+                node = node.right;
+            }else {
+                ans = node.data;
+                node = node.left;
+            }
+        }
+        
+        return ans;
+    }
+}
