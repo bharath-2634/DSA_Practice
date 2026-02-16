@@ -1,0 +1,16 @@
+Solution:
+
+private static int kth_smallest_element = -1,count=0;
+
+    public static void findKthSmallest(Node node,int k) {
+        if(node==null) return;
+
+        findKthSmallest(node.left,k);
+        count++;
+        if(count==k) {
+            kth_smallest_element = node.data;
+            return;
+        }
+        
+        findKthSmallest(node.right,k);
+    }
