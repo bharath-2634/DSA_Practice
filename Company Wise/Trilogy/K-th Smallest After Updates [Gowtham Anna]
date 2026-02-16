@@ -1,0 +1,183 @@
+Question: 
+
+Problem: K-th Smallest After Updates
+
+You are given an integer array nums of size n. You must process a list of operations of two types:
+
+Update Operation:
+[1, index, value]
+Replace the element at position index in nums with value.
+
+Query Operation:
+[2, k]
+Return the k-th smallest element in the current array.
+
+If k is larger than the size of the array, return -1.
+
+📥 Input
+
+nums: Initial integer array.
+
+operations: 2D array where:
+
+operations[i][0] is the operation type.
+
+If type is 1, then:
+
+operations[i][1] = index
+
+operations[i][2] = new value
+
+If type is 2, then:
+
+operations[i][1] = k
+
+testcase 1:
+
+nums = [5, 3, 8, 6]
+
+operations = [
+    [2, 2],
+    [1, 1, 10],
+    [2, 2],
+    [2, 4]
+]
+
+output: [5, 6, 10]
+
+
+
+
+Solution:
+
+import java.util.*;
+
+/*
+
+This is my naive approach which takes
+case 1: O(1)
+case 2: O(nlogn) worst case 
+
+class Main {
+    public static void display(int[] nums) {
+        for(int i=0;i<nums.length;i++) {
+            System.out.print(nums[i]+" ");
+        }
+    }
+
+    public static void replace(int[] nums,int idx,int val) {
+        nums[idx] = val;
+        display(nums);
+    }
+
+    public static int kthSmallest(int[] nums,int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>((x,y)->x-y);
+        for(int num : nums) pq.offer(num);
+
+        while(k>1) {
+            pq.poll();
+            k--;
+        }
+
+        int val = pq.isEmpty() ? -1 : pq.poll();
+        return val;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        int op=-1;
+        do {
+            op = sc.nextInt();
+
+            switch(op) {
+                case 1: 
+                    int idx = sc.nextInt();
+                    int val = sc.nextInt();
+                    replace(nums,idx,val);
+                    System.out.println("");
+                break;
+
+                case 2:
+                    int k = sc.nextInt();
+                    System.out.println(kthSmallest(nums,k));
+                break;
+            }
+        }while(op!=-1); 
+    }
+}
+
+*/
+
+class Main {
+    private static TreeMap<Integer,Integer> tMap = new TreeMap<>();
+
+    public static void display(int[] nums) {
+        for(int i=0;i<nums.length;i++) {
+            System.out.print(nums[i]+" ");
+        }
+    }
+
+    public static void replace(int[] nums,int idx,int val) {
+        int old = nums[idx];
+        tMap.put(nums[idx],tMap.get(nums[idx])-1);
+        if(tMap.get(nums[idx])==0) {
+            tMap.remove(nums[idx]);
+        }
+
+        nums[idx] = val;
+        display(nums);
+    }
+
+    public static int kthSmallest(int[] nums,int k) {
+        int count=0;
+        for(int key : tMap.keySet()) {
+            count+=tMap.get(key);
+            if(count>=k) return key;
+        }
+
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        for(int num : nums) {
+            tMap.put(num,tMap.getOrDefault(num,0)+1);
+        }
+
+        int op=-1;
+        do {
+            op = sc.nextInt();
+
+            switch(op) {
+                case 1: 
+                    int idx = sc.nextInt();
+                    int val = sc.nextInt();
+                    replace(nums,idx,val);
+                    System.out.println("");
+                break;
+
+                case 2:
+                    int k = sc.nextInt();
+                    System.out.println(kthSmallest(nums,k));
+                break;
+            }
+        }while(op!=-1); 
+
+        
+        
+    }   
+}
