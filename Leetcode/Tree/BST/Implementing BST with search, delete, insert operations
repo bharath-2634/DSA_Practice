@@ -1,0 +1,128 @@
+Solution:
+
+import java.util.*;
+
+class Node {
+    int data;
+    Node left,right;
+
+    public Node(int d) {
+        this.data = d;
+    }
+}
+
+class Main {
+
+    /*Task 5 Deleting two child Nodes in BST */
+
+    public static Node getSuccessor(Node root) {
+        while(root.left!=null) {
+            root = root.left;
+        }
+
+        return root;
+    }
+
+    public static Node delete(Node root,int key) {
+        if(root==null) return null;
+
+        if(root.data < key) {
+            root.right = delete(root.right,key);
+        }else if(root.data > key) {
+            root.left = delete(root.left,key);
+        }else {
+            // deleting leaf nodes
+            if(root.left==null && root.right==null) return null;
+
+            // deleting one child parent
+            if(root.left==null) return root.right;
+            if(root.right==null) return root.left;
+
+            // deleting two child parent
+            Node successor = getSuccessor(root.right);
+            root.data = successor.data;
+            root.right = delete(root.right,successor.data);
+        } 
+
+        return root;
+    }
+
+    /* Task 3 Searching in BST */
+    public static boolean search(Node root,int key) {
+        if(root==null) return false;
+
+        if(root.data==key) return true;
+
+        if(root.data > key) {
+            return search(root.left,key);
+        }else {
+            return search(root.right,key);
+        }
+    }
+
+    /*Task 2 InOrder Traversal*/
+    public static void inOrder(Node node) {
+        if(node==null) return;
+
+        inOrder(node.left);
+        System.out.print(node.data+" ");
+        inOrder(node.right);
+    }
+
+    /* Task 1 Building BST (Insert) */
+    public static Node buildTree(Node root,Node node) {
+        if(root==null) return node;
+
+        if(root.data < node.data) {
+            root.right = buildTree(root.right,node);
+        }else {
+            root.left = buildTree(root.left,node);
+        }
+
+        return root;
+    }
+
+    public static void constructBST(int[] nums) {
+        Node root = null;
+
+        for(int i=0;i<nums.length;i++) {
+            Node node = new Node(nums[i]);
+
+            if(root==null) {
+                root=node;
+            }else {
+                root = buildTree(root,node);
+            }
+        }
+
+        inOrder(root);
+        System.out.println("\n"+"____________________");
+
+        System.out.println(search(root,40));
+        System.out.println(search(root,100));
+        System.out.println(search(root,60));
+        System.out.println(search(root,10));
+
+        System.out.println("\n Delete Operations \n");
+        root = delete(root,80);
+        System.out.println("");
+        inOrder(root);
+        System.out.println("");
+        root = delete(root,50);
+
+        System.out.println("");
+        inOrder(root);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        int[] nums = new int[n];
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        constructBST(nums);
+    }
+}
