@@ -1,0 +1,339 @@
+Solution:
+
+Count Number of Longest Paths in a Weighted DAG
+
+You are given:
+
+A Directed Acyclic Graph (DAG)
+
+n vertices numbered 0 to n-1
+
+m directed weighted edges
+
+A source vertex s
+
+Each edge is of form:
+
+[u, v, w] → edge from u to v with weight w
+
+🎯 Task
+
+For every vertex v, compute:
+
+dist[v] → Longest distance from s to v
+
+ways[v] → Number of distinct longest paths from s to v
+
+If a node is unreachable:
+
+dist[v] = -∞ (or Integer.MIN_VALUE)
+
+ways[v] = 0
+
+Return both arrays.
+
+🧠 Core Idea
+
+We already know how to compute longest distance in DAG using:
+
+Topological sort
+
+Relax edges
+
+Now we extend it.
+
+When relaxing edge:
+
+u → v (weight w)
+
+
+We check:
+
+Case 1: Found better path
+dist[u] + w > dist[v]
+
+
+Then:
+
+dist[v] = dist[u] + w
+ways[v] = ways[u]
+
+
+Because all best paths to v now come through u.
+
+Case 2: Found another equally good path
+dist[u] + w == dist[v]
+
+
+Then:
+
+ways[v] += ways[u]
+
+
+Because we found additional longest paths.
+
+That’s it. That’s the entire trick.
+
+🧪 Test Case 1
+n = 4
+edges = [
+    [0,1,1],
+    [0,2,1],
+    [1,3,1],
+    [2,3,1]
+]
+s = 0
+
+
+Graph:
+
+0
+↙ ↘
+1   2
+ \ /
+  3
+
+Longest path to 3:
+
+0 → 1 → 3 = 2
+0 → 2 → 3 = 2
+
+So:
+
+dist = [0,1,1,2]
+ways = [1,1,1,2]
+
+
+Node 3 has 2 longest paths.
+
+🧪 Test Case 2 (Weighted + Unequal)
+n = 5
+edges = [
+    [0,1,2],
+    [0,2,3],
+    [1,3,4],
+    [2,3,3],
+    [3,4,1]
+]
+s = 0
+
+
+Possible paths to 4:
+
+Path 1:
+0 → 1 → 3 → 4
+= 2 + 4 + 1 = 7
+
+Path 2:
+0 → 2 → 3 → 4
+= 3 + 3 + 1 = 7
+
+Both give 7.
+
+So:
+
+dist = [0,2,3,7,8?] wait carefully
+
+
+Let’s compute properly:
+
+To node 3:
+
+0→1→3 = 6
+0→2→3 = 6
+
+So:
+
+dist[3] = 6
+ways[3] = 2
+
+
+Then to node 4:
+
+6 + 1 = 7
+
+So final:
+
+dist = [0,2,3,6,7]
+ways = [1,1,1,2,2]
+
+
+Node 4 has 2 longest paths.
+
+🧪 Test Case 3 (Unreachable Node)
+n = 4
+edges = [
+    [0,1,5],
+    [1,2,3]
+]
+s = 0
+
+
+Node 3 is isolated.
+
+Output:
+
+dist = [0,5,8,-∞]
+ways = [1,1,1,0]
+
+import java.util.*;
+
+/*
+class Main {
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+
+    public static void dfs(int node,Map<Integer,List<int[]>> adjList,int[] dist,int[] ways) {
+        
+        if(!adjList.containsKey(node)) return;
+
+        for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode= adjPair[0];
+            int weight = adjPair[1];
+
+            if(dist[adjNode] < dist[node]+weight) {
+                dist[adjNode] = dist[node]+weight;
+                ways[adjNode] = ways[node];
+            }else if(dist[adjNode]==dist[node]+weight) {
+                ways[adjNode]+=ways[node];
+            }
+            dfs(adjNode,adjList,dist,ways);
+        }
+    }
+
+    public static void countLongestPathInDAG(int n,int[][] edges,int src) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int[] ways = new int[n];
+        ways[src] = 1;
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MIN_VALUE);
+        dist[src]=0;
+
+        dfs(src,adjList,dist,ways);
+
+        for(int d : dist) {
+            System.out.print(d+" ");
+        }
+
+        System.out.println("");
+
+        for(int w : ways) {
+            System.out.print(w+" ");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges= new int[n][3];
+
+        for(int i=0;i<n;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        int src= sc.nextInt();
+
+        countLongestPathInDAG(n,edges,src);
+    }
+}
+
+*/
+
+class Main { 
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            inDegree[v]++;
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+
+    public static void countLongestPathInDAG(int n,int[][] edges,int src) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        int[] inDegree = new int[n];
+        generateAdjList(edges,adjList,inDegree);
+
+        int[] ways = new int[n];
+        ways[src] = 1;
+        int[] dist = new int[n];
+        Arrays.fill(dist,Integer.MIN_VALUE);
+        dist[src]=0;
+
+        Queue<Integer> q = new LinkedList<>();
+        for(int node=0;node<n;node++) {
+            if(inDegree[node]==0) q.offer(node);
+        }
+
+        while(!q.isEmpty()) {
+            int node = q.poll();
+
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) q.offer(adjNode);
+                if(dist[node] != Integer.MIN_VALUE) {
+                    if(dist[adjNode] < dist[node] + weight) {
+                        dist[adjNode] = dist[node] + weight;
+                        ways[adjNode] = ways[node];
+                    } 
+                    else if(dist[adjNode] == dist[node] + weight) {
+                        ways[adjNode] += ways[node];
+                    }
+                }
+
+            }
+        }
+
+        for(int d : dist) {
+            System.out.print(d+" ");
+        }
+
+        System.out.println("");
+
+        for(int w : ways) {
+            System.out.print(w+" ");
+        }
+
+
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges= new int[n][3];
+
+        for(int i=0;i<n;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        int src= sc.nextInt();
+
+        countLongestPathInDAG(n,edges,src);
+    }
+}
