@@ -1,0 +1,102 @@
+Question: https://www.geeksforgeeks.org/problems/longest-path-in-a-directed-acyclic-graph/1
+
+Solution:
+
+/*
+
+class Solution {
+    
+    public static void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+            
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+    
+    public static void dfs(int node,Map<Integer,List<int[]>> adjList,int[] dist) {
+        if(!adjList.containsKey(node) || adjList.get(node).size()==0) return;
+        
+        for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjPair[0];
+            int weight = adjPair[1];
+            dist[adjNode] = Math.max(dist[adjNode],weight+dist[node]);
+            dfs(adjNode,adjList,dist);
+        }
+        
+    }
+    
+    public static int[] maximumDistance(int v, int e, int src, int[][] edges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+        
+        int[] dist = new int[v];
+        Arrays.fill(dist,Integer.MIN_VALUE);
+        dist[src]=0;
+        dfs(src,adjList,dist);
+        
+        return dist;
+    }
+}
+
+*/
+
+class Solution {
+    
+    public static void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList,int[] inDegree) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+            
+            inDegree[v]++;
+            
+            if(!adjList.containsKey(u)) {
+                adjList.put(u,new ArrayList<>());
+            }
+            
+            adjList.get(u).add(new int[]{v,w});
+        }
+    }
+    
+    public static int[] maximumDistance(int v, int e, int src, int[][] edges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        int[] inDegree = new int[v];
+        generateAdjList(edges,adjList,inDegree);
+        
+        Queue<Integer> q = new LinkedList<>();
+        for(int node=0;node<v;node++) {
+            if(inDegree[node]==0) {
+                q.offer(node);
+            }
+        }
+        
+        int[] dist = new int[v];
+        Arrays.fill(dist,Integer.MIN_VALUE);
+        dist[src]=0;
+        
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            
+            for(int[] adjPair : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjPair[0];
+                int weight = adjPair[1];
+                inDegree[adjNode]--;
+                if(inDegree[adjNode]==0) q.offer(adjNode);
+                if(dist[node]!=Integer.MIN_VALUE) {
+                    dist[adjNode] = Math.max(dist[adjNode],dist[node]+weight);
+                }
+                
+            }
+        }
+        
+        
+        return dist;
+    }
+}
