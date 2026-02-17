@@ -1,0 +1,80 @@
+Question: https://leetcode.com/problems/binary-tree-maximum-path-sum/description/
+
+Solution:
+
+import java.util.*;
+
+class TreeNode {
+    int data;
+    TreeNode left,right;
+
+    public TreeNode(int d) {
+        this.data = d;
+        this.left = this.right = null;
+    }
+}
+
+public class Main {
+    public static boolean buildTree(TreeNode root,TreeNode node) {
+        if(root==null) {
+            root = node;
+            return true;
+        }
+
+        if(root.left==null) {
+            root.left = node;
+            return true;
+        }else if(root.right==null) {
+            root.right = node;
+            return true;
+        }else {
+            return buildTree(root.left,node) || buildTree(root.right,node);
+        }
+    }
+
+    public static void inOrder(TreeNode node) {
+        if(node==null) return;
+
+        inOrder(node.left);
+        System.out.println(node.data);
+        inOrder(node.right);
+    }
+
+
+
+    private static int max_sum = Integer.MIN_VALUE;
+
+    public static int maxPathSum(TreeNode root) {
+
+        if(root==null) return 0;
+
+        int left_sum = Math.max(0,maxPathSum(root.left));
+        int right_sum = Math.max(0,maxPathSum(root.right));
+
+        int cur_sum = root.data + left_sum+right_sum;
+        // System.out.println(cur_sum);
+        max_sum = Math.max(max_sum,cur_sum);
+
+        return root.data + Math.max(left_sum,right_sum);
+    }
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        TreeNode root = null;
+        while(n-->0) {
+            int d = sc.nextInt();
+            TreeNode node = new TreeNode(d);
+            if(root==null) {
+                root = node;
+            }else {
+                buildTree(root,node);
+            }
+        }
+        // inOrder(root);
+        maxPathSum(root);
+        System.out.println(max_sum);
+    }
+}
