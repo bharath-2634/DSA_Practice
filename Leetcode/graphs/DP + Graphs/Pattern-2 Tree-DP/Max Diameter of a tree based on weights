@@ -1,0 +1,65 @@
+Question:  
+
+Solution:
+
+import java.util.*;
+
+public class Main {
+
+    private static int maxDia= Integer.MIN_VALUE;
+
+    public static void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int w = edge[2];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,w});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,w});
+
+        }
+    }
+
+    public static int dfs(int root,int parent,Map<Integer,List<int[]>> adjList) {
+        int left_child=0;
+        int right_child=0;
+
+        for(int[] adjPair : adjList.getOrDefault(root,new ArrayList<>())) {
+            int adjNode = adjPair[0];
+            int weight = adjPair[1];
+
+            if(adjNode==parent) continue;
+            int cur_sum = weight+dfs(adjNode,root,adjList);
+            if(cur_sum > left_child) {
+                right_child= left_child;
+                left_child = cur_sum;
+            }else if(cur_sum > right_child) {
+                right_child = cur_sum;
+            }
+        }
+
+        maxDia = Math.max(maxDia,left_child+right_child);
+        return left_child;
+    }
+
+    public static void maxDiameterWithWeights(int n,int[][] edges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+        int ans = dfs(0,-1,adjList);
+        System.out.println(maxDia);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] edges= new int[3][3];
+
+        for(int i=0;i<3;i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+        }
+
+        maxDiameterWithWeights(n,edges);
+    }
+}
