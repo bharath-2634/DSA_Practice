@@ -1,0 +1,43 @@
+Solution:
+
+import java.util.*;
+
+public class Main {
+    private static int min_steps = Integer.MAX_VALUE;
+    private static int[][] moves = {{-1,+2},{-2,+1},{-1,-2},{-2,-1},{+1,+2},{+2,+1},{+1,-2},{+2,-1}};
+    public static void backtrack(int n,int st_r,int st_c,int en_r,int en_c,int steps,int[][] sol) {
+       
+        
+        if(st_r<0 || st_r>=n || st_c<0 || st_c>=n) return;
+        
+        if(steps>=sol[st_r][st_c]) return;
+        
+        sol[st_r][st_c] = steps;
+        if(st_r==en_r && st_c==en_c) {
+            min_steps = Math.min(min_steps,steps);
+            return;
+        }
+        
+        
+        for(int[] move : moves) {
+            int new_row = st_r + move[0];
+            int new_col = st_c + move[1];
+            if(new_row<0 || new_col<0 || new_row>=n || new_col>=n) continue;
+            backtrack(n,new_row,new_col,en_r,en_c,steps+1,sol);
+        }
+        
+    }
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int st_r = sc.nextInt();
+        int st_c = sc.nextInt();
+        int en_r = sc.nextInt();
+        int en_c = sc.nextInt();
+        int[][] sol = new int[n][n];
+        for(int[] s : sol) Arrays.fill(s,Integer.MAX_VALUE);
+        backtrack(n,st_r-1,st_c-1,en_r-1,en_c-1,0,sol);
+        System.out.println("Minimum steps = "+min_steps);
+    }
+}
