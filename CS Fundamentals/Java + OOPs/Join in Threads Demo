@@ -1,0 +1,28 @@
+class Printer implements Runnable {
+    @Override 
+    public void run() {
+        try {
+            System.out.println("child Process Thread Started");
+            Thread.sleep(200);
+            System.out.println("child Process Ended here !");
+        }catch(InterruptedException e) {
+            System.out.println(e);
+        }
+    }
+}
+
+class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Printer p = new Printer();
+        Thread t = new Thread(p);
+        t.start();
+
+        t.join();
+        System.out.println("Main Thread gets executed");
+    }
+}
+
+// Explanation:
+
+join() is the "wait for me" method. It allows one thread to pause its execution until another thread has completely finished its task 1.
+Without join(), the main thread might finish before your background task even has a chance to print its results.
