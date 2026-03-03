@@ -23,4 +23,29 @@ class Main {
     }
 }
 
+// using implementing runnable interface
+
+class Printer implements Runnable {
+    @Override
+    public void run() {
+        for(int i=0;i<50;i++) {
+            System.out.println("Child Thread Process: " + Thread.currentThread().getName()+" " +i);
+        }
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Printer p = new Printer();
+        Thread t = new Thread(p);
+        t.setDaemon(true);
+        t.start();
+        for(int i=0;i<50;i++) {
+            System.out.println("Main Thread Process: "+t.currentThread().getName() + " " + i);
+        }
+    }
+}
+
+// Explanation
+
 In this case, the application terminates the execution when the main thread exits. It means the printerThread might not be able to print up to “Thread-0 49”
