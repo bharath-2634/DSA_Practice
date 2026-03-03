@@ -1,0 +1,37 @@
+// Type 1: This is creating a child thread by extending Thread class
+
+class Printer extends Thread{
+    
+    @Override
+    public void run() {
+        System.out.println("Child Thread Running");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Printer p = new Printer();
+        p.start();
+        System.out.println("Main Thread Running");
+    }
+}
+
+// Type 2: This is creating a child thread using implementing Runnable interface
+
+class Printer extends Machine implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Child Process Running");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Printer p = new Printer();
+        Thread thred = new Thread(p);
+        thred.start(); 
+        System.out.println("Main Thread Running");
+    }
+}
+
+I'm currently trying to implement the types of implementing the child thread but I'm getting an error why ?
