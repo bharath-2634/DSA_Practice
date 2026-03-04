@@ -1,0 +1,94 @@
+Question: https://leetcode.com/problems/sort-list/
+
+Solution:
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+
+/* 
+
+Brute force Approach -> O(n) + O(nlogn) + O(n)
+class Solution {
+    public void collectData(ListNode node,List<Integer> res) {
+        if(node==null) return;
+
+        res.add(node.val);
+        collectData(node.next,res);
+    }
+
+    public ListNode sortList(ListNode head) {
+        List<Integer> res = new ArrayList<>();
+        collectData(head,res);
+
+        Collections.sort(res);
+
+        ListNode dummy = new ListNode(-1);
+        ListNode tail = dummy;
+
+        for(int d : res) {
+            ListNode node = new ListNode(d);
+            tail.next = node;
+            tail = node;
+        }
+
+        return dummy.next;
+    }
+}
+*/
+
+class Solution {
+
+    public ListNode findMiddleNode(ListNode node) {
+        if(node==null) return null;
+
+        ListNode slow= node,fast=node;
+
+        while(fast!=null && fast.next!=null) {
+            fast = fast.next.next;
+            if(fast!=null) slow = slow.next;
+        }
+
+        ListNode split = slow.next;
+        slow.next = null;
+
+        return split;
+    }
+
+    public ListNode merge(ListNode left,ListNode right) {
+        if(left==null && right==null) return null;
+        if(left==null) return right;
+        if(right==null) return left;
+
+        if(left.val < right.val) {
+            left.next = merge(left.next,right);
+            return left;
+        }else {
+            right.next = merge(left,right.next);
+            return right;
+        }
+
+    }
+
+    public ListNode mergeSort(ListNode node) {
+        if(node==null || node.next==null) return node;
+
+        ListNode middle = findMiddleNode(node);
+        node = mergeSort(node);
+        middle = mergeSort(middle);
+
+
+        return merge(node,middle);
+    }
+
+    public ListNode sortList(ListNode node) {
+        return mergeSort(node);
+    }
+}
