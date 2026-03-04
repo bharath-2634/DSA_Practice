@@ -1,0 +1,88 @@
+Question: 
+Given an array representing the heights of people, determine how many people are visible to the last person in the array.
+Rule: Person A is visible to Person B if there is no one between them who is taller than both Person A and Person B.
+
+Example:
+
+Input: [1, 10, 5, 7, 6, 3, 2, 4]
+Output: 5 (The people with heights 2, 3, 6, 7, and 10 are visible to 4)
+
+Solution:
+
+import java.util.*;
+
+class Main {
+
+    public static int getNumberOfPeopleVisible(int[] nums) {
+        // int max_seen=0,count=0;
+
+        // for(int i=nums.length-2;i>=0;i--) {
+        //     if(nums[i]>max_seen) {
+        //         max_seen = nums[i];
+        //         count++;
+        //     }
+        // }
+
+        // return count;
+
+        Stack<Integer> st = new Stack<>();
+        for(int i=nums.length-2;i>=0;i--) {
+           if(!st.isEmpty() && nums[i]<st.peek()) continue;
+            st.push(nums[i]);
+        }
+
+        return st.size();
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 10, 5, 7, 6, 3, 2, 4};
+        System.out.println(getNumberOfPeopleVisible(nums));
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+follow-up: Find the number of visible people for every person in the list (not just the last one).
+
+import java.util.*;
+
+class Main {
+
+    public static int getNumberOfPeopleVisible(int[] nums) {
+        // int max_seen=0,count=0;
+
+        // for(int i=nums.length-2;i>=0;i--) {
+        //     if(nums[i]>max_seen) {
+        //         max_seen = nums[i];
+        //         count++;
+        //     }
+        // }
+
+        // return count;
+
+        Stack<Integer> st = new Stack<>();
+        int[] count_arr = new int[nums.length];
+        // int count=0,idx=0;
+        for(int i=nums.length-1;i>=0;i--) {
+            int count=0;
+            while(!st.isEmpty() && nums[i]>st.peek()) {
+                count++;
+                st.pop();
+            }
+
+            if(!st.isEmpty()) count++;
+            count_arr[i] = count;
+            st.push(nums[i]);
+        }
+
+        for(int c : count_arr) System.out.print(c+" ");
+        System.out.println("");
+
+        return st.size();
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {1, 10, 5, 7, 6, 3, 2, 4};
+        System.out.println(getNumberOfPeopleVisible(nums));
+    }
+}
