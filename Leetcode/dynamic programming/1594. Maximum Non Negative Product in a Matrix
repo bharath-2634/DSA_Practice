@@ -1,0 +1,49 @@
+Question: https://leetcode.com/problems/maximum-non-negative-product-in-a-matrix/
+
+Solution:
+
+class Solution {
+
+    public long[] getMaxProductPath(int[][] grid,int row,int col,long[][][] dp) {
+        if(row==0 && col==0) {
+            return new long[]{grid[0][0],grid[0][0]};
+        }
+        
+        if(row<0 || col<0) return null;
+
+        if(dp[row][col]!=null) return dp[row][col];
+
+        long[] move_left = getMaxProductPath(grid,row-1,col,dp);
+        long[] move_right = getMaxProductPath(grid,row,col-1,dp);
+
+        int cur = grid[row][col];
+        long max_val = Long.MIN_VALUE;
+        long min_val = Long.MAX_VALUE;
+
+        if(move_left!=null) {
+            long a = cur*move_left[0];
+            long b = cur*move_left[1];
+
+            max_val = Math.max(max_val,Math.max(a,b));
+            min_val = Math.min(min_val,Math.min(a,b));
+        }
+
+        if(move_right!=null) {
+            long a = cur*move_right[0];
+            long b = cur*move_right[1];
+
+            max_val = Math.max(max_val,Math.max(a,b));
+            min_val = Math.min(min_val,Math.min(a,b));
+        }
+
+        return dp[row][col] = new long[]{min_val,max_val};
+    }
+
+    public int maxProductPath(int[][] grid) {
+        long[][][] dp = new long[grid.length][grid[0].length][];
+        long[] val = getMaxProductPath(grid,grid.length-1, grid[0].length-1,dp);
+        if(val[1]<0) return -1;
+
+        return (int)(val[1]%1_000_000_007);
+    }
+}
