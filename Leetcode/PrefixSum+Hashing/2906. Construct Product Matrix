@@ -1,0 +1,90 @@
+Question: https://leetcode.com/problems/construct-product-matrix/
+
+Solution:
+
+class Solution {
+
+    /*
+
+    Approach 1: Brute-force 
+    public int[][] constructProductMatrix(int[][] grid) {
+        int[][] p= new int[grid.length][grid[0].length];
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                int cur_product=1;
+                for(int c=0;c<grid.length;c++) {
+                    for(int r=0;r<grid[0].length;r++) {
+                        if(c==i && r==j) continue;
+                        cur_product*=grid[c][r];
+                    }
+                }
+
+                p[i][j] = cur_product%12345;
+            }
+        }
+
+        return p;
+    }
+    */
+
+    /*
+
+    Approach 2: Product-Except Itself Approach
+    public int[][] constructProductMatrix(int[][] grid) {
+        int total_product = 1;
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                total_product*=grid[i][j];
+            }
+        }
+
+        int[][] p = new int[grid.length][grid[0].length];
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                p[i][j] = (total_product/grid[i][j])%12345;
+            }
+        }
+
+        return p;
+    }
+    */
+
+    public int[][] constructProductMatrix(int[][] grid) {
+
+        int[] flat_arr = new int[grid.length*grid[0].length];
+        int idx=0;
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                flat_arr[idx++] = grid[i][j];
+                // System.out.println(idx+" "+flat_arr[idx-1]);
+            }
+        }
+
+        long[] prefix_arr = new long[idx];
+        prefix_arr[0] = 1;
+
+        for(int i=1;i<prefix_arr.length;i++) {
+            prefix_arr[i] = (long)(prefix_arr[i-1]*flat_arr[i-1])%12345;
+        }
+
+        long[] suffix_arr= new long[idx];
+        suffix_arr[suffix_arr.length-1] = 1;
+
+        for(int i=suffix_arr.length-2;i>=0;i--) {
+            suffix_arr[i] = (long)(suffix_arr[i+1]*flat_arr[i+1])%12345;
+        }
+
+        int[][] p = new int[grid.length][grid[0].length];
+        int index=0;
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                p[i][j] = (int)(prefix_arr[index]*suffix_arr[index])%12345;
+                index++;
+            }
+        }
+
+        return p;
+    }
+}
