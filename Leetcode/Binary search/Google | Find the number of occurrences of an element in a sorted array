@@ -1,0 +1,46 @@
+Question/link: https://leetcode.com/discuss/post/124724/google-find-the-number-of-occurrences-of-63q6/
+
+Solution:
+import java.util.*;
+
+class Main {
+
+    public static int lowerBound(int[] nums,int target) {
+        int left=0,right=nums.length;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(nums[mid]>=target) right = mid;
+            else left = mid+1;
+        }
+
+        return left;
+    }
+
+    public static int upperBound(int[] nums,int target) {
+        int left=0,right=nums.length;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(nums[mid]>target) right = mid;
+            else left = mid+1;
+        }
+
+        return left;
+    }
+
+    public static int getOccurences(int[] nums,int target) {
+        return upperBound(nums,target)-lowerBound(nums,target);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+        int target = sc.nextInt();
+        System.out.println(getOccurences(nums,target)); 
+    }
+}
