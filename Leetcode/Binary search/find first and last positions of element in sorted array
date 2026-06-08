@@ -1,0 +1,39 @@
+link: https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+
+Solution:
+class Solution {
+    public int lowerBound(int[] nums,int target) {
+        int left=0,right=nums.length;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(nums[mid]>=target) right = mid;
+            else left = mid+1;
+        }
+
+        return left;
+    }
+
+    public int upperBound(int[] nums,int target) {
+        int left=0,right=nums.length;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(nums[mid]>target) right = mid;
+            else left = mid+1;
+        }
+
+        return left;
+    }
+
+    public int[] searchRange(int[] nums, int target) {
+        int left = lowerBound(nums,target);
+        int right = upperBound(nums,target)-1;
+
+        if(nums.length==0 || left==nums.length || nums[left]!=target) {
+            return new int[]{-1,-1};
+        }
+
+        return new int[]{left,right};
+    }
+}
