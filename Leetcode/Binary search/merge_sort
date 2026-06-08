@@ -1,0 +1,49 @@
+link: https://leetcode.com/problems/sort-an-array/
+
+Solution:
+class Solution {
+
+    public void merge(int[] nums,int left,int right,int mid) {
+        int[] left_part = new int[mid-left+1];
+        int[] right_part = new int[right-mid];
+
+        for(int i=0;i<left_part.length;i++) left_part[i] = nums[left+i];
+        for(int i=0;i<right_part.length;i++) right_part[i] = nums[mid+1+i];
+
+        int left_ptr=0,right_ptr=0;
+        int idx=left;
+        while(left_ptr<left_part.length && right_ptr<right_part.length) {
+            if(left_part[left_ptr] < right_part[right_ptr]) {
+                nums[idx++] = left_part[left_ptr];
+                left_ptr++;
+            }else {
+                nums[idx++] = right_part[right_ptr];
+                right_ptr++;
+            }
+        }
+
+        while(left_ptr<left_part.length) {
+            nums[idx++] = left_part[left_ptr++];
+        }
+
+        while(right_ptr < right_part.length) {
+            nums[idx++] = right_part[right_ptr++];
+        }
+    }
+
+    public void mergeSort(int[] nums,int left,int right) {
+        if(right<=left) return;
+
+
+        int mid = left + (right-left)/2;
+        mergeSort(nums,left,mid);
+        mergeSort(nums,mid+1,right);
+
+        merge(nums,left,right,mid);
+    }
+
+    public int[] sortArray(int[] nums) {
+        mergeSort(nums,0,nums.length-1);
+        return nums;
+    }
+}
