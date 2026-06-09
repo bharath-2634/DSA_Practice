@@ -1,0 +1,39 @@
+Question: https://leetcode.com/problems/minimum-limit-of-balls-in-a-bag/
+
+Solution:
+class Solution {
+    public int getMax(int[] nums) {
+        int max = Integer.MIN_VALUE;
+
+        for(int num : nums) {
+            max = Math.max(max,num);
+        }
+
+        return max;
+    }
+
+    public boolean canIMake(int[] nums,int mid,int maxOperations) {
+        int ops=0;
+
+        for(int num : nums) {
+            ops+=Math.ceil((num-1)/mid);
+            if(ops>maxOperations) return false;
+        }
+
+        return true;
+    }
+
+    public int minimumSize(int[] nums, int maxOperations) {
+        int left=1, right= getMax(nums);
+
+        while(left<right) {
+            int mid= left+(right-left)/2;
+
+            if(canIMake(nums,mid,maxOperations)) {
+                right = mid;
+            }else left= mid+1;
+        }
+
+        return left;
+    }
+}
