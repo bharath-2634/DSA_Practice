@@ -1,0 +1,43 @@
+Question: https://leetcode.com/problems/minimum-speed-to-arrive-on-time/
+Solution:
+class Solution {
+    public int getMax(int[] nums) {
+        int max = Integer.MIN_VALUE;
+
+        for(int num : nums) {
+            max = Math.max(max,num);
+        }
+
+        return max;
+    }
+
+    public boolean canArrive(int[] dist,int mid,double hour) {
+        double time=0;
+
+        for(int i=0;i<dist.length-1;i++) {
+            double val = ((double)dist[i]/mid);
+            time+=Math.ceil(val);
+        }
+
+        time+=(double)dist[dist.length-1]/mid;
+
+        return time<=hour;
+
+    }
+
+    public int minSpeedOnTime(int[] dist, double hour) {
+        int left=1,right=10000000;
+
+        if(dist.length-1>=hour) return -1;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+
+            if(canArrive(dist,mid,hour)) {
+                right=mid;
+            }else left =mid+1;
+        }
+
+        return left;
+    }
+}
