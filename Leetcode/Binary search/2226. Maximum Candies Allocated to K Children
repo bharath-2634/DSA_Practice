@@ -1,0 +1,44 @@
+Question: https://leetcode.com/problems/maximum-candies-allocated-to-k-children/
+
+Solution:
+class Solution {
+    public int getMax(int[] candies) {
+        int max = Integer.MIN_VALUE;
+        for(int can: candies) {
+            max = Math.max(max,can);
+        }
+
+        return max;
+    }
+
+    public boolean canSplit(int[] candies,int mid,long k,long sum) {
+        long count=0;
+        
+        for(int i=0;i<candies.length;i++) {
+            count+=candies[i]/mid;
+            if(count>=k) return true;
+        }
+
+        return false;
+    }
+
+    public int maximumCandies(int[] candies, long k) {
+        int left=1,right=getMax(candies);
+
+        long sum=0;
+        for(int can: candies) sum+=can;
+        if(sum<k) return 0;
+
+        while(left<=right) {
+            int mid = left+(right-left)/2;
+
+            if(canSplit(candies,mid,k,sum)) {
+                left = mid+1;
+            }else {
+                right= mid-1;
+            }
+        }
+
+        return left-1;
+    }
+}
