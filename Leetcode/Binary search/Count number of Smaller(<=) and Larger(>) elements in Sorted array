@@ -1,0 +1,35 @@
+Question: https://www.geeksforgeeks.org/problems/smaller-and-larger4005/1
+
+Solution:
+class Solution {
+    int upper_bound(int[] arr,int target) {
+        int left=0,right=arr.length;
+        
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(arr[mid]>target) right = mid;
+            else left = mid+1;
+        }
+        
+        return left;
+    }
+    
+    int lower_bound(int[] arr,int target) {
+        int left=0,right=arr.length;
+        
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            if(arr[mid]>=target) right = mid;
+            else left = mid+1;
+        }
+        
+        return left;
+    }
+    
+    int[] getMoreAndLess(int[] arr, int target) {
+        int less_eq = upper_bound(arr,target);
+        int greater = arr.length - lower_bound(arr,target);
+
+        return new int[]{less_eq,greater};
+    }
+}
