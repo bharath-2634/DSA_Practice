@@ -1,0 +1,42 @@
+Question: https://leetcode.com/problems/maximum-number-of-removable-characters/
+
+Solution:
+class Solution {
+
+    public boolean canSatisfy(String s,String p,int[] removable,int k) {
+        // now I've the count -> I need to think of the index's that I need to remove (k=2-> what are all the removeables I can do !)-> finding an optimal solution!
+
+        boolean[] mark = new boolean[s.length()];
+        Arrays.fill(mark,true);
+
+        for(int i=0;i<k;i++) {
+            mark[removable[i]] = false;
+        }
+
+        int ptr1=0,ptr2=0;
+        while(ptr1<s.length() && ptr2<p.length()) {
+            if(s.charAt(ptr1)==p.charAt(ptr2) && mark[ptr1]) {
+                ptr2++;
+            }
+            ptr1++;
+        }
+
+        return ptr2>=p.length();
+    }
+
+    public int maximumRemovals(String s, String p, int[] removable) {
+        int left=0,right=removable.length+1,res=0;
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+
+            if(canSatisfy(s,p,removable,mid)) {
+                res = mid;
+                left = mid+1;
+            }
+            else right = mid;
+        } 
+
+        return res;
+    }
+}
