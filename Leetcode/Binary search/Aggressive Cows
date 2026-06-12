@@ -1,0 +1,38 @@
+Question: https://www.geeksforgeeks.org/problems/aggressive-cows/1
+
+Solution:
+class Solution {
+    
+    public boolean canPlaceCows(int[] stalls,int k,int mid) {
+        int last_stall=stalls[0],count=1;
+        for(int i=1;i<stalls.length;i++) {
+            // if(stalls[i]>mid) return false;
+            
+            if(stalls[i]-last_stall>=mid) {
+                last_stall = stalls[i];
+                count++;
+                
+                // if(count>k)  return false;
+                if(count==k) return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public int aggressiveCows(int[] stalls, int k) {
+        Arrays.sort(stalls);
+        int left=0,right=stalls[stalls.length-1]-stalls[0],res=0;
+ 
+        
+        while(left<=right) {
+            int mid = left+(right-left)/2;
+            if(canPlaceCows(stalls,k,mid)) {
+                res = mid;
+                left = mid+1;
+            }else right =mid-1;
+        }
+        
+        return res;
+    }
+}
