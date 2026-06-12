@@ -1,0 +1,48 @@
+Question: https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1
+
+Solution:
+class Solution {
+    
+    public boolean canArrange(int[] nums,int k,int mid) {
+        int sum=0,count_split=1;
+        
+        for(int num: nums) {
+            if(num>mid) return false;
+            
+            if(sum+num>mid) {
+                sum=0;
+                count_split++;
+                if(count_split>k) return false;
+            }
+            sum+=num;
+        }
+        
+        return true;
+    } 
+    
+    public int findPages(int[] nums, int k) {
+        
+        if(k>nums.length) return -1;
+        int left=0,right=0,res=0;
+        
+        for(int num: nums) {
+            left = Math.max(left,num);
+            right+=num;
+        }
+        
+        if(k==1) return right;
+        
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            
+            if(canArrange(nums,k,mid)) {
+                res = mid;
+                right = mid;
+            }else {
+                left = mid+1;
+            }
+        }
+        
+        return res;
+    }
+}
