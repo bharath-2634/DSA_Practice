@@ -1,0 +1,72 @@
+Question: https://www.geeksforgeeks.org/problems/steps-by-knight5927/1
+
+Solution:
+
+class Solution {
+    int[][] moves = {{-1,+2},{-2,+1},{-1,-2},{-2,-1},{+2,+1},{+1,+2},{+2,-1},{+1,-2}};
+    private int min_steps = Integer.MAX_VALUE;
+    
+    /*
+    public void getMinStepsToReachTarget(int row,int col,int target_row,int target_col,boolean[][] visited,int n,int steps) {
+        if(row<0 || row>=n || col<0 || col>=n || visited[row][col]) return;
+        
+        if(steps>=min_steps) return;
+        
+        if(row==target_row && col==target_col) {
+            min_steps = Math.min(min_steps,steps);
+            return;
+        }
+        
+        
+        visited[row][col] = true;
+        for(int[] move: moves) {
+            int new_row = move[0]+row;
+            int new_col = move[1]+col;
+            
+            if(new_row<0 || new_row>=n || new_col<0 || new_col>=n || visited[new_row][new_col]) continue;
+            getMinStepsToReachTarget(new_row,new_col,target_row,target_col,visited,n,steps+1);
+            
+        }
+        visited[row][col] = false;
+        
+    }
+    
+    public int minStepToReachTarget(int knightPos[], int targetPos[], int n) {
+        boolean[][] visited = new boolean[n][n];
+        getMinStepsToReachTarget(knightPos[0]-1,knightPos[1]-1,targetPos[0]-1,targetPos[1]-1,visited,n,0);
+        
+        return min_steps==Integer.MAX_VALUE ? -1 : min_steps;
+    }
+    */
+    
+    public int minStepToReachTarget(int knightPos[], int targetPos[], int n) {
+        boolean[][] visited = new boolean[n][n];
+        Queue<int[]> q = new LinkedList<>();
+        
+        q.offer(new int[]{knightPos[0]-1,knightPos[1]-1,0});
+        visited[knightPos[0]-1][knightPos[1]-1]= true;
+        
+        while(!q.isEmpty()) {
+            int[] cur_pos = q.poll();
+            int row = cur_pos[0];
+            int col = cur_pos[1];
+            int cur_step= cur_pos[2];
+            
+            if(row==targetPos[0]-1 && col==targetPos[1]-1) return cur_step;
+            
+            
+            for(int[] move: moves) {
+                int new_row = row+move[0];
+                int new_col = col+move[1];
+                
+                if(new_row<0 || new_col<0 || new_row>=n || new_col>=n || visited[new_row][new_col]) continue;
+                visited[new_row][new_col] = true;
+                q.offer(new int[]{new_row,new_col,cur_step+1});
+            }
+            
+        }
+        
+        return -1;
+    }
+    
+}
