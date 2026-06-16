@@ -2,6 +2,9 @@ Question: https://leetcode.com/problems/letter-case-permutation/
 
 Solution:
 class Solution {
+    /*
+
+    Backtracking + Loop Version --> out of pattern but best solution
     public List<String> letterCasePermutation(String s) {
         List<String> res = new ArrayList<>();
         getLetterCasePermutation(0,s.toCharArray(),res);
@@ -19,6 +22,34 @@ class Solution {
                 getLetterCasePermutation(i+1,s,res);
                 s[i] = temp;
             }
+        }
+    }
+    */
+
+    public List<String> letterCasePermutation(String s) {
+        List<String> res = new ArrayList<>();
+        getLetterCasePermutation(0,s.toCharArray(),res);
+
+        return res;
+    }
+
+    public void getLetterCasePermutation(int idx,char[] s,List<String> res) {
+        if(idx>s.length) return;
+
+        if(idx==s.length) {
+            res.add(String.valueOf(s));
+            return;
+        }
+
+        if(Character.isDigit(s[idx])) {
+            getLetterCasePermutation(idx+1,s,res);
+        }else {
+            getLetterCasePermutation(idx+1,s,res);
+            char temp = s[idx];
+            if(Character.isLowerCase(temp)) s[idx] = Character.toUpperCase(temp);
+            else s[idx] = Character.toLowerCase(temp);
+            getLetterCasePermutation(idx+1,s,res);
+            s[idx] = temp;
         }
     }
 }
