@@ -1,0 +1,24 @@
+Question: https://leetcode.com/problems/letter-case-permutation/
+
+Solution:
+class Solution {
+    public List<String> letterCasePermutation(String s) {
+        List<String> res = new ArrayList<>();
+        getLetterCasePermutation(0,s.toCharArray(),res);
+        return res;
+    }
+
+    public void getLetterCasePermutation(int idx,char[] s,List<String> res) {
+        res.add(String.valueOf(s));
+
+        for(int i=idx;i<s.length;i++) {
+            if(!Character.isDigit(s[i])) {
+                char temp = s[i];
+                if(Character.isUpperCase(s[i])) s[i] = Character.toLowerCase(s[i]);
+                else s[i] = Character.toUpperCase(s[i]);
+                getLetterCasePermutation(i+1,s,res);
+                s[i] = temp;
+            }
+        }
+    }
+}
