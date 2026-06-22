@@ -1,0 +1,28 @@
+Question: https://leetcode.com/problems/valid-parenthesis-string/
+
+Solution: 
+class Solution {
+    public boolean checkValidString(String s) {
+        int left_balance=0;
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)=='(' || s.charAt(i)=='*') {
+                left_balance++;
+            }else left_balance--;
+
+            if(left_balance<0) return false;
+        }
+
+        int right_balance=0;
+        for(int i=s.length()-1;i>=0;i--) {
+            if(s.charAt(i)==')' || s.charAt(i)=='*') {
+                right_balance++;
+            }else {
+                right_balance--;
+            }
+
+            if(right_balance<0) return false;
+        }
+
+        return true;
+    }
+}
