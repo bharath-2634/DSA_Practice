@@ -1,0 +1,43 @@
+Question: https://leetcode.com/problems/longest-valid-parentheses/
+
+Solution:
+
+class Solution {
+    public int longestValidParentheses(String s) {
+        int left=0,right=0;
+        int max_len = -1;
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)=='(') {
+                left++;
+            }else {
+                right++;
+            }
+
+            if(left==right) {
+                max_len = Math.max(max_len,left+right);
+            }
+
+            if(right>left) {
+                left=right=0;
+            }
+        }
+
+        left=right=0;
+
+        for(int i=s.length()-1;i>=0;i--) {
+            if(s.charAt(i)==')') {
+                left++;
+            }else {
+                right++;
+            }
+
+            if(left==right) {
+                max_len = Math.max(max_len,left+right);
+            }else if(right>left) {
+                left=right=0;
+            }
+        }
+
+        return max_len==-1 ? 0 : max_len;
+    }
+}
