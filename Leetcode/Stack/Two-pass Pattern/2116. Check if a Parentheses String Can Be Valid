@@ -1,0 +1,48 @@
+Question: https://leetcode.com/problems/check-if-a-parentheses-string-can-be-valid/
+
+Solution:
+
+class Solution {
+    public boolean canBeValid(String s, String locked) {
+        
+        if(s.length()%2!=0) return false;
+
+        int left_balance=0;
+
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)=='(' || locked.charAt(i)=='0') {
+                left_balance++;
+            }else {
+                left_balance--;
+            }
+
+            if(left_balance<0) return false;
+        }
+
+        int right_balance=0;
+        for(int i=s.length()-1;i>=0;i--) {
+            if(s.charAt(i)==')' || locked.charAt(i)=='0') {
+                right_balance++;
+            }else {
+                right_balance--;
+            }
+
+            if(right_balance<0) return false;
+        }
+
+        return true;
+    }
+}
+
+/*
+    s = "))()))", locked = "010100"
+
+    Thinking process I've now:
+        * only care about the locked[i]='0' pos -> either way to change 
+        * check whether the string is palindrome/valid parenthesis before and after changing the those id in string
+
+
+    Learning:
+        * 1. Recognize the Core Sub-Pattern: The Parentheses InvariantWhenever you see a parenthesis question, your brain should immediately think of the prefix sum balance rule.A string of parentheses is valid if and only if at any point from left to right, your count of ( is greater than or equal to ).If it ever drops below zero, it is permanently broken.Once you know this rule, any variation of this question is just a twist on maintaining that balance.
+
+*/
