@@ -1,0 +1,30 @@
+Question: https://leetcode.com/problems/find-number-of-ways-to-reach-the-k-th-stair/
+
+Solution:
+class Solution {
+    public int getWaysToReachStair(int stair,int jump,int k,boolean drop_flag,Map<String,Integer> memo) {
+        if(stair>k+1) return 0;
+        
+        String key = stair+"|"+jump+"|"+drop_flag;
+        if(memo.containsKey(key)) return memo.get(key);
+
+        int count=0;
+        if(stair==k) count++;
+
+        if(!drop_flag && stair>0) {
+            count+=getWaysToReachStair(stair-1,jump,k,true,memo);
+        }
+
+        int cur_stair = stair+(int)Math.pow(2,jump);
+        count+=getWaysToReachStair(cur_stair,jump+1,k,false,memo);
+
+        memo.put(key,count);
+        
+        return count;
+    }
+
+    public int waysToReachStair(int k) {
+        Map<String,Integer> memo =new HashMap<>();
+        return getWaysToReachStair(1,0,k,false,memo);
+    }
+}
