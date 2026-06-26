@@ -189,3 +189,61 @@ max_teleports = 0
 **Output:** `-1`
 
 **Explanation:** Target is unreachable due to walls blocking all paths.
+
+Solution:
+
+static int solve(int rows, int cols, int[][] grid,
+                 int startR, int startC, int endR, int endC,
+                 List<Gate> gates, int maxTeleports) {
+
+    // Build adjacency: encoded source cell -> list of {toR, toC}
+    Map<Integer, List<int[]>> gateMap = new HashMap<>();
+    for (Gate g : gates) {
+        // Adjust field names if your Gate class differs
+        gateMap.computeIfAbsent(g.fromR * cols + g.fromC, k -> new ArrayList<>())
+               .add(new int[]{g.toR, g.toC});
+    }
+
+    int T = maxTeleports + 1;                 // teleports-used dimension: 0..maxTeleports
+    boolean[][][] visited = new boolean[rows][cols][T];
+    int[] dr = {-1, 1, 0, 0};
+    int[] dc = {0, 0, -1, 1};
+
+    ArrayDeque<int[]> queue = new ArrayDeque<>(); // {row, col, used, dist}
+    queue.add(new int[]{startR, startC, 0, 0});
+    visited[startR][startC][0] = true;
+
+    while (!queue.isEmpty()) {
+        int[] cur = queue.poll();
+        int r = cur[0], c = cur[1], used = cur[2], dist = cur[3];
+
+        if (r == endR && c == endC) return dist;
+
+        // Walking moves (used unchanged)
+        for (int d = 0; d < 4; d++) {
+            int nr = r + dr[d], nc = c + dc[d];
+            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols
+                    && grid[nr][nc] == 0 && !visited[nr][nc][used]) {
+                visited[nr][nc][used] = true;
+                queue.add(new int[]{nr, nc, used, dist + 1});
+            }
+        }
+
+        // Teleport moves (only if budget remains)
+        if (used < maxTeleports) {
+            List<int[]> dests = gateMap.get(r * cols + c);
+            if (dests != null) {
+                for (int[] dst : dests) {
+                    int nr = dst[0], nc = dst[1];
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols
+                            && grid[nr][nc] == 0
+                            && !visited[nr][nc][used + 1]) {
+                        visited[nr][nc][used + 1] = true;
+                        queue.add(new int[]{nr, nc, used + 1, dist + 1});
+                    }
+                }
+            }
+        }
+    }
+    return -1;
+}
