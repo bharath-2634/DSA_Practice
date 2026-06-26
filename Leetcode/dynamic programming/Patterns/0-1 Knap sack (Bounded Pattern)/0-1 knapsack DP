@@ -1,0 +1,55 @@
+Question: https://www.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1
+
+Solution:
+class Solution {
+    
+    /*
+    public int getKnapsack(int idx,int cur_w,int[] val,int[] wt,int W,int[][] dp) {
+        if(idx==0) {
+            if(cur_w+wt[idx]<=W) {
+                return val[idx];
+            }
+            
+            return 0;
+        }    
+        
+        if(dp[idx][cur_w]!=0) return dp[idx][cur_w];
+        
+        int not_take = getKnapsack(idx-1,cur_w,val,wt,W,dp);
+        int take = Integer.MIN_VALUE;
+        if(cur_w + wt[idx]<=W) {
+            take = val[idx]+getKnapsack(idx-1,cur_w+wt[idx],val,wt,W,dp);
+        }
+        
+        return dp[idx][cur_w] = Math.max(take,not_take);
+    }
+    
+    public int knapsack(int W, int val[], int wt[]) {
+        int[][] dp = new int[val.length][W+1];
+        return getKnapsack(val.length-1,0,val,wt,W,dp);
+    }
+    */
+    
+    public int knapsack(int W, int val[], int wt[]) {
+        int[][] dp = new int[val.length][W+1];
+        
+        for(int w=wt[0];w<=W;w++) {
+            dp[0][w] = val[0];
+        }
+        
+        for(int i=1;i<val.length;i++) {
+            for(int w=0;w<=W;w++) {
+                int not_take= dp[i-1][w];
+                int take = Integer.MIN_VALUE;
+                if(wt[i]<=w) {
+                    take = val[i]+dp[i-1][w-wt[i]];
+                }
+                
+                dp[i][w] = Math.max(not_take,take);
+            }
+        }
+        
+        return dp[val.length-1][W];
+    }
+    
+}
