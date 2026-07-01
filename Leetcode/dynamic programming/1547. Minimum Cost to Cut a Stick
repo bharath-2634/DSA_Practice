@@ -1,0 +1,34 @@
+Question: https://leetcode.com/problems/minimum-cost-to-cut-a-stick/
+
+Solution:
+
+class Solution {
+
+    public int getMinCost(int[] points,int left,int right,int[][] dp) {
+        if(right-left==1) return 0;
+
+        if(dp[left][right]!=0) return dp[left][right];
+
+        int min_cost = Integer.MAX_VALUE;
+        for(int k=left+1;k<right;k++) {
+            int cost = (points[right]-points[left]) + getMinCost(points,left,k,dp) + getMinCost(points,k,right,dp);
+            min_cost = Math.min(min_cost,cost);
+        }
+
+        return dp[left][right] = min_cost;
+    }
+
+    public int minCost(int n, int[] cuts) {
+        Arrays.sort(cuts);
+        int[] points = new int[cuts.length+2];
+
+        points[0] = 0;
+        for(int i=0;i<cuts.length;i++) {
+            points[i+1] = cuts[i];
+        }
+        points[points.length-1] = n;
+
+        int[][] dp = new int[points.length][points.length];
+        return getMinCost(points,0,points.length-1,dp);
+    }
+}
