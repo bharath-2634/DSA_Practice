@@ -1,0 +1,49 @@
+Question: https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/description/
+
+Solution:
+class Solution {
+    public int shortestPath(int[][] grid, int k) {
+        PriorityQueue<int[]> pq= new PriorityQueue<>((a,b)->Integer.compare(a[2],b[2]));
+        boolean[][][] visited = new boolean[grid.length][grid[0].length][k+1];
+        int start_count = k - (grid[grid.length-1][grid[0].length-1]==1? 1:0 );
+        pq.offer(new int[]{grid.length-1,grid[0].length-1,0,start_count});
+
+        int[] d_r = {+1,-1,0,0};
+        int[] d_c = {0,0,-1,+1};
+        int min_steps = Integer.MAX_VALUE;
+
+        while(!pq.isEmpty()) {
+            int[] cur_pos = pq.poll();
+            int row = cur_pos[0], col = cur_pos[1],cur_steps=cur_pos[2], cur_k = cur_pos[3];
+
+            if(cur_k<0) continue;
+
+            if(row==0 && col==0 && cur_k>=0) {
+                min_steps = Math.min(min_steps,cur_steps);
+                continue;
+            }
+
+            if(visited[row][col][cur_k]) continue;
+            visited[row][col][cur_k] = true;
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+d_r[i];
+                int new_col = col+d_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col][cur_k] || grid[new_row][new_col]==1) continue;
+
+                pq.offer(new int[]{new_row,new_col,cur_steps+1,cur_k});
+            }
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+d_r[i];
+                int new_col = col+d_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col][cur_k] || grid[new_row][new_col]==0) continue;
+                pq.offer(new int[]{new_row,new_col,cur_steps+1,cur_k-1});
+            }
+        }
+
+        return min_steps==Integer.MAX_VALUE ? -1 : min_steps;
+    }
+}
