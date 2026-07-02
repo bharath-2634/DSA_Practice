@@ -1,0 +1,63 @@
+Question: https://leetcode.com/problems/find-a-safe-walk-through-a-grid/
+
+Solution:
+class Solution {
+    public boolean findSafeWalk(List<List<Integer>> grid, int health) {
+        PriorityQueue<int[]> q = new PriorityQueue<>((a,b)->Integer.compare(b[2],a[2]));
+        int start_health = health - (grid.get(grid.size()-1).get(grid.get(0).size()-1)==1 ? 1 : 0); 
+        int[][] max_health = new int[grid.size()][grid.get(0).size()];
+        for(int[] arr : max_health) {
+            Arrays.fill(arr,-1);
+        }
+        max_health[grid.size()-1][grid.get(0).size()-1] = start_health;
+        q.offer(new int[]{grid.size()-1,grid.get(0).size()-1,start_health});
+        boolean[][] visited = new boolean[grid.size()][grid.get(0).size()];
+        // visited[grid.size()-1][grid.get(0).size()-1]= true;
+
+        int[] d_r= {+1,-1,0,0};
+        int[] d_c = {0,0,-1,+1};
+
+        while(!q.isEmpty()) {
+            int[] cur_pos= q.poll();
+            int row = cur_pos[0],col = cur_pos[1],cur_health=cur_pos[2];
+
+            if(visited[row][col]) continue;
+
+            visited[row][col]= true;
+
+            if(max_health[row][col]!=-1 && max_health[row][col]<cur_health) continue;
+
+            if(row==0 && col==0) {
+                return cur_health>=1;
+            }
+
+            for(int k=0;k<4;k++) {
+                int new_row = row+d_r[k];
+                int new_col = col+d_c[k];
+
+                if(new_row<0 || new_col<0 || new_col>=grid.get(0).size() || new_row>=grid.size() || visited[new_row][new_col] || grid.get(new_row).get(new_col)==1) {
+                    continue;
+                }
+
+                // visited[new_row][new_col] = true;
+                max_health[new_row][new_col] = cur_health;
+                q.offer(new int[]{new_row,new_col,cur_health});
+            }
+
+            for(int k=0;k<4;k++) {
+                int new_row = row+d_r[k];
+                int new_col = col+d_c[k];
+
+                if(new_row<0 || new_col<0 || new_col>=grid.get(0).size() || new_row>=grid.size() || visited[new_row][new_col] || grid.get(new_row).get(new_col)==0) continue;
+
+                if(grid.get(new_row).get(new_col)==1) {
+                    // visited[new_row][new_col] = true;
+                    max_health[new_row][new_col] = cur_health;
+                    q.offer(new int[]{new_row,new_col,cur_health-1});
+                }
+            }
+        }
+
+        return false;
+    }
+}
