@@ -1,0 +1,210 @@
+Question: https://leetcode.com/problems/bus-routes/description/
+
+Solution:
+
+/*
+
+DFS Limitation : able to solve around 26/54 testcase
+
+class Solution {
+
+    public void generateAdjList(int[][] routes,Map<Integer,List<int[]>> adjList) {
+
+        for(int i=0;i<routes.length;i++) {
+            for(int j=1;j<routes[i].length;j++) {
+               
+                int next_bus = routes[i][j];
+                adjList.computeIfAbsent(routes[i][j-1],k->new ArrayList<>()).add(new int[]{next_bus,i});
+                
+            }
+
+            int next_bus = routes[i][0];
+            adjList.computeIfAbsent(routes[i][routes[i].length-1],k->new ArrayList<>()).add(new int[]{next_bus,i});
+        }
+    }
+
+    int min_steps_final_res = Integer.MAX_VALUE;
+
+
+    public boolean dfs(int node,Set<Integer> bus_visited,Set<Integer> bus_station,Map<Integer,List<int[]>> adjList,int target,int steps) {
+        if(node==target) {
+            
+            if(min_steps_final_res==Integer.MAX_VALUE) {
+                min_steps_final_res= steps;
+            }
+
+            if(steps<min_steps_final_res) {
+                min_steps_final_res = steps;
+                return true;
+            }
+        }
+
+        if(steps>min_steps_final_res) return false;
+
+        int cur_steps=Integer.MAX_VALUE;
+
+        for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjComp[0], bus = adjComp[1];
+            if(!bus_station.contains(adjNode)) {
+                bus_station.add(adjNode);
+                if(!bus_visited.contains(bus)) {
+                    bus_visited.add(bus);
+                    if(dfs(adjNode,bus_visited,bus_station,adjList,target,steps+1)) return true;
+                }else {
+                    if(dfs(adjNode,bus_visited,bus_station,adjList,target,steps)) return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(routes,adjList);
+
+        Set<Integer> bus_visited = new HashSet<>();
+        Set<Integer> bus_station = new HashSet<>();
+        bus_station.add(source);
+        boolean steps = dfs(source,bus_visited,bus_station,adjList,target,1);
+        return min_steps_final_res==Integer.MAX_VALUE ? -1 : min_steps_final_res-1;
+    }
+}
+
+    0->[1->2->7]
+    1->[3->6->7]
+
+    1->{[2,0]} [nextBus_stop, bus_number]
+    2->{[7,0]}
+    3->{[6,1]}
+    6->{[7,1]}
+    7->{[1,0],[3,1]}
+
+    src = 1, target=6
+
+    q. if anyway If I'm able to connect the stops with bus (identity) then I can choose and get the min_count
+
+*/
+
+/*
+class Solution {
+
+    public void generateAdjList(int[][] routes,Map<Integer,List<Integer>> adjList) {
+
+        for(int i=0;i<routes.length;i++) {
+            for(int bus_station : routes[i]) {
+                adjList.computeIfAbsent(bus_station,k->new ArrayList<>()).add(i);
+            }
+        }
+    }
+
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        
+        if(source==target) return 0;
+
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(routes,adjList);
+
+        Queue<Integer> q = new LinkedList<>();
+        Set<Integer> bus_station = new HashSet<>();
+        Set<Integer> bus_visited = new HashSet<>();
+
+        for(int bus : adjList.getOrDefault(source,new ArrayList<>())) {
+            q.offer(bus);
+            bus_visited.add(bus);
+        }
+
+        int min_steps=1;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            
+
+            while(size-->0) {
+                int bus = q.poll();
+                for(int station : routes[bus]) {
+                    if(station==target) return min_steps;
+                    if(!bus_station.contains(station)) {
+                        bus_station.add(station);
+                        for(int bus_no : adjList.getOrDefault(station,new ArrayList<>())) {
+                            if(!bus_visited.contains(bus_no)) {
+                                bus_visited.add(bus_no);
+                                q.offer(bus_no);
+                            }
+                        }
+                    }
+                }
+            }
+            min_steps++;
+        }
+        return -1;
+    }
+}
+*/
+
+class Solution {
+    public void generateAdjList(int[][] routes,Map<Integer,List<int[]>> adjList) {
+
+        for(int i=0;i<routes.length;i++) {
+            for(int j=1;j<routes[i].length;j++) {
+               
+                int next_bus = routes[i][j];
+                adjList.computeIfAbsent(routes[i][j-1],k->new ArrayList<>()).add(new int[]{next_bus,i});
+                
+            }
+
+            int next_bus = routes[i][0];
+            adjList.computeIfAbsent(routes[i][routes[i].length-1],k->new ArrayList<>()).add(new int[]{next_bus,i});
+        }
+    }
+
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        
+        if(source==target) return 0;
+
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(routes,adjList);
+
+        Deque<int[]> queue = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+        
+        for(int[] adjComp : adjList.getOrDefault(source,new ArrayList<>())) {
+            int bus = adjComp[1];
+            queue.addFirst(new int[]{source,bus,1});
+            // visited.add(source+" | "+bus);
+        }
+
+        while(!queue.isEmpty()) {
+            int[] src = queue.pollFirst();
+            int cur_station = src[0], cur_bus = src[1], cur_exchange=src[2];
+
+            if(cur_station==target) {
+                return cur_exchange;
+            }
+
+            String key = cur_station + " | "+cur_bus;
+
+            if(visited.contains(key)) continue;
+            visited.add(key);
+
+            for(int[] adjComp : adjList.getOrDefault(cur_station,new ArrayList<>())) {
+                int station = adjComp[0], bus = adjComp[1];
+                String cur_key = station + " | "+bus;
+
+                if(!visited.contains(cur_key)) {
+                    // visited.add(key);
+
+                    if(cur_bus==bus) {
+                        queue.addFirst(new int[]{station, bus,  cur_exchange});
+                    }else {
+                        queue.addLast(new int[]{station,bus,cur_exchange+1});
+                    }
+                }
+
+            }
+        }
+
+        return -1;
+
+    }
+
+}
