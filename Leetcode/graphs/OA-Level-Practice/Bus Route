@@ -1,5 +1,14 @@
 Question: https://leetcode.com/problems/bus-routes/description/
 
+Learning - Pattern:
+
+* If any question is asked to find "minimum steps", "minimum operation" -> 0-1 BFS
+* If there is a track of 0-1, which if I stay on the same track -0 , if I change the context-1 --> Think about 0-1 BFS
+
+Approach:
+* first write down the state of the node in queue.
+* imagine it with dequeue (addFirst and addLast) -> then implement with queue. 
+
 Solution:
 
 /*
