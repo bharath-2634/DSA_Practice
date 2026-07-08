@@ -1,0 +1,52 @@
+Question:https://leetcode.com/problems/network-delay-time/
+
+Solution:
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0]-1, v = edge[1]-1, w = edge[2];
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,w});
+        }
+    }
+
+    public int networkDelayTime(int[][] times, int n, int k) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(times,adjList);
+
+        int[] minTime = new int[n];
+        Arrays.fill(minTime,Integer.MAX_VALUE);
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[1]-b[1]);
+        pq.offer(new int[]{k-1,0});
+        minTime[k-1] = 0;
+
+        while(!pq.isEmpty()) {
+            int[] cur_pos = pq.poll();
+            int node = cur_pos[0], cur_weight = cur_pos[1];
+
+            if(minTime[node]<cur_weight) {
+                continue;
+            }
+
+            for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjComp[0], weight = adjComp[1];
+                if(minTime[adjNode]==Integer.MAX_VALUE || minTime[adjNode]>minTime[node]+weight) {
+                    minTime[adjNode] = minTime[node]+weight;
+                    pq.offer(new int[]{adjNode,minTime[adjNode]});
+                }
+            }
+        }
+
+        int min_time_reach = Integer.MIN_VALUE;
+
+        for(int i=0;i<n;i++) {
+            int time = minTime[i];
+            System.out.println(time+" "+i);
+            if(time==Integer.MAX_VALUE) return -1;
+            min_time_reach = Math.max(min_time_reach,time);
+        }
+
+        return min_time_reach;
+    }
+}
