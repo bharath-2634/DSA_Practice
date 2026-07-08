@@ -1,0 +1,78 @@
+Question: https://leetcode.com/problems/minimum-weighted-subgraph-with-the-required-paths/
+
+Solution:
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,w});
+        }
+    }
+
+    public void generateRevAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+        for(int[] edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,w});
+        }
+    }
+
+    public void findMinimumWeight(int src,Map<Integer,List<int[]>> adjList,long[] dist) {
+        Arrays.fill(dist,Long.MAX_VALUE);
+        dist[src]=0;
+        PriorityQueue<long[]> pq = new PriorityQueue<>((a,b)->Long.compare(a[1],b[1]));
+        pq.offer(new long[]{src,0L});
+
+        while(!pq.isEmpty()) {
+            long[] cur_pos = pq.poll();
+            int node = (int)cur_pos[0];
+            long cur_weight = cur_pos[1];
+
+            if(cur_weight>dist[node]) continue;
+
+            for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+                int adjNode = adjComp[0], weight = adjComp[1];
+
+                if(dist[adjNode]==Long.MAX_VALUE || dist[adjNode]>dist[node]+weight) {
+                    dist[adjNode] = dist[node]+weight;
+                    pq.offer(new long[]{adjNode,dist[adjNode]});
+                }
+            }
+        }
+    }
+
+    public long minimumWeight(int n, int[][] edges, int src1, int src2, int dest) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        long[] dist1 = new long[n];
+        findMinimumWeight(src1,adjList,dist1);
+        long[] dist2 = new long[n];
+        findMinimumWeight(src2,adjList,dist2);
+
+        Map<Integer,List<int[]>> rev_adjList = new HashMap<>();
+        generateRevAdjList(edges,rev_adjList);
+        long[] dist3 = new long[n];
+        findMinimumWeight(dest,rev_adjList,dist3);
+
+        long minimum_weight = Long.MAX_VALUE;
+        for(int i=0;i<n;i++) {
+            if (dist1[i] == Long.MAX_VALUE || dist2[i] == Long.MAX_VALUE || dist3[i] == Long.MAX_VALUE) {
+                continue;
+            }
+            minimum_weight = Math.min(minimum_weight,dist1[i]+dist2[i]+dist3[i]);
+        }
+
+        return minimum_weight==Long.MAX_VALUE ? -1 : minimum_weight;
+    }
+}
+
+/*
+    1. find out the shortest path(weight) from src1 -> src2, src2->src1 -> take the final minimum dist/cost/weight from this -> res1
+
+    2. find out the shortest path(weight) from src1->dest, src2-> dest 
+        [overlapping condition here] -> Add a set of nodes which is used to find the minimum path/dist/cost and check whether it contains other source nodes 
+        if -> dont add the res1 to this final res
+        else -> add the res1 to the final res
+*/
