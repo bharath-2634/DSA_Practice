@@ -1,0 +1,71 @@
+Question: https://leetcode.com/problems/minimum-edge-reversals-so-every-node-is-reachable/
+
+Solution:
+class Solution {
+
+    public void generateAdjList(int[][] edges,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0], v =edge[1];
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,0});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,1});
+        }
+    }
+
+    public int dfsTotalRoot(int node,int parent,Map<Integer,List<int[]>> adjList) {
+
+        int total_flips=0;
+        for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjComp[0], cost = adjComp[1];
+            if(adjNode!=parent) {
+                total_flips+=cost+dfsTotalRoot(adjNode,node,adjList);
+            }
+        }
+
+        return total_flips;
+    }
+
+    public void dfsReRooting(int node,int parent,Map<Integer,List<int[]>> adjList,int[] answer) {
+
+        for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjComp[0], cost = adjComp[1];
+            if(adjNode!=parent) {
+                if(cost==0) {
+                    answer[adjNode] = answer[node]+1;
+                }else {
+                    answer[adjNode] = answer[node]-1;
+                }
+                dfsReRooting(adjNode,node,adjList,answer);
+            }
+        }
+    }
+
+    public int[] minEdgeReversals(int n, int[][] edges) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int[] answer = new int[n];
+        answer[0] = dfsTotalRoot(0,-1,adjList);
+        // System.out.println(answer[0]);
+        dfsReRooting(0,-1,adjList,answer);
+
+        return answer;
+    }
+}
+
+/*
+    "The graph would form a tree if its edges were bi-directional" 
+        -> There is no loop
+        -> Think about parent,node relationship dfs
+        -> Calculate the operation on the traversal not after the traversal
+
+    AdjList construction:
+        -> if the direction flows inside of it +1
+        -> if the direction flows outside of it +0
+        2-> {[0,0], [1,0]}
+        0-> {[2,1]} 
+        1-> {[2,1], [3,0]}
+        3-> {[1,1]}
+
+        min_count=1
+*/
