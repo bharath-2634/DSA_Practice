@@ -1,0 +1,84 @@
+Question: https://leetcode.com/problems/sum-of-distances-in-tree/
+
+Solution:
+class Solution {
+    
+    public void generateAdjList(int[][] edges,Map<Integer,List<Integer>> adjList) {
+
+        for(int[] edge : edges) {
+            int u = edge[0], v = edge[1];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }
+    }
+
+    public void dfsSubTree(int node,int parent,int depth,Map<Integer,List<Integer>> adjList,int[] subTree,int[] dist) {
+        subTree[node]=1;
+        dist[0]+=depth;
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(parent!=adjNode) {
+                dfsSubTree(adjNode,node,depth+1,adjList,subTree,dist);
+                subTree[node]+=subTree[adjNode];
+            }
+        }
+    }
+
+    public void dfsCalc(int node,int parent,int N,Map<Integer,List<Integer>> adjList,int[] dist,int[] subTreeSize) {
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(adjNode!=parent) {
+                dist[adjNode] = dist[node] - subTreeSize[adjNode] + (N-subTreeSize[adjNode]);
+                dfsCalc(adjNode,node,N,adjList,dist,subTreeSize);
+            }
+        }
+    }
+    
+    public int[] sumOfDistancesInTree(int n, int[][] edges) {
+        Map<Integer,List<Integer>> adjList = new HashMap<>();
+        generateAdjList(edges,adjList);
+
+        int[] subTreeSize= new int[n];
+        int[] dist = new int[n];
+        dfsSubTree(0,-1,0,adjList,subTreeSize,dist);
+        // System.out.println(dist[0]);
+
+        dfsCalc(0,-1,n,adjList,dist,subTreeSize);
+
+        return dist;
+    }
+}
+
+/*
+
+    ---------- Initial Approach ----------------------
+    public int dfs(int node,int parent,Map<Integer,List<Integer>> adjList) {
+
+        int total_dist=0;
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(adjNode!=parent) {
+                total_dist+=dfs(adjNode,node,adjList)+1;
+            }
+        }
+
+        return total_dist;
+    }
+    ------------------------------------------------------------------------
+
+    public void dfsSize(int node,int parent,Map<Integer,List<Integer>> adjList,int[] subtree) {
+        subtree[node] =1;
+
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(adjNode!=parent) {
+                dfsSize(adjNode,node,adjList,subtree);
+                subtree[node]+=subtree[adjNode];
+            }
+        }
+    }
+
+    
+        int[] subtreeSize = new int[n];
+        dfsSize(0,-1,adjList,subtreeSize);
+
+*/
