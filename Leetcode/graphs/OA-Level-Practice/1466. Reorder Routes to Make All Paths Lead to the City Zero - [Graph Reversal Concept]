@@ -1,0 +1,129 @@
+Question: https://leetcode.com/problems/reorder-routes-to-make-all-paths-lead-to-the-city-zero/
+
+Solution:
+/*
+
+Brute-force Approach: O(n^2*m) -> passed 76/77 testcase
+class Solution {
+
+    public void generateAdjList(int[][] connections,Map<Integer,List<Integer>> dir_adjList,Map<Integer,List<Integer>> un_adjList) {
+
+        for(int[] connection: connections) {
+            int u = connection[0], v = connection[1];
+            dir_adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            un_adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+            un_adjList.computeIfAbsent(v,k->new ArrayList<>()).add(u);
+        }
+    }
+
+    public boolean dfs(int node,Map<Integer,List<Integer>> adjList,boolean[] visited,List<Integer> path) {
+        if(node==0) return true;
+        visited[node] = true;
+        path.add(node);
+        for(int adjNode : adjList.getOrDefault(node,new ArrayList<>())) {
+            if(!visited[adjNode]) {
+                if(dfs(adjNode,adjList,visited,path)) return true;
+            }
+        }
+
+        path.remove(path.size()-1);
+        return false;
+    }
+
+    public int minReorder(int n, int[][] connections) {
+        Map<Integer,List<Integer>> dir_adjList = new HashMap<>();
+        Map<Integer,List<Integer>> un_adjList = new HashMap<>();
+        generateAdjList(connections,dir_adjList,un_adjList);
+        // System.out.println(dir_adjList);
+
+        int min_count=0;
+        for(int i=1;i<n;i++) {
+            List<Integer> path = new ArrayList<>();
+            boolean[] visited = new boolean[n];
+            dfs(i,un_adjList,visited,path);
+            // System.out.println(i+ " " +path);
+            if(path.size()==1) {
+                int u = i;
+                int v = path.get(0);
+
+                if(u==v && v!=0) {
+                    boolean found = false;
+                    for(int node : dir_adjList.getOrDefault(v,new ArrayList<>())) {
+                        if(node==0) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found) {
+                        min_count++;
+                        // dir_adjList.computeIfAbsent()
+                    }
+                }
+            }
+
+            for(int j=1;j<path.size();j++) {
+                int u = path.get(j-1);
+                int v = path.get(j);
+
+                if(!dir_adjList.containsKey(u)) {
+                    min_count++;
+                    dir_adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+                }else {
+                    boolean found = false;
+                    for(int node: dir_adjList.getOrDefault(u,new ArrayList<>())) {
+                        if(node==v) {
+                            found= true;
+                            break;
+                        }
+                    }
+
+                    if(!found) {
+                        min_count++;
+                        dir_adjList.computeIfAbsent(u,k->new ArrayList<>()).add(v);
+                    }
+                }
+            }
+        }
+
+        return min_count;
+    }
+}
+*/
+
+class Solution {
+
+    private int min_count=0;
+
+    public void generateAdjList(int[][] connections,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] connection : connections) {
+            int u = connection[0];
+            int v = connection[1];
+
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,1});
+            adjList.computeIfAbsent(v,k->new ArrayList<>()).add(new int[]{u,0});
+        }
+    }
+
+    public void dfs(int node,int parent,Map<Integer,List<int[]>> adjList) {
+
+        for(int[] adjComp : adjList.getOrDefault(node,new ArrayList<>())) {
+            int adjNode = adjComp[0], change=adjComp[1];
+
+            if(adjNode!=parent) {
+                min_count+=change;
+                dfs(adjNode,node,adjList);
+            }
+        }
+    }
+
+    public int minReorder(int n, int[][] connections) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(connections,adjList);
+
+        dfs(0,-1,adjList);
+
+        return min_count;
+
+    }
+}
