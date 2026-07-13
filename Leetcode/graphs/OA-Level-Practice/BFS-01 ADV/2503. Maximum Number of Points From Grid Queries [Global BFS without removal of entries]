@@ -1,0 +1,127 @@
+Question: https://leetcode.com/problems/maximum-number-of-points-from-grid-queries/
+
+Solution:
+/*
+class Solution {
+
+    public int getMaxPoints(int[][] grid,int max_limit) {
+
+        if(grid[0][0]>max_limit) return 0;
+        int n = grid.length, m= grid[0].length;
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        Queue<int[]> q = new LinkedList<>();
+        int count=1;
+        q.offer(new int[]{0,0});
+        visited[0][0] = true;
+
+        int[] dir_r = {+1,0,-1,0};
+        int[] dir_c = {0,+1,0,-1};
+
+        while(!q.isEmpty()) {
+            int[] cur_pos = q.poll();
+            int row = cur_pos[0], col= cur_pos[1];
+            
+            // if(visited[row][col]) continue;
+            // visited[row][col] = true;
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+dir_r[i];
+                int new_col = col+dir_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=n || new_col>=m || visited[new_row][new_col]) continue;
+
+                if(grid[new_row][new_col]<max_limit) {
+                    q.offer(new int[]{new_row,new_col});
+                    visited[new_row][new_col]= true;
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public int[] maxPoints(int[][] grid, int[] queries) {
+        
+        int[] ans = new int[queries.length];
+        for(int i=0;i<queries.length;i++) {
+            ans[i]= getMaxPoints(grid,queries[i]);
+        }
+
+        return ans;
+    }
+}
+*/
+
+class Solution {
+
+    // public int bfs(int[][] grid,boolean[][] visited,Queue<int[]> q,int max_limit) {
+    //     int count=1;
+
+    //     int[] dir_r = {+1,0,-1,0};
+    //     int[] dir_c = {0,+1,0,-1};
+
+    //     while(!q.isEmpty()) {
+    //         int[] cur_pos = q.poll();
+    //         int row = cur_pos[0], col = cur_pos[1];
+
+    //         for(int i=0;i<4;i++) {
+    //             int new_row = row+dir_r[i];
+    //             int new_col = col+dir_c[i];
+
+    //             if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col]) continue;
+
+    //             if(grid[new_row][new_col]<max_limit) {
+    //                 q.offer(new int[]{new_row,new_col});
+    //                 visited[new_row][new_col] = true;
+    //                 count++;
+    //             }
+    //         }
+    //     }
+
+    //     return count;
+    // }
+
+    public int[] maxPoints(int[][] grid,int[] queries) {
+        int[] answer = new int[queries.length];
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[0]-b[0]);
+        
+        for(int i=0;i<queries.length;i++) {
+            pq.offer(new int[]{queries[i],i});
+        }
+
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        PriorityQueue<int[]> grid_pq = new PriorityQueue<>((a,b)->a[2]-b[2]);
+        grid_pq.offer(new int[]{0,0,grid[0][0]});
+        visited[0][0] = true;
+        int count=0;
+
+        int[] dir_r = {+1,0,-1,0};
+        int[] dir_c = {0,+1,0,-1};
+
+        while(!pq.isEmpty()) {
+            int[] cur_pos = pq.poll();
+            int query = cur_pos[0], idx = cur_pos[1];
+
+            while(!grid_pq.isEmpty() && grid_pq.peek()[2]<query) {
+                int[] cur_grid = grid_pq.poll();
+                int row = cur_grid[0], col = cur_grid[1], val = cur_grid[2];
+
+                count++;
+
+                for(int i=0;i<4;i++) {
+                    int new_row = row + dir_r[i];
+                    int new_col = col + dir_c[i];
+
+                    if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col]) continue;
+                    visited[new_row][new_col] = true;
+                    grid_pq.offer(new int[]{new_row,new_col,grid[new_row][new_col]});
+                }
+            }
+
+            answer[idx] = count;
+        }
+
+        return answer;
+    }
+}
