@@ -1,0 +1,112 @@
+Question: https://leetcode.com/problems/escape-the-spreading-fire/
+
+Solution:
+class Solution {
+
+    public boolean canReachSafe(int[][] grid,int[][] fire_time,int mid,int steps) {
+
+        if(fire_time[0][0]<=mid) return false;
+
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{0,0,mid});
+        visited[0][0] = true;
+
+        int[] dir_r = {+1,0,-1,0};
+        int[] dir_c = {0,+1,0,-1};
+
+        while(!q.isEmpty()) {
+            int[] cur_pos = q.poll();
+            int row=cur_pos[0], col=cur_pos[1], cur_steps=cur_pos[2];
+
+            if(row==grid.length-1 && col==grid[0].length-1) return true;
+
+            // if(visited[row][col]) continue;
+            // visited[row][col] = true;
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+dir_r[i];
+                int new_col = col+dir_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col] || grid[new_row][new_col]==2) continue;
+
+                int time = cur_steps+1;
+                if(new_row==grid.length-1 && new_col==grid[0].length-1) {
+                    if(time<=fire_time[new_row][new_col]) {
+                        q.offer(new int[]{new_row,new_col,time});
+                        visited[new_row][new_col] = true;
+                    }
+                }else {
+                    if(time<fire_time[new_row][new_col]) {
+                        q.offer(new int[]{new_row,new_col,time});
+                        visited[new_row][new_col] = true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public int maximumMinutes(int[][] grid) {
+        int[][] fire_time = new int[grid.length][grid[0].length];
+        boolean[][] visited = new boolean[grid.length][grid[0].length];
+
+        for(int[] fire : fire_time) {
+            Arrays.fill(fire,Integer.MAX_VALUE);
+        }
+
+        Queue<int[]> q = new LinkedList<>();
+
+        for(int i=0;i<grid.length;i++) {
+            for(int j=0;j<grid[0].length;j++) {
+                if(grid[i][j]==1) {
+                    fire_time[i][j]=0;
+                    // visited[i][j] = true;
+                    q.offer(new int[]{i,j,0});
+                }
+            }
+        }
+
+        int[] dir_r = {+1,0,-1,0};
+        int[] dir_c = {0,+1,0,-1};
+
+        while(!q.isEmpty()) {
+            int[] cur_pos = q.poll();
+            int row=cur_pos[0], col=cur_pos[1], cur_time=cur_pos[2];
+
+            if(visited[row][col] || grid[row][col]==2) continue;
+            visited[row][col] = true;
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+dir_r[i];
+                int new_col = col+dir_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=grid.length || new_col>=grid[0].length || visited[new_row][new_col] || grid[new_row][new_col]==2) continue;
+                
+                if(fire_time[new_row][new_col] >fire_time[row][col]+1) {
+                    fire_time[new_row][new_col] = fire_time[row][col]+1;
+                    q.offer(new int[]{new_row,new_col,fire_time[new_row][new_col]});
+                }
+            }
+        }
+
+        // fire_time[fire_time.length-1][fire_time[0].length-1]=0;
+
+        int low = 0, high = 1000000000;
+        int ans=-1;
+
+        while(low<=high) {
+            int mid = low+(high-low)/2;
+
+            if(canReachSafe(grid,fire_time,mid,0)) {
+                ans = mid;
+                low= mid+1;
+            }else {
+                high = mid-1;
+            }
+        }
+
+        return ans;
+    }
+}
