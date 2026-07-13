@@ -1,0 +1,36 @@
+Question: https://leetcode.com/problems/find-minimum-time-to-reach-last-room-i/
+
+Solution:
+class Solution {
+    public int minTimeToReach(int[][] moveTime) {
+        int n= moveTime.length, m=moveTime[0].length;
+        boolean[][] visited = new boolean[n][m];
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[2]-b[2]);
+        pq.offer(new int[]{0,0,0});
+        visited[0][0] = true;
+
+        int[] dir_r = {+1,0,-1,0};
+        int[] dir_c = {0,+1,0,-1};
+
+        while(!pq.isEmpty()) {
+            int[] cur_pos = pq.poll();
+            int row= cur_pos[0], col = cur_pos[1], cur_time = cur_pos[2];
+
+            if(row==n-1 && col==m-1) {
+                return cur_time;
+            }
+
+            for(int i=0;i<4;i++) {
+                int new_row = row+dir_r[i];
+                int new_col = col+dir_c[i];
+
+                if(new_row<0 || new_col<0 || new_row>=n || new_col>=m || visited[new_row][new_col]) continue;
+                int time = Math.max(moveTime[new_row][new_col],cur_time)+1;
+                pq.offer(new int[]{new_row,new_col,time});
+                visited[new_row][new_col] = true;
+            }
+        }
+
+        return 0;
+    }
+}
