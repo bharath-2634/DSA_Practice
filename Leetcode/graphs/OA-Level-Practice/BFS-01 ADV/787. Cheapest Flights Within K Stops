@@ -1,0 +1,54 @@
+Question: https://leetcode.com/problems/cheapest-flights-within-k-stops/
+
+Solution:
+class Solution {
+
+    public void generateAdjList(int[][] flights,Map<Integer,List<int[]>> adjList) {
+        for(int[] flight : flights) {
+            int u = flight[0], v =  flight[1], w = flight[2];
+            adjList.computeIfAbsent(u,k->new ArrayList<>()).add(new int[]{v,w});
+        }
+    }
+
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer,List<int[]>> adjList = new HashMap<>();
+        generateAdjList(flights,adjList);
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[2]-b[2]);
+        pq.offer(new int[]{src,0,0}); // node, steps, cost
+        int[][] minCost = new int[n][k+2];
+        for(int[] cost : minCost) {
+            Arrays.fill(cost,Integer.MAX_VALUE);
+        }
+
+        minCost[src][0]=0;
+
+        while(!pq.isEmpty()) {
+            int[] cur_pos = pq.poll();
+            int cur_node = cur_pos[0], cur_step = cur_pos[1], cur_cost = cur_pos[2];
+
+            if(cur_node==dst) {
+                return cur_cost;
+            }
+
+            if(cur_step>k) continue;
+
+            for(int[] adjComp : adjList.getOrDefault(cur_node, new ArrayList<>())) {
+                int adjNode = adjComp[0], cost = adjComp[1];
+
+                int next_step = cur_step+1;
+                int next_cost = cur_cost + cost;
+
+                if(next_step<=k+1) {
+                    if(minCost[adjNode][next_step]>next_cost) {
+                        minCost[adjNode][next_step] = next_cost;
+                        pq.offer(new int[]{adjNode,next_step,next_cost});
+                    }
+                }
+            }
+        }
+
+        return -1;
+
+    }
+}
