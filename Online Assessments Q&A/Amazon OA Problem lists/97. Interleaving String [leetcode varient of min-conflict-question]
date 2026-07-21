@@ -1,0 +1,108 @@
+Question: https://leetcode.com/problems/interleaving-string/
+
+Solution: 
+/*
+
+My initial Idea - failed because of dp state can't be defined with this state
+class Solution {
+
+    public boolean getIsInterleave(int idx1,int idx2,StringBuilder sb, String s1,String s2,String s3,Boolean[][] dp) {
+
+        if(idx1==s1.length() && idx2==s2.length()) {
+            if(sb.toString().equals(s3)) return true;
+            else return false;
+        }
+
+        if(idx1>=s1.length()) {
+            sb.append(s2.charAt(idx2));
+            if(getIsInterleave(idx1,idx2+1,sb,s1,s2,s3,dp)) return true;
+            sb.deleteCharAt(sb.length()-1);
+
+            return false;
+        }
+
+        if(idx2>=s2.length()) {
+            sb.append(s1.charAt(idx1));
+            if(getIsInterleave(idx1+1,idx2,sb,s1,s2,s3,dp)) return true;
+            sb.deleteCharAt(sb.length()-1);
+
+            return false;
+        }
+
+        if(dp[idx1][idx2]!=null) return dp[idx1][idx2];
+
+        //choosing s1
+        boolean choosing_s1 = false;
+        sb.append(s1.charAt(idx1));
+        choosing_s1 = getIsInterleave(idx1+1,idx2,sb,s1,s2,s3,dp);
+        sb.deleteCharAt(sb.length()-1);
+
+        //choosing s2
+        boolean choosing_s2 = false;
+        sb.append(s2.charAt(idx2));
+        choosing_s2 = getIsInterleave(idx1,idx2+1,sb,s1,s2,s3,dp);
+        sb.deleteCharAt(sb.length()-1);
+
+        return dp[idx1][idx2] = choosing_s1 || choosing_s2;
+    }
+
+    public boolean isInterleave(String s1, String s2, String s3) {
+
+        // if(s1.equals("aabcc") && s2.equals("dbbca") && s3.equals("aadbbcbcac")) return true;
+        Boolean[][] dp = new Boolean[s1.length()+1][s2.length()+1];
+        return getIsInterleave(0,0,new StringBuilder(),s1,s2,s3,dp);
+    }
+}
+*/
+
+class Solution {
+    
+    public boolean getIsInterleave(int idx1,int idx2,String s1,String s2,String s3,Boolean[][] dp) {
+
+        if(idx1==s1.length() && idx2==s2.length()) {
+            if((idx1+idx2)==s3.length()) return true;
+            else return false;
+        }
+
+        int idx3 = idx1+idx2;
+
+        if(idx1>=s1.length()) {
+            // add all the s2
+            if(idx3<s3.length() && s2.charAt(idx2)==s3.charAt(idx3)) {
+                return dp[idx1][idx2] = getIsInterleave(idx1,idx2+1,s1,s2,s3,dp);
+            }
+
+            return false;
+        }
+
+        if(idx2>=s2.length()) {
+            // add all the s1
+            if(idx3<s3.length() && s1.charAt(idx1)==s3.charAt(idx3)) {
+                return dp[idx1][idx2] = getIsInterleave(idx1+1,idx2,s1,s2,s3,dp);
+            }
+
+            return false;
+        }
+
+        if(dp[idx1][idx2]!=null) return dp[idx1][idx2];
+        
+        //choose s1
+        boolean choose_s1 = false;
+        if(idx3<s3.length() && s1.charAt(idx1)==s3.charAt(idx3)) {
+            choose_s1 = getIsInterleave(idx1+1,idx2,s1,s2,s3,dp);
+        }
+
+        //choose s2
+        boolean choose_s2 = false;
+        if(idx3<s3.length() && s2.charAt(idx2)==s3.charAt(idx3)) {
+            choose_s2 = getIsInterleave(idx1,idx2+1,s1,s2,s3,dp);
+        } 
+
+        return dp[idx1][idx2] = (choose_s1 || choose_s2);
+    }
+
+    public boolean isInterleave(String s1,String s2,String s3) {
+        Boolean[][] dp = new Boolean[s1.length()+1][s2.length()+1];
+        return getIsInterleave(0,0,s1,s2,s3,dp);
+    }
+}
