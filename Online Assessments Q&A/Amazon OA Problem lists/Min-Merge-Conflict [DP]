@@ -1,0 +1,103 @@
+Question: 
+At Amazon, developers want to merge primary and secondary source control branches into a unified branch while preserving the order of commits from each branch. Each character of a branch represents a commit's priority, with lower alphabetical order indicating higher priority.
+
+A conflict occurs when, in the merged branch, a commit with lower priority is placed before a commit with higher priority. Your task is to find the minimum number of conflicts in any valid merge of primary and secondary branches.
+
+Example
+primary = "zo"
+secondary = "d"
+
+There are three possible merge arrangements:
+
+"zcdo" with 2 merge conflicts ('z' being lower priority is placed before higher priority commits 'o' and 'd')
+Similarly, "zdco" with 3 merge conflicts
+Similarly, "dzco" with 2 merge conflicts
+
+The minimum number of merge conflicts possible is 2.
+
+Function Description
+
+Complete the function getMinimumConflicts that takes the following input:
+
+string primary: the commit sequence of the primary branch
+string secondary: the commit sequence of the secondary branch
+Returns
+int: the minimum number of conflicts after a valid merge
+Constraints
+1 ≤ |primary|, |secondary| ≤ 1000
+primary and secondary consist of lowercase English letters only.
+Input Format for Custom Testing
+
+(Standard HackerRank custom input format.)
+
+Sample Case 0
+Sample Input 0
+STDIN      FUNCTION
+-----      --------
+dae   ->   primary = "dae"
+add   ->   secondary = "add"
+Sample Output 0
+1
+
+Solution:
+import java.util.*;
+
+class Main {
+    
+    public static int getInversionCost(int idx,String s,char last_ch) {
+
+        int count=0;
+        for(int i=idx;i<s.length();i++) {
+            if(last_ch>s.charAt(i)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+   
+    public static int getMinConflitMerge(int idx1,int idx2,String s,String t,int[][] dp) {
+        if(idx1>=s.length() && idx2>=t.length()) return 0;
+
+        if(idx1>=s.length() && idx2<t.length()) {
+            char ch = t.charAt(idx2);
+            int cur_cost = getInversionCost(idx2+1,t,ch);
+            return cur_cost+getMinConflitMerge(idx1,idx2+1,s,t,dp);
+        }
+
+        if(idx2>=t.length() && idx1<s.length()) {
+            char ch = s.charAt(idx1);
+            int cur_cost = getInversionCost(idx1+1,s,ch);
+            return cur_cost+getMinConflitMerge(idx1+1,idx2,s,t,dp);
+        }
+
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+
+       //choosing s
+        char ch = s.charAt(idx1);
+        int choose_s = getInversionCost(idx1+1,s,ch) +getInversionCost(idx2,t,ch)+ getMinConflitMerge(idx1+1,idx2,s,t,dp);
+
+        //choosing t
+        char cr = t.charAt(idx2);
+        int choose_t = getInversionCost(idx2+1,t,cr) + getInversionCost(idx1,s,cr)+ getMinConflitMerge(idx1,idx2+1,s,t,dp);
+
+        return dp[idx1][idx2] = Math.min(choose_s,choose_t);
+    }
+
+    public static int minConflitMerge(String s,String t) {
+        int[][] dp = new int[s.length()+1][t.length()+1];
+        for(int[] d : dp) {
+            Arrays.fill(d,-1);
+        }
+
+        return getMinConflitMerge(0,0,s,t,dp);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.next();
+        String t = sc.next();
+
+        System.out.println(minConflitMerge(s,t));
+    }
+}  
