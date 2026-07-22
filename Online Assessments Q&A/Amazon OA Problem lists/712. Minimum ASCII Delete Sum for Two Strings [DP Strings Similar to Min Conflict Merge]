@@ -1,0 +1,56 @@
+Question: https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/
+
+Solution:
+class Solution {
+    public int getMinDeleteSum(int idx1,int idx2,String s1,String s2,int[][] dp) {
+        // base case
+
+        if(idx1>=s1.length() && idx2>=s2.length()) return 0;
+
+        if(idx1>=s1.length()) {
+            if(idx2<s2.length()) {
+                int value=0;
+                for(int i=idx2;i<s2.length();i++) {
+                    value+=((int)s2.charAt(i));
+                }
+                return value;
+            }
+
+            return 0;
+        }
+
+        if(idx2>=s2.length()) {
+            if(idx1<s1.length()) {
+                int value=0;
+                for(int i=idx1;i<s1.length();i++) {
+                    value+=((int)s1.charAt(i));
+                }
+                return value;
+            }
+
+            return 0;
+        }
+
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+
+        if(s1.charAt(idx1)==s2.charAt(idx2)) {
+            return dp[idx1][idx2] = getMinDeleteSum(idx1+1,idx2+1,s1,s2,dp);
+        }else {
+            int path1 = ((int)s1.charAt(idx1)) + getMinDeleteSum(idx1+1,idx2,s1,s2,dp);
+            int path2 = ((int)s2.charAt(idx2)) + getMinDeleteSum(idx1,idx2+1,s1,s2,dp);
+            // int path3 = ((int)s1.charAt(idx1) + (int)s2.charAt(idx2)) + getMinDeleteSum(idx1+1,idx2+1,s1,s2,dp);
+            // return dp[idx1][idx2] = Math.min(path1,Math.min(path2,path3));
+
+            return dp[idx1][idx2] = Math.min(path1,path2);
+        }
+    }
+
+    public int minimumDeleteSum(String s1, String s2) {
+        int[][] dp = new int[s1.length()+1][s2.length()+1];
+        for(int[] d : dp) {
+            Arrays.fill(d,-1);
+        }
+
+        return getMinDeleteSum(0,0,s1,s2,dp);
+    }
+}
