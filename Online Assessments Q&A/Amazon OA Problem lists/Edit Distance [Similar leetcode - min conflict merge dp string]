@@ -1,0 +1,44 @@
+Question: https://leetcode.com/problems/edit-distance/
+
+Solution:
+class Solution {
+    public int getMinDistance(int idx1,int idx2,String word1,String word2,int[][] dp) {
+        //base case
+        if(idx1>=word1.length() && idx2>=word2.length()) return 0;
+
+        if(idx1>=word1.length()) {
+            if(idx2<word2.length()) {
+                return (word2.length()-idx2);
+            }
+            return 0;
+        }
+
+        if(idx2>=word2.length()) {
+            if(idx1<word1.length()) {
+                return (word1.length()-idx1);
+            }
+            return 0;
+        }
+
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+        // equal entity
+        if(word1.charAt(idx1)==word2.charAt(idx2)) {
+            return dp[idx1][idx2] = getMinDistance(idx1+1,idx2+1,word1,word2,dp);
+        }else {
+            int path1 = 1+getMinDistance(idx1,idx2+1,word1,word2,dp); // inserting
+            int path2 = 1+getMinDistance(idx1+1,idx2,word1,word2,dp); // deleting
+            int path3 = 1+getMinDistance(idx1+1,idx2+1,word1,word2,dp); // replacing
+
+            return dp[idx1][idx2] = Math.min(path1,Math.min(path2,path3));
+        }
+    }
+
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length()+1][word2.length()+1];
+        for(int[] d : dp) {
+            Arrays.fill(d,-1);
+        }
+
+        return getMinDistance(0,0,word1,word2,dp);
+    }
+}
