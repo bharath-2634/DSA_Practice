@@ -1,0 +1,122 @@
+Question: In Amazon's financial team an analyst is dealing with an infinite number of bags arranged in a line, each numbered from 1 to infinity. The task is to gather information about the amount of money in these bags, presented in the form of continuous segments. The objective is to select consecutive bags in such a way that the total amount of money in these bags is maximized.
+
+The continuous segments provided to represent the amount of money in each bag do not intersect. Additionally, any bag included within a segment contains some amount of money, while bags not included in any segment are considered to have zero money.
+
+Formally, given a 2D array segment of size n x 3, where n represents the number of available segments, and an integer k representing the number of consecutive bags you will take, and the 2D array segment represents the range of bags included in this segment [segment[i][0], segment[i][1]] and the amount of money inside the bags in the range segment[i][2].
+
+Find the k consecutive bags with the maximum total amount of money, since the answer can be large, return it modulo (10^9 + 7).
+
+Example
+k = 5
+n = 4
+
+segment = [[1, 4, 2], [6, 6, 5], [7, 7, 7], [9, 10, 1]]
+
+The amount of money in each bag is:
+
+Bag	1	2	3	4	5	6	7	8	9	10
+Money	2	2	2	2	0	5	7	0	1	1
+
+All other bags have zero money.
+
+Let's try different consecutive bags of size k:
+
+Bags	Total Money
+[1 - 5]	2 + 2 + 2 + 2 + 0 = 8
+[2 - 6]	2 + 2 + 2 + 0 + 5 = 11
+[3 - 7]	2 + 2 + 0 + 5 + 7 = 16
+[4 - 8]	2 + 0 + 5 + 7 + 0 = 14
+[5 - 9]	0 + 5 + 7 + 0 + 1 = 13
+[6 - 10]	5 + 7 + 0 + 1 + 1 = 14
+
+The subsegment starting from the third bag and ending at the seventh bag has the maximum total amount of money, hence the answer is 16.
+
+Function Description
+
+Complete the function calculateMaximumConsecutiveSum in the editor below.
+
+calculateMaximumConsecutiveSum has the following parameters:
+
+int k: the number of consecutive bags you will take.
+int segment[n][3]: A 2D array where n is the number of segments. Each segment contains the start index, end index, and money in the bags for that range.
+Returns
+int: the amount of money inside the k consecutive bags with the maximum total amount of money modulo 10^9 + 7.
+Constraints
+1 ≤ n ≤ 2 * 10^5
+1 ≤ k ≤ 10^9
+1 ≤ segment[i][0] ≤ segment[i][1] ≤ 10^9
+1 ≤ segment[i][2] ≤ 10^6
+It is guaranteed that no two segments intersect.
+Sample Input 0
+STDIN            Function
+-----            --------
+3            ->  k = 3
+2            ->  segment[] size n = 2
+3            ->  segment[][] size columns = 3
+(always)
+1 9 5        ->  segment = [[1, 9, 5], [10, 20, 5]]
+10 20 5
+Sample Output 0
+15
+
+Solution:
+
+# Bruteforce
+import java.util.*;
+
+class Main {
+
+    private static int MOD = 1_000_000_007;
+    
+    public static int maxProfitContinousBags(int k,int n,int[][] bags) {
+        int max_size=0;
+
+        for(int i=0;i<n;i++) {
+            int end = bags[i][1];
+            max_size = Math.max(max_size,end);
+        }
+
+        int[] money_bag = new int[max_size];
+
+        for(int i=0;i<n;i++) {
+            for(int j=bags[i][0]-1;j<bags[i][1];j++) {
+                money_bag[j] = bags[i][2];
+            }
+        }
+
+        int max_amount = Integer.MIN_VALUE;
+
+        for(int i=0;i<max_size;i++) {
+            boolean flag = false;
+            int sum = 0;
+            for(int j=0;j<k && j+i<max_size;j++) {
+                if(j+i>=max_size) {
+                    flag = true;
+                    break;
+                }
+                sum+=money_bag[j+i];
+            }
+            if(flag) break;
+            max_amount = Math.max(max_amount,sum);
+        }
+
+        return max_amount%MOD;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        int k = sc.nextInt();
+        int n = sc.nextInt();
+
+        int[][] bags = new int[n][3];
+
+        for(int i=0;i<n;i++) {
+            bags[i][0] = sc.nextInt();
+            bags[i][1] = sc.nextInt();
+            bags[i][2] = sc.nextInt();
+        }
+
+        System.out.println(maxProfitContinousBags(k,n,bags));
+    }
+}
