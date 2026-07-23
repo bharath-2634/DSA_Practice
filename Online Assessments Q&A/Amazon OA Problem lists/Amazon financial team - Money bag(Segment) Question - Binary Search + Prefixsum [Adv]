@@ -61,6 +61,134 @@ Sample Output 0
 
 Solution:
 
+# optimized solution (Binary Search + Prefix sum [Adv])
+
+import java.util.*;
+
+class Main {
+
+    private static final long MOD = 1_000_000_007L;
+
+    public static int findLastSegmentIndexExpandingRight(int[][] segments, int target) {
+        int low = 0, high = segments.length - 1;
+        int ans = -1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (segments[mid][0] <= target) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+
+    public static int findLastSegmentIndexExpandingLeft(int[][] segments, int target) {
+        int low = 0, high = segments.length - 1;
+        int ans = -1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (segments[mid][1] >= target) {
+                ans = mid;
+                high = mid - 1; // Try to extend even further left
+            } else {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+    
+    public static int maxProfitContinousBags(int k, int n, int[][] segments) {
+        // Step 0: Ensure segments are properly sorted by start times for binary search
+        Arrays.sort(segments, (a, b) -> Integer.compare(a[0], b[0]));
+
+        // Step 1: Setup for prefix_sum and money calculation 
+        long[] total_value = new long[n];
+        long[] prefix_sum = new long[n + 1];
+        prefix_sum[0] = 0;
+
+        for (int i = 0; i < n; i++) {
+            long total_bags = (long) segments[i][1] - segments[i][0] + 1;
+            total_value[i] = total_bags * segments[i][2];
+            prefix_sum[i + 1] = prefix_sum[i] + total_value[i];
+        }
+
+        long max_money = 0;
+
+        // Step 2: Left-Aligned Windows (Window Starts at segments[i][0])
+        for (int i = 0; i < n; i++) {
+            int start = segments[i][0];
+            int end = start + k - 1;
+
+            int last_segment_idx = findLastSegmentIndexExpandingRight(segments, end);
+
+            if (last_segment_idx >= i) {
+                // Get value of fully wrapped middle segments
+                long current_window_money = prefix_sum[last_segment_idx] - prefix_sum[i];
+
+                int last_seg_start = segments[last_segment_idx][0];
+                int last_seg_end = segments[last_segment_idx][1];
+                long last_seg_money = segments[last_segment_idx][2];
+
+                if (end >= last_seg_end) {
+                    current_window_money += total_value[last_segment_idx];
+                } else {
+                    long total_captured_bags = (long) end - last_seg_start + 1;
+                    current_window_money += total_captured_bags * last_seg_money;
+                }
+                max_money = Math.max(max_money, current_window_money);
+            }
+        }
+
+        // Step 3: Right-Aligned Windows (Window Ends at segments[i][1])
+        for (int i = 0; i < n; i++) {
+            int start = segments[i][1];
+            int end = (start - k + 1) < 1 ? 1 : start - k + 1;
+
+            int last_segment_idx = findLastSegmentIndexExpandingLeft(segments, end);
+
+            // Leftmost index must be less than or equal to current anchor segment i
+            if (last_segment_idx != -1 && last_segment_idx <= i) {
+                // Sum fully engulfed segments between last_segment_idx + 1 and i
+                long current_window_money = prefix_sum[i + 1] - prefix_sum[last_segment_idx + 1];
+
+                int last_seg_start = segments[last_segment_idx][0];
+                int last_seg_end = segments[last_segment_idx][1];
+                long last_seg_money = segments[last_segment_idx][2];
+
+                if (end <= last_seg_start) {
+                    current_window_money += total_value[last_segment_idx];
+                } else {
+                    long total_captured_bags = (long) last_seg_end - end + 1;
+                    current_window_money += total_captured_bags * last_seg_money;
+                }
+                max_money = Math.max(max_money, current_window_money);
+            }
+        }
+
+        return (int) (max_money % MOD);
+    } 
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // if (!sc.hasNextInt()) return;
+        int k = sc.nextInt();
+        int n = sc.nextInt();
+
+        int[][] bags = new int[n][3];
+        for (int i = 0; i < n; i++) {
+            bags[i][0] = sc.nextInt();
+            bags[i][1] = sc.nextInt();
+            bags[i][2] = sc.nextInt();
+        }
+
+        System.out.println(maxProfitContinousBags(k, n, bags));
+        sc.close();
+    }
+}
+
+---------------------------------------------------------------------------------------------------------
 # Bruteforce
 import java.util.*;
 
