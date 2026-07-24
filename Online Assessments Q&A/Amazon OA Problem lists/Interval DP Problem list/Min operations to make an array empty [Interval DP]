@@ -1,0 +1,101 @@
+Question: Given an array of numbers 1<=n<=10^5, where you can perform 2 operations - 1. increase the number by 1 arr[idx]+1, 2. delete the arr[idx1], arr[idx2] idx1<idx2 so the end goal is to make the array empty and find the minimum possible steps required to empty the array
+Input: 
+n = 5
+arr = [1 2 3 4 7]
+output: 10 
+
+
+Solution:
+import java.util.*;
+
+public class Main {
+    private static List<int[]> primeNumbers;
+
+    public static boolean isPrime(int n) {
+        if(n==0 || n==1) return false;
+
+        for(int j=2;j<=n/2;j++) {
+            if(n%j==0) return false;
+        }
+        return true;
+    }
+
+    public static void calculatePrimeNumberPairs(int n) {
+        List<Integer> primeList = new ArrayList<>();
+        
+        for(int i=1;i<=n;i++) {
+            if(isPrime(i)) {
+                primeList.add(i);
+            }
+        }
+
+        primeNumbers = new ArrayList<>();
+
+        for(int i=0;i<primeList.size()-1;i++) {
+            primeNumbers.add(new int[]{primeList.get(i),primeList.get(i+1)});
+        }
+        
+    }
+
+    public static int getCost(int a,int b) {
+        
+        int minCost = 10000;
+        for (int[] pair : primeNumbers) {
+            int p1 = pair[0];
+            int p2 = pair[1];
+            if (p1 >= a && p2 >= b) {
+                int cost = (p1 - a) + (p2 - b);
+                minCost = Math.min(minCost, cost);
+            }
+        }
+        return minCost;
+    }
+
+    public static int getMinOperations(int start,int end,int[] nums) {
+        
+        // base case
+        if(start>end) return 0;
+
+        if(start+1==end) {
+            return 1+getCost(nums[start],nums[end]);
+        }
+
+        // split
+        int ans=10000;
+        
+        for(int k=start+1;k<end;k+=2) {
+            int left = getMinOperations(start,k,nums);
+            int right = getMinOperations(k+1,end,nums);
+            ans = Math.min(ans,left+right);
+        }
+
+        //occasional condition case [what if inner elements of i,j has to wiped first]
+        int inner_cost = getMinOperations(start+1,end-1,nums);
+        if(inner_cost<100000) {
+            int cur_cost = 1+getCost(nums[start],nums[end]);
+            ans = Math.min(ans,inner_cost+cur_cost);
+        }
+
+        return ans;
+
+    }
+
+    public static int minOperationToMakeArrayEmpty(int n,int[] nums) {
+        int max_element=0;
+        for(int num : nums) max_element = Math.max(max_element,num);
+
+        calculatePrimeNumberPairs(max_element+100);
+        return getMinOperations(0,nums.length-1,nums);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        System.out.println(minOperationToMakeArrayEmpty(n,nums));
+    }
+}
