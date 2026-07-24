@@ -1,0 +1,60 @@
+Question: https://leetcode.com/problems/longest-palindromic-subsequence/
+
+
+Solution:
+/*
+
+class Solution {
+
+    public int getLongestPalindromeSubseq(int idx1,int idx2,String s1,String s2,int[][] dp) {
+
+        if(idx1>=s1.length() || idx2>=s2.length()) return 0;
+
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+
+        if(s1.charAt(idx1)==s2.charAt(idx2)) {
+            return dp[idx1][idx2] = 1+getLongestPalindromeSubseq(idx1+1,idx2+1,s1,s2,dp);
+        }
+        
+        return dp[idx1][idx2] = Math.max(getLongestPalindromeSubseq(idx1+1,idx2,s1,s2,dp),getLongestPalindromeSubseq(idx1,idx2+1,s1,s2,dp));
+    }
+
+    public int longestPalindromeSubseq(String s) {
+        int[][] dp = new int[s.length()+1][s.length()+1];
+        for(int[] d : dp) Arrays.fill(d,-1);
+
+        return getLongestPalindromeSubseq(0,0,s,new StringBuilder(s).reverse().toString(),dp);   
+    }
+}
+
+/*
+    Longest Palindrome Subseq = LCS(s,s.reverse()); 
+
+
+*/
+
+class Solution {
+
+    public int getLongestPalindromeSubseq(int idx1,int idx2,String s,int[][] dp) {
+        if(idx1>idx2) return 0;
+
+        if(idx1==idx2) return 1;
+        
+        if(dp[idx1][idx2]!=-1) return dp[idx1][idx2];
+
+        if(s.charAt(idx1)==s.charAt(idx2)) {
+            return dp[idx1][idx2] = 2+getLongestPalindromeSubseq(idx1+1,idx2-1,s,dp);
+        }
+
+        return dp[idx1][idx2] = Math.max(getLongestPalindromeSubseq(idx1+1,idx2,s,dp),getLongestPalindromeSubseq(idx1,idx2-1,s,dp));
+    }
+
+    public int longestPalindromeSubseq(String s) {
+
+        if(s.length()==1) return 1;
+        int[][] dp = new int[s.length()+1][s.length()+1];
+        for(int[] d : dp) Arrays.fill(d,-1);
+
+        return getLongestPalindromeSubseq(0,s.length()-1,s,dp);   
+    }
+}
