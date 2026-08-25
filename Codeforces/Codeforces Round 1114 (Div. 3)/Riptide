@@ -1,0 +1,39 @@
+Problem: https://codeforces.com/contest/2254/problem/A
+
+Solution:
+import java.util.*;
+
+class Main {
+
+    public static boolean isSame(int a,int b,int c) {
+        return a==b || b==c || a==c;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-->0) {
+            int a = sc.nextInt();
+            int b = sc.nextInt();
+            int c = sc.nextInt();
+
+            int count=0;
+            if(isSame(a,b,c)) {
+                System.out.println(0);
+                continue;
+            }
+
+            int second_max=0,max=0;
+            int[] nums = {a,b,c};
+            Arrays.sort(nums);
+            max = nums[nums.length-1];
+            second_max = nums[nums.length-2];
+            int x = nums[nums.length-3];
+            int rem = Math.min((second_max - x),(max - second_max));
+
+            System.out.println(rem); 
+        }
+    }
+    
+} 
