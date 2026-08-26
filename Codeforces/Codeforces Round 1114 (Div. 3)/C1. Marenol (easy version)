@@ -1,0 +1,139 @@
+Problem: https://codeforces.com/contest/2254/problem/C1
+
+Solution:
+import java.util.*;
+
+class Main {
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = Integer.parseInt(sc.next());
+
+        while(t-->0) {
+            int n = Integer.parseInt(sc.next());
+            String a = sc.next();
+            String b = sc.next();
+
+            if(a.equals(b)) {
+                System.out.println("YES");
+                continue;
+            }
+
+            if(!a.equals(b) && n<3) {
+                System.out.println("NO");
+                continue;
+            }
+
+            
+
+            /*
+
+            Substring parsing failed - testcase 5
+            int l=0,r=2;
+            boolean flag=true;
+            while(l<n && r<n) {
+                String sub1 = a.substring(l,r+1);
+                String sub2 = b.substring(l,r+1);
+                if(sub1.equals(sub2) || sub1.equals("100") && sub2.equals("001") || sub1.equals("001") && sub2.equals("100") || sub1.equals("110") && sub2.equals("011") || sub1.equals("011") && sub2.equals("110")) {
+                    l++;
+                    r++;
+                }else {
+                    flag=false;
+                    System.out.println("NO");
+                    break;
+                }
+            }
+
+            if(flag) {
+                System.out.println("YES");
+            }
+            */
+
+            /*
+
+            Approach 2 fails due to - index misplace invariants
+
+            Set<String> matched_sub = new HashSet<>();
+            int l=0,r=2;
+            while(l<n && r<n) {
+                String sub = b.substring(l,r+1);
+                if(sub.equals("100") || sub.equals("001") || sub.equals("110") || sub.equals("011")) {
+                    matched_sub.add(sub);
+                }
+                l++;
+                r++;
+            }
+
+            if(matched_sub.size()==0) {
+                System.out.println("NO");
+                continue;
+            }
+
+            l=0;
+            r=2;
+            boolean flag = false;
+            while(l<n && r<n) {
+                String sub = a.substring(l,r+1);
+                if((sub.equals("100") || sub.equals("001") || sub.equals("110") || sub.equals("011")) && matched_sub.contains(sub)) {
+                    System.out.println("YES");
+                    flag = true;
+                    break;
+                }
+                l++;
+                r++;
+            }
+
+            if(!flag) {
+                System.out.println("NO");
+                continue;
+            }
+            */
+
+            // final correct approach
+            int a_eve=0,a_odd=0;
+            for(int i=0;i<n;i++) {
+                if(a.charAt(i)=='1') {
+                    if(i%2==0) {
+                        a_eve++;
+                    }else {
+                         a_odd++;
+                    }
+                }
+            }
+
+            int b_eve=0,b_odd=0;
+            for(int i=0;i<n;i++) {
+                if(b.charAt(i)=='1') {
+                    if(i%2==0) {
+                        b_eve++;
+                    }else {
+                        b_odd++;
+                    }
+                }
+                
+            }
+
+            if(a_eve == b_eve && a_odd == b_odd) {
+                System.out.println("YES");
+            }else {
+                System.out.println("NO");
+            }
+        }
+    }
+    
+}
+
+/*
+YES
+NO
+YES
+NO
+NO
+YES
+YES
+NO
+YES
+
+
+*/
