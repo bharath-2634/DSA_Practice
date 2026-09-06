@@ -1,0 +1,22 @@
+Question: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
+
+Solution:
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int left=0,right=nums.length-1;
+        
+        while(left<right) {
+            int rem= nums[left]+nums[right];
+
+            if(rem==target) {
+                return new int[]{left+1,right+1};
+            }else if(rem>target) {
+                right--;
+            }else if(rem<target) {
+                left++;
+            }
+        }
+
+        return new int[]{-1,-1};
+    }
+}
