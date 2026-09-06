@@ -1,0 +1,66 @@
+Question: https://codeforces.com/problemset/problem/1490/B
+
+Solution:
+
+import java.util.*;
+
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-->0) {
+            int n = sc.nextInt();
+            int[] nums = new int[n];
+
+            for(int i=0;i<n;i++) {
+                nums[i] = sc.nextInt();
+            }
+
+            int c0=0,c1=0,c2=0;
+
+            for(int num : nums) {
+                int cur_rem = num%3;
+
+                if(cur_rem==0) {
+                    c0++;
+                }else if(cur_rem==1) {
+                    c1++;
+                }else if(cur_rem==2) {
+                    c2++;
+                }
+            }
+
+            int min_moves=0;
+            int target = n/3;
+
+            while(c0!=target || c1!=target || c2!=target) {
+                
+                if(c0>n/3) {
+                    int extra_1 = c0-target;
+                    c0-=extra_1;
+                    c1+=extra_1;
+                    min_moves+=extra_1;
+                }
+
+                if(c1>n/3) {
+                    int extra_2 = c1 - target;
+                    c1-=extra_2;
+                    c2+=extra_2;
+                    min_moves+=extra_2;
+                }
+
+                if(c2>n/3) {
+                    int extra_3 = c2 - target;
+                    c2-=extra_3;
+                    c0+=extra_3;
+                    min_moves+=extra_3;
+                }
+            }
+            
+
+            System.out.println(min_moves);
+        }
+    }
+}
