@@ -1,0 +1,22 @@
+Question: https://leetcode.com/problems/is-subsequence/
+
+Solution:
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        int idx1=0,idx2=0;
+
+        while(idx1<s.length() && idx2<t.length()) {
+            char c1 = s.charAt(idx1);
+            char c2 = t.charAt(idx2);
+
+            if(c1==c2) {
+                idx1++;
+                idx2++;
+            }else {
+                idx2++;
+            }
+        }
+
+        return idx1>=s.length();
+    }
+}
