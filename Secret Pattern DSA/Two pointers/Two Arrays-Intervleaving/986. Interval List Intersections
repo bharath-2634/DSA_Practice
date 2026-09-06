@@ -1,0 +1,116 @@
+Question: https://leetcode.com/problems/interval-list-intersections/
+
+Solution:
+
+// class Solution {
+//     public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
+//         List<List<Integer>> res = new ArrayList<>();
+//         int idx1=0,idx2=0;
+
+//         while(idx1<firstList.length && idx2<secondList.length) {
+//             int[] first_card = firstList[idx1];
+//             int[] second_card = secondList[idx2];
+
+//             if(first_card[0]>second_card[1]) {
+//                 idx2++;
+//                 continue;
+//             }
+
+//             if(first_card[1]<second_card[0]) {
+//                 idx1++;
+//                 continue;
+//             }
+
+//             List<Integer> ds = new ArrayList<>();
+//             int min_start = Math.min(first_card[0],second_card[0]);
+//             int max_end = Math.max(first_card[1],second_card[1]);
+
+//             if(first_card[0]!=min_start) {
+//                 ds.add(first_card[0]);
+//             }else if(second_card[0]!=min_start) {
+//                 ds.add(second_card[0]);
+//             }else if(first_card[0]==min_start && second_card[0]==min_start) {
+//                 ds.add(min_start);
+//             }
+
+//             if(first_card[1]!=max_end) {
+//                 ds.add(first_card[1]);
+//                 // idx1++;
+//             }else if(second_card[1]!=max_end) {
+//                 ds.add(second_card[1]);
+//                 // idx2++;
+//             }else if(first_card[1]==max_end && second_card[1]==max_end) {
+//                 ds.add(max_end);
+//             }
+
+//             if(first_card[1]<second_card[1]) {
+//                 idx1++;
+//             }else idx2++;
+
+//             res.add(new ArrayList<>(ds));
+//         }
+
+//         // System.out.println(res);
+
+//         int[][] final_res = new int[res.size()][2];
+//         int idx=0;
+//         for(List<Integer> d : res) {
+//             final_res[idx][0] = d.get(0);
+//             final_res[idx][1] = d.get(1);
+//             idx++;
+//         }
+
+//         return final_res;
+//     }
+// }
+
+class Solution {
+    public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
+        List<List<Integer>> res = new ArrayList<>();
+        int idx1 = 0, idx2 = 0;
+
+        while (idx1 < firstList.length && idx2 < secondList.length) {
+
+            int[] first_card = firstList[idx1];
+            int[] second_card = secondList[idx2];
+
+            // No intersection
+            if (first_card[0] > second_card[1]) {
+                idx2++;
+                continue;
+            }
+
+            if (first_card[1] < second_card[0]) {
+                idx1++;
+                continue;
+            }
+
+            // Intersection
+            List<Integer> ds = new ArrayList<>();
+
+            int start = Math.max(first_card[0], second_card[0]);
+            int end = Math.min(first_card[1], second_card[1]);
+
+            ds.add(start);
+            ds.add(end);
+
+            res.add(ds);
+
+            // Move the interval that ends first
+            if (first_card[1] < second_card[1]) {
+                idx1++;
+            } else {
+                idx2++;
+            }
+        }
+
+        int[][] final_res = new int[res.size()][2];
+
+        for (int i = 0; i < res.size(); i++) {
+            final_res[i][0] = res.get(i).get(0);
+            final_res[i][1] = res.get(i).get(1);
+        }
+
+        return final_res;
+    }
+}
