@@ -1,0 +1,59 @@
+Question: https://leetcode.com/problems/merge-intervals/
+
+Solution:
+class Solution {
+    public int[][] merge(int[][] intervals) {
+
+        Arrays.sort(intervals,(a,b)->a[0]-b[0]);
+
+        if(intervals.length==1) {
+            return intervals;
+        }
+
+        if(intervals.length==2 && intervals[0][1]<intervals[1][0]) {
+            return intervals;
+        } 
+
+
+        List<int[]> res = new ArrayList<>();
+        int start=intervals[0][0];
+        int end = intervals[0][1];
+
+        for(int i=1;i<intervals.length;i++) {
+            int[] block = intervals[i];
+            
+            if(end<block[0]) {
+                res.add(new int[]{start,end});
+
+                start = block[0];
+                end = block[1];
+            }else {
+                end = Math.max(end,block[1]);
+            }
+
+            // int min_start = Math.min(start,block[0]);
+            // int max_end = Math.max(end,block[1]);
+            // res.add(new int[]{min_start,max_end});
+
+            // if(start>block[0]) {
+            //     start = block[0];
+            // }    
+
+            // if(end<block[1]) {
+            //     end = block[1];
+            // }
+        }
+
+        res.add(new int[]{start,end});
+
+        int[][] final_res = new int[res.size()][2];
+        int idx=0;
+        for(int i=0;i<res.size();i++) {
+            final_res[idx][0] = res.get(i)[0];
+            final_res[idx][1] = res.get(i)[1];
+            idx++; 
+        }
+
+        return final_res;
+    }
+}
