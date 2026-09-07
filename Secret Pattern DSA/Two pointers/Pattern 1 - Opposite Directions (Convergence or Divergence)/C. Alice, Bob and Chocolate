@@ -1,0 +1,54 @@
+Question: https://codeforces.com/problemset/problem/6/C
+
+Solution:
+import java.util.*;
+
+
+public class Main {
+
+    // public static boolean isSquareFreeNumber(long n) {
+    //     if(n<0) return false;
+        
+    //     if(n==1) return true;
+        
+    //     if(n%4==0) return false;
+
+    //     long i=3;
+    //     while(i*i<=n) {
+    //         if(n%(i*i)==0) return false;
+    //         i+=2;
+    //     }
+
+    //     return true;
+    // }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        int alice_count=0,bob_count=0,idx1=0,idx2=n-1;
+        int alice_time=0,bob_time=0;
+
+        while(idx1<=idx2) {
+            int cur_alice = nums[idx1];
+            int cur_bob = nums[idx2];
+            
+            if(alice_time<=bob_time) {
+                alice_time+=cur_alice;
+                alice_count++;
+                idx1++;
+            }else {
+                bob_time+=cur_bob;
+                bob_count++;
+                idx2--;
+            }
+        }
+
+        System.out.println(alice_count + " " + bob_count);
+    }
+} 
