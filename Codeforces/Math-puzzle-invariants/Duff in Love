@@ -1,0 +1,74 @@
+NOTE:
+|           n | Usually think about                          |
+| ----------: | -------------------------------------------- |
+|    `n ≤ 20` | `2^n`, brute force                           |
+|   `n ≤ 100` | `O(n²)`                                      |
+| `n ≤ 2,000` | `O(n²)` often okay                           |
+|  `n ≤ 10^5` | `O(n log n)` / `O(n)`                        |
+|  `n ≤ 10^6` | roughly `O(n)`                               |
+| `n ≤ 10^12` | definitely exploit math / `√n` / logarithmic |
+
+
+Question: https://codeforces.com/problemset/problem/588/B
+
+Solution:
+import java.util.*;
+
+
+public class Main {
+
+    public static boolean isSquareFreeNumber(long n) {
+        if(n<0) return false;
+        
+        if(n==1) return true;
+        
+        if(n%4==0) return false;
+
+        long i=3;
+        while(i*i<=n) {
+            if(n%(i*i)==0) return false;
+            i+=2;
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        long n = sc.nextLong();
+
+        // Brute force approach
+
+        // List<Long> div = new ArrayList<>();
+        // for(long i=1;i<=n;i++) {
+        //     if(n%i==0) {
+        //         div.add(i);
+        //     }
+        // }
+
+        // long max_square_free_number = 0;
+        // for(long val : div) {
+        //     if(isSquareFreeNumber(val)) {
+        //         max_square_free_number = Math.max(max_square_free_number,val);
+        //     }
+        // }
+
+        // System.out.println(max_square_free_number);
+        long answer=1;
+
+        for(long p=2;p*p<=n;p++) {
+            if(n%p==0) {
+                answer*=p;
+                while(n%p==0) {
+                    n/=p;
+                }
+            }
+        }
+
+        if(n>1) {
+            answer*=n;
+        }
+
+        System.out.println(answer);
+    }
+} 
