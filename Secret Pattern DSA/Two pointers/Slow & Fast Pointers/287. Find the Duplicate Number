@@ -1,0 +1,35 @@
+Question: https://leetcode.com/problems/find-the-duplicate-number/
+
+Solution:
+class Solution {
+    public int findDuplicate(int[] nums) {
+
+// Thought of constraint and wrote a O(n^2) solution but failed, now thinking about fast & slow pointer concept
+        // for(int i=0;i<nums.length;i++) {
+        //     for(int j=i+1;j<nums.length;j++) {
+        //         if(i!=j && nums[i]==nums[j]) {
+        //             return nums[i];
+        //         }
+        //     }
+        // }   
+
+        // return -1;
+
+        // Re-thinking: turn every number as a node and the one node which contains duplicate - is the one forms a cycle
+
+        int slow = nums[0], fast = nums[0];
+
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }while(slow!=fast);
+        
+        slow = nums[0];
+        while(slow!=fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+
+        return slow;
+    }
+}
