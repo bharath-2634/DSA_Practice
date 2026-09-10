@@ -1,0 +1,64 @@
+Question: https://leetcode.com/problems/reorder-list/
+
+
+solution:
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    
+    public ListNode reverseList(ListNode node) {
+        if(node==null) return null;
+
+        ListNode p=node,q=node,temp=null;
+        while(p!=null && q!=null) {
+            q = p.next;
+            p.next = temp;
+            temp = p;
+            p = q;
+        }
+
+        return temp;
+    }
+    
+    public void reorderList(ListNode head) {
+        ListNode dummy = new ListNode(-1);
+        dummy.next = head;
+        ListNode slow = dummy,fast =dummy;
+
+        while(fast!=null && fast.next!=null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        ListNode mid = slow.next;
+        ListNode rev = reverseList(mid);
+        slow.next = null;
+
+        fast = head;
+        while(rev!=null) {
+            ListNode temp_1 = fast.next;
+            ListNode temp_2 = rev.next;
+            // System.out.println(temp.val);
+            fast.next = rev;
+            fast = fast.next;
+            // System.out.println(fast.val);
+            fast.next = temp_1;
+            fast = fast.next;
+            // System.out.println(rev.val);
+            rev = temp_2;
+        }
+    }
+}
+
+/*
+    1->4->2
+    3
+*/
