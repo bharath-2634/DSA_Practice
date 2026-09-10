@@ -1,0 +1,27 @@
+Question: https://codeforces.com/problemset/problem/246/B
+
+Solution:
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+        int sum=0;
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+            sum+=nums[i];
+        }
+
+        if(sum%n==0) {
+            System.out.println(n);
+        }else {
+            System.out.println(n-1);
+        }
+
+
+    }
+}
