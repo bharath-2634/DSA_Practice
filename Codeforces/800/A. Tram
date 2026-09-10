@@ -1,0 +1,29 @@
+Question: https://codeforces.com/problemset/problem/116/A
+
+Solution:
+import java.util.*;
+ 
+public class Main {
+    public static void main(String[] args) {
+ 
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] tram = new int[n][2];
+ 
+        for(int i=0;i<n;i++) {
+            tram[i][0] = sc.nextInt();
+            tram[i][1] = sc.nextInt();
+        }
+ 
+        int passenger_count=tram[0][1],max_passenger=tram[0][1];
+ 
+        for(int i=1;i<n;i++) {
+            int bus_stop = tram[i][0], number_pass = tram[i][1];
+            int curr_pass = passenger_count - bus_stop;
+            passenger_count = curr_pass+number_pass;
+            max_passenger = Math.max(max_passenger,passenger_count);
+        }
+ 
+        System.out.println(max_passenger);
+    }
+}
