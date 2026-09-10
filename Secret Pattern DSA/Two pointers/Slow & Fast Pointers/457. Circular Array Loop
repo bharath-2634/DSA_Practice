@@ -1,0 +1,136 @@
+Question: https://leetcode.com/problems/circular-array-loop/
+
+
+Solution:
+/*
+class Solution {
+
+    public void generateAdjList(int[] nums,Map<Integer,Integer> adjList) {
+
+        for(int idx=0;idx<nums.length;idx++) {
+            // if(nums[idx]>=0) {
+            //     adjList.put(idx,(idx+nums[idx])%nums.length);
+            // }else {
+            //     adjList.put(idx,(nums.length-(Math.abs(nums[idx])-idx))%nums.length);
+            // }
+
+            int next = (idx+nums[idx])%nums.length;
+            if(next<0) {
+                next+=nums.length;
+            }
+            adjList.put(idx,next);
+        }
+    }
+
+    public boolean detectCycle(int parent,int node,int[] nums,Map<Integer,Integer> adjList,boolean[] used,boolean flag,boolean[] path) {
+        if((nums[node]>0)!=flag) return false;
+
+        if(path[node]) return true;
+        if(used[node]) return false;
+
+        used[node] = true;
+        path[node] = true;
+
+        int adjNode = adjList.get(node);
+
+        if(node==adjNode) {
+            path[node] = false;
+            return false;
+        }
+
+        
+        if(detectCycle(node,adjNode,nums,adjList,used,flag,path)) {
+            return true;
+            // if(ds.size()>1) return true;
+        }
+        
+        path[node] = false;
+        return false;
+    }
+
+    public boolean circularArrayLoop(int[] nums) {
+        Map<Integer,Integer> adjList = new HashMap<>();
+        generateAdjList(nums,adjList);
+        
+        boolean[] used = new boolean[nums.length];
+        boolean[] path = new boolean[nums.length];
+        for(int node=0;node<nums.length;node++) {
+            if(used[node]) continue;
+
+            boolean flag_dir = (nums[node]>0 ? true: false);
+            if(detectCycle(-1,node,nums,adjList,used,flag_dir,path)) return true;
+        }
+
+        return false;
+    }
+}
+*/
+
+/*
+    [2,-1,1,2,2]
+    at 2-> moves 2 steps -> now at 1
+    at 1-> moves 1 steps -> now at 2
+    at 2-> moves 2 steps -> now at 2
+
+    [-1,-2,-3,-4,-5,-6]
+    at -1-> moves 1 steps -> now at -6
+
+    // found that, thinking in terms of graph -> 
+    * build a adj list where each index should say where to move next idx->next_node
+    * detect cycle where the length of the cycle>1 and also does the cycle has formed only with same direction elements 
+
+    converting and detecting the neg move
+    [2,-1,1,2,2]
+    formula:  nums.length - (Math.abs(nums[idx]) - idx) 
+    nums[3]
+*/
+
+class Solution {
+
+    public int getIdx(int idx,int[] nums) {
+        int next = (idx+nums[idx])%nums.length;
+        if(next<0) {
+            next+=nums.length;
+        }
+
+        return next;
+    }
+
+    public boolean circularArrayLoop(int[] nums) {
+        
+
+        for(int i=0;i<nums.length;i++) {
+            int slow = i, fast = i;
+            int flag_dir = nums[i]>0 ? +1 : -1;
+
+            // boolean flag=false;
+            while(true) {
+                
+                int next_slow_idx = getIdx(slow,nums);
+                int next_fast_idx = getIdx(getIdx(fast,nums),nums);
+
+                int fast_next_dir = nums[getIdx(fast,nums)]>0 ? +1 : -1;
+                int next_slow_dir = nums[next_slow_idx]>0 ? +1 : -1;
+                int next_fast_dir = nums[next_fast_idx]>0 ? +1 :-1;
+                if(next_slow_dir!=flag_dir || next_fast_dir!=flag_dir || fast_next_dir!=flag_dir) {
+                    // flag = true;
+                    break;
+                }
+
+                slow = next_slow_idx;
+                fast = next_fast_idx;
+
+                if(slow==fast) {
+                    // cycle found
+                    if(slow == getIdx(slow,nums)) {
+                        break;
+                    }
+
+                    return true;
+                } 
+            }
+        }
+
+        return false;
+    }
+}
