@@ -1,0 +1,26 @@
+Question: https://leetcode.com/problems/length-of-the-longest-alphabetical-continuous-substring/
+
+
+Solution:
+
+class Solution {
+    public int longestContinuousSubstring(String s) {
+        int max_len = Integer.MIN_VALUE;
+        int start=0;
+        
+        while(start<s.length()) {
+            char c = s.charAt(start);
+            // int curr_len=1;
+            if(start+1<s.length() && (c+1)==s.charAt(start+1)) {
+                int end = start;
+                while(end+1<s.length() && (s.charAt(end)+1)==s.charAt(end+1)) {
+                    end++;
+                }
+                max_len = Math.max(max_len,end-start+1);
+                start = end;
+            }else start++;
+        }
+
+        return max_len==Integer.MIN_VALUE ? 1 : max_len;
+    }
+}
