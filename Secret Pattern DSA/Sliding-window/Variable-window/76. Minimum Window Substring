@@ -1,0 +1,57 @@
+Question: https://leetcode.com/problems/minimum-window-substring/
+
+Solution:
+class Solution {
+
+    public boolean containsReq(int[] window,int[] req) {
+        // here I need to check whether window[] contains req[]
+        for(int i=0;i<126;i++) {
+            if(window[i] < req[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public String minWindow(String s, String t) {
+        if(s.length()<t.length()) return "";
+        
+        int[] tMap = new int[126];
+        for(char c : t.toCharArray()) {
+            tMap[c]++;
+        }   
+
+        int k = t.length();
+        int[] window = new int[126];
+        // for(int i=0;i<k;i++) {
+        //     window[s.charAt(i)]++;
+        // }
+
+        int start=0,end=0;
+        int min_len = Integer.MAX_VALUE,min_start=0;
+        
+        // if(Arrays.equals(tMap,window)) {
+        //     return t;
+        // }
+
+        while(end<s.length() && start<s.length()) {
+            window[s.charAt(end)]++;
+
+            while(containsReq(window,tMap)) {
+
+                if(min_len > (end-start+1)) {
+                    min_len = end-start+1;
+                    min_start = start;
+                }
+
+                window[s.charAt(start)]--;
+                start++;
+            }   
+
+            end++;        
+        }
+
+        return min_len==Integer.MAX_VALUE ? "": s.substring(min_start,min_start+min_len);
+    }
+}
