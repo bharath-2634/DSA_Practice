@@ -1,0 +1,93 @@
+Question: https://leetcode.com/problems/find-all-anagrams-in-a-string/
+
+Solution:
+/*
+
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> res = new ArrayList<>();
+        
+        int start=0,end=p.length();
+        Map<Character,Integer> pMap = new HashMap<>();
+        for(char c : p.toCharArray()) {
+            pMap.put(c,pMap.getOrDefault(c,0)+1);
+        }
+
+        while(end<=s.length()) {
+            String sub = s.substring(start,end);
+            boolean not_continue = false;
+            Map<Character,Integer> fMap = new HashMap<>();
+            for(char c : sub.toCharArray()) {
+
+                if(!pMap.containsKey(c)) {
+                    not_continue = true;
+                    break;
+                }
+                fMap.put(c,fMap.getOrDefault(c,0)+1);
+            }
+
+            if(not_continue) {
+                start++;
+                end++;
+                continue;
+            }
+
+            boolean is_ana=true;
+            for(Map.Entry<Character,Integer> e : fMap.entrySet()) {
+                char key = e.getKey();
+                int freq = e.getValue();
+
+                if(!pMap.containsKey(key) || freq!=pMap.get(key)) {
+                    is_ana = false;
+                    break;
+                }
+            }
+
+            if(is_ana) {
+                res.add(start);
+            }
+            start++;
+            end++;
+        }
+
+        return res;
+    }
+}
+
+*/
+
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> res= new ArrayList<>();
+        int k = p.length();
+        
+        if(s.length()<p.length()) {
+            return res;
+        }
+
+        int[] freq = new int[126];
+        for(char c : p.toCharArray()) {
+            freq[c-'a']++;
+        }
+
+        int[] window = new int[126];
+        for(int i=0;i<k;i++) {
+            window[s.charAt(i)-'a']++;
+        }
+
+        if(Arrays.equals(freq,window)) {
+            res.add(0);
+        }
+
+        for(int i=k;i<s.length();i++) {
+            window[s.charAt(i)-'a']++;
+            window[s.charAt(i-k)-'a']--;
+
+            if(Arrays.equals(freq,window)) {
+                res.add(i-k+1);
+            }
+        }
+
+        return res;
+    }
+}
