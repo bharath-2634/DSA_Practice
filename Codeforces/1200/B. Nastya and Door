@@ -1,0 +1,52 @@
+Question: https://codeforces.com/problemset/problem/1341/B
+
+Solution:
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int t = sc.nextInt();
+
+        while(t-->0) {
+            int n = sc.nextInt();
+            int k = sc.nextInt();
+
+            int[] a = new int[n];
+            
+            for (int i = 0; i < n; i++) {
+                a[i] = sc.nextInt();
+            }
+
+            int[] isPeak = new int[n];
+            for (int i = 1; i < n - 1; i++) {
+                if (a[i] > a[i - 1] && a[i] > a[i + 1]) {
+                    isPeak[i] = 1;
+                }
+            }
+
+            int[] pref = new int[n];
+            for (int i = 1; i < n; i++) {
+                pref[i] = pref[i - 1] + isPeak[i];
+            }
+
+            int maxPeaks = -1;
+            int bestL = 1;
+
+            for (int l = 0; l <= n - k; l++) {
+                int r = l + k - 1;
+                
+                int currentPeaks = pref[r - 1] - pref[l];
+
+                if (currentPeaks > maxPeaks) {
+                    maxPeaks = currentPeaks;
+                    bestL = l + 1; 
+                }
+            }
+
+            System.out.println((maxPeaks + 1) + " " + bestL); 
+        }
+        
+    }
+}
