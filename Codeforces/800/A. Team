@@ -1,0 +1,24 @@
+Question: https://codeforces.com/problemset/problem/231/A
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int count=0;
+        while(n-->0) {
+            int fr1 = sc.nextInt();
+            int fr2 = sc.nextInt();
+            int fr3 = sc.nextInt();
+
+            if((fr1==1 && fr2==1) || (fr1==1 && fr3==1) || (fr2==1 && fr3==1)) {
+                count++;
+            }
+        }
+
+        System.out.println(count);
+    }
+}
