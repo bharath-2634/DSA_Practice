@@ -1,0 +1,31 @@
+Question: https://codeforces.com/problemset/problem/282/A
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = Integer.parseInt(sc.next());
+        String[] ops = new String[t];
+        for(int i=0;i<t;i++) {
+            ops[i] = sc.next();
+        } 
+
+        int x=0;
+        for(String op : ops) {
+            if(op.equals("++X")) {
+                ++x;
+            }else if(op.equals("X++")) {
+                x++;
+            }else if(op.equals("--X")) {
+                --x;
+            }else if(op.equals("X--")) {
+                x--;
+            }
+        }
+       
+       System.out.println(x);
+    }
+}
