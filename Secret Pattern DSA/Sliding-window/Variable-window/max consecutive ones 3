@@ -1,0 +1,30 @@
+Question: https://leetcode.com/problems/max-consecutive-ones-iii/
+
+Solution:
+class Solution {
+    public int longestOnes(int[] nums, int k) {
+        int max_ones=0,ones=0,zero_flips=0,right=0,left=0;
+
+        while(right<nums.length) {
+            int curr_node = nums[right];
+            if(curr_node==0) {
+                zero_flips++;
+            }
+
+            while(zero_flips>k) {
+                int left_node = nums[left];
+                if(left_node==0) {
+                    zero_flips--;
+                }
+                ones--;
+                left++;
+            }
+
+            ones++;
+            max_ones = Math.max(max_ones,ones);
+            right++;
+        }
+
+        return max_ones;
+    }
+}
