@@ -1,0 +1,38 @@
+Question: https://codeforces.com/problemset/problem/2258/B1
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        while(t-->0) {
+            int n = sc.nextInt();
+            int m = sc.nextInt();
+            int[] nums = new int[n];
+            int[] freq = new int[m+1];
+            for(int i=0;i<n;i++) {
+                nums[i] = sc.nextInt();
+                freq[nums[i]]++;
+            } 
+
+            int[] suffix = new int[m+2];
+            for(int x=m;x>=1;x--) {
+                suffix[x] = suffix[x+1]+freq[x];
+            }
+
+            int max_count=0;
+            for(int x=1;x<=m;x++) {
+                int curr_count = suffix[x+1]+freq[x];
+                if(2*x<=m) {
+                    curr_count+=freq[x*2];
+                }
+                max_count = Math.max(max_count,curr_count);
+            }
+
+            System.out.println(max_count);
+        }
+    }
+}
