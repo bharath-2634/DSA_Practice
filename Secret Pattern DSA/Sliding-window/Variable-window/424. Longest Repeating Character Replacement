@@ -1,0 +1,69 @@
+Question: https://leetcode.com/problems/longest-repeating-character-replacement/
+
+Solution:
+class Solution {
+    /*
+
+    Approach 1: try all possible targets and form a window for each - accepted
+    public int characterReplacement(String s, int k) {
+        int final_max=0;
+        Set<Character> targets = new HashSet<>();
+        for(char c : s.toCharArray()) {
+            targets.add(c);
+        }
+
+        for(char c : targets) {
+            int left=0,right=0,flips=0,same=0,max_len=0;
+            char se = c;
+            while(right<s.length()) {
+                char curr_node = s.charAt(right);
+
+                if(curr_node!=se) {
+                    flips++;
+                }
+
+                while(flips>k) {
+                    char fo_node = s.charAt(left);
+                    if(fo_node!=se) {
+                        flips--;
+                    }
+                    same--;
+                    left++;
+                }
+
+                same++;
+                max_len = Math.max(max_len,same);
+                right++;
+            }
+
+            final_max = Math.max(final_max,max_len);
+        }
+
+        return final_max;
+    }
+    */
+
+    public int characterReplacement(String s, int k) {
+        int left=0,right=0,max_len=0,max_freq=0;
+        int[] freq = new int[126];
+
+        while(right<s.length()) {
+            char curr_node= s.charAt(right);
+            freq[curr_node]++;
+            max_freq = Math.max(max_freq,freq[curr_node]);
+            int max_replacement = (right-left+1) - max_freq;
+
+            while(max_replacement>k) {
+                char left_node = s.charAt(left);
+                left++;
+                freq[left_node]--;
+                max_replacement = (right-left+1) - max_freq;
+            }
+
+            max_len = Math.max(max_len,(right-left+1));
+            right++;
+        }
+
+        return max_len;
+    }
+}
