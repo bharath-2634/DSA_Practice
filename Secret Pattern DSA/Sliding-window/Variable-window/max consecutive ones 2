@@ -1,0 +1,39 @@
+Question: https://www.geeksforgeeks.org/dsa/max-number-of-one-ii/
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        } 
+
+        int max_ones=0,left=0,right=0,zero_flips=0,ones=0;
+        while(right<nums.length) {
+            int curr_node = nums[right];
+            if(curr_node==0) {
+                zero_flips++;
+            }
+
+            while(zero_flips>1) {
+                int left_node = nums[left];
+                if(left_node==0) {
+                    zero_flips--;
+                }
+                ones--;
+                left++;
+            }
+
+            ones++;
+            max_ones = Math.max(max_ones,ones);
+            right++;
+        }
+
+        System.out.println(max_ones);
+    }
+}
