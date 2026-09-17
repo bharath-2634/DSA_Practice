@@ -1,0 +1,25 @@
+Question: https://leetcode.com/problems/fruit-into-baskets/
+
+Solution:
+class Solution {
+    public int totalFruit(int[] fruits) {
+        Map<Integer,Integer> fMap = new HashMap<>();
+        int right=0,left=0,max_len=0;
+
+        while(right<fruits.length) {
+            fMap.put(fruits[right],fMap.getOrDefault(fruits[right],0)+1);
+            
+            // shrinking
+            while(fMap.size()>2) {
+                fMap.put(fruits[left],fMap.get(fruits[left])-1);
+                if(fMap.get(fruits[left])==0) fMap.remove(fruits[left]);
+                left++;
+            }
+            
+            max_len = Math.max(max_len,(right-left+1));
+            right++;
+        }
+
+        return max_len;
+    }
+}
