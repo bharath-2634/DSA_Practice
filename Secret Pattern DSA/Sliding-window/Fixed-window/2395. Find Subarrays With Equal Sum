@@ -1,0 +1,23 @@
+Question: https://leetcode.com/problems/find-subarrays-with-equal-sum/
+
+Solution:
+class Solution {
+    public boolean findSubarrays(int[] nums) {
+        Set<Integer> sums = new HashSet<>();
+        int curr_sum=0;
+        for(int i=0;i<2;i++) {
+            curr_sum+=nums[i];
+        }
+        sums.add(curr_sum);
+
+        for(int i=2;i<nums.length;i++) {
+            curr_sum+=nums[i];
+            curr_sum-=nums[i-2];
+
+            if(sums.contains(curr_sum)) return true;
+            sums.add(curr_sum);
+        }
+
+        return false;
+    }
+}
