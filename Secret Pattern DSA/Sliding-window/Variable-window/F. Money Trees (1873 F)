@@ -1,0 +1,50 @@
+Question: https://codeforces.com/problemset/problem/1873/F
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        
+        while(t-->0) {
+            int n = sc.nextInt();
+            int k = sc.nextInt();
+            int[] fruits = new int[n];
+            int[] height = new int[n];
+
+            for(int i=0;i<n;i++) {
+                fruits[i] = sc.nextInt();
+            }
+
+            for(int i=0;i<n;i++) {
+                height[i] = sc.nextInt();
+            }
+
+            int left=0,right=0,max_len=0,curr_val=0;
+
+            while(right<n) {
+                curr_val+=fruits[right];
+
+                if(right>0 && height[right-1]%height[right]!=0) {
+                    curr_val=fruits[right];
+                    left = right;
+                    // right++;
+                    // continue;
+                }
+
+                while(curr_val>k) {
+                    curr_val-=fruits[left];
+                    left++;
+                }
+
+                max_len = Math.max(max_len,(right-left+1));
+                right++;
+            }
+
+            System.out.println(max_len);
+        }
+    }
+}
