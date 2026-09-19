@@ -1,0 +1,46 @@
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static int sol(String s,int k) {
+        if(k<1) return 0;
+
+        int left=0,right=0,max_len = 0,count=0;
+        int[] freq = new int[126];
+
+        while(right<s.length()) {
+            char curr = s.charAt(right);
+
+            if(freq[curr]==0) {
+                count++;
+                freq[curr]++;
+            }
+
+            // shrink
+            while(count>k) {
+                char left_node = s.charAt(left);
+                freq[left_node]--;
+                if(freq[left_node]==0) {
+                    count--;
+                }
+                left++;
+            }
+
+            max_len = Math.max(max_len,(right-left+1));
+            right++;
+        }
+
+        return max_len;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.next();
+        int k = Integer.parseInt(sc.next()); 
+
+        // Longest substring with atmost k distinct characters
+        int atmost_k = sol(s,k) - sol(s,k-1);
+        System.out.println(atmost_k);
+    }
+}
