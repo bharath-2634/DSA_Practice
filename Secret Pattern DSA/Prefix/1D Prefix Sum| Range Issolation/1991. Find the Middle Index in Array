@@ -1,0 +1,27 @@
+Questions: https://leetcode.com/problems/find-the-middle-index-in-array/
+
+Solution:
+
+class Solution {
+    public int findMiddleIndex(int[] nums) {
+        int[] prefix = new int[nums.length];
+        prefix[0] = nums[0];
+        
+        for(int i=1;i<nums.length;i++) {
+            prefix[i] = prefix[i-1]+nums[i];
+        }
+
+        int idx=-1;
+        for(int i=0;i<nums.length;i++) {
+            int left_sum = prefix[i]-nums[i];
+            int right_sum = prefix[nums.length-1]- prefix[i];
+
+            if(left_sum==right_sum) {
+                idx = i;
+                return idx;
+            }
+        }
+
+        return idx;
+    }
+}
