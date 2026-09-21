@@ -1,0 +1,48 @@
+Question: https://codeforces.com/problemset/problem/433/B
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static long sol(long[] nums,int left,int right) {
+        if(left==0) return nums[right];
+        return nums[right] - nums[left-1];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] stones = new int[n];
+        for(int i=0;i<n;i++) {
+            stones[i]= sc.nextInt();
+        }
+
+        // normal: prefix_sum
+        long[] prefix = new long[n];
+        prefix[0] = stones[0];
+        for(int i=1;i<n;i++) {
+            prefix[i] = prefix[i-1]+stones[i];
+        }
+        // sorted: prefix_sum
+        Arrays.sort(stones);
+        long[] sorted_prefix= new long[n];
+        sorted_prefix[0] = stones[0];
+        for(int i=1;i<n;i++) {
+            sorted_prefix[i] = sorted_prefix[i-1]+stones[i];
+        }
+        
+        int q = sc.nextInt();
+        while(q-->0) {
+            int type = sc.nextInt();
+            int left = sc.nextInt()-1;
+            int right = sc.nextInt()-1;
+
+            if(type==1) {
+                System.out.println(sol(prefix,left,right));
+            }else if(type==2) {
+                System.out.println(sol(sorted_prefix,left,right));
+            }
+        }
+    }
+}
