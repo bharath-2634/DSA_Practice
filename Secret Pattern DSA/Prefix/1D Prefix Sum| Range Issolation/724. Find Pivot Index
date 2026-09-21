@@ -1,0 +1,42 @@
+Question: https://leetcode.com/problems/find-pivot-index/
+
+Solution:
+class Solution {
+    public int pivotIndex(int[] nums) {
+        int[] prefix = new int[nums.length];
+        prefix[0] = nums[0];
+        
+        for(int i=1;i<nums.length;i++) {
+            prefix[i] = prefix[i-1]+nums[i];
+        }
+
+        int idx=-1;
+        for(int i=0;i<nums.length;i++) {
+            int left_sum = prefix[i]-nums[i];
+            int right_sum = prefix[nums.length-1]- prefix[i];
+
+            if(left_sum==right_sum) {
+                idx = i;
+                return idx;
+            }
+        }
+
+        return idx;
+    }
+}
+
+/*
+    [1,8,11,17,22,28]
+    
+    i=0, 
+    left_sum: 1
+    right_sum: 28-1=27 [Not equal]
+
+    i=1,
+    left_sum: 8
+    right_sum: 28-8=20
+
+    i=3
+    left_sum: 17-nums[3] = 11
+    right_sum: 28- 17 
+*/
