@@ -1,0 +1,28 @@
+Question: https://leetcode.com/problems/car-pooling/
+
+Solution:
+class Solution {
+    public boolean carPooling(int[][] trips, int capacity) {
+        int[] diff = new int[1001];
+        for(int[] trip : trips) {
+            int l = trip[1];
+            int r = trip[2];
+            int val = trip[0];
+            diff[l]+=val;
+            diff[r]-=val;
+        }
+
+        // for(int i=0;i<trips.length;i++) {
+        //     System.out.println(diff[i]);
+        // }
+
+        // // int[] prefix = new int[trips.length];
+        int curr_freq=0;
+        for(int i=0;i<diff.length;i++) {
+            curr_freq+=diff[i];
+            if(curr_freq>capacity) return false;
+        }
+
+        return true;
+    }
+}
