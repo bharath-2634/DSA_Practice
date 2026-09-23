@@ -1,0 +1,23 @@
+Question: https://leetcode.com/problems/shifting-letters/
+
+Solution:
+
+class Solution {
+    public String shiftingLetters(String s, int[] shifts) {
+        long[] suffix = new long[shifts.length];
+        suffix[suffix.length-1] = shifts[shifts.length-1];
+        for(int i=shifts.length-2;i>=0;i--) {
+            suffix[i] = suffix[i+1]+shifts[i];
+            System.out.println(suffix[i]);
+        }
+
+        char[] chr = s.toCharArray();
+        for(int i=0;i<chr.length;i++) {
+            long shift_chr = ((chr[i]-'a')+suffix[i])%26;
+            if(shift_chr<0) shift_chr+=26;
+            chr[i] = (char)(shift_chr+'a');
+        }
+
+        return new String(chr);
+    }
+}
