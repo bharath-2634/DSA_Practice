@@ -1,0 +1,101 @@
+Question: https://codeforces.com/problemset/problem/276/C
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static int calc(int[] prefix,int[][] queries) {
+        int curr_total=0;
+        for(int[] query: queries) {
+            int l = query[0], r = query[1];
+            if(l==0) {
+                curr_total+=(prefix[r]);
+                continue;
+            }
+            curr_total+=(prefix[r]-prefix[l-1]);
+        }
+
+        return curr_total;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int q = sc.nextInt();
+        int[] nums = new int[n];
+        for(int i=0;i<n;i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        // int[] queries_freq = new int[n];
+        // int[][] queries = new int[q][2];
+        long[] diff = new long[n+1];
+        for(int i=0;i<q;i++) {
+            int l = sc.nextInt()-1;
+            int r = sc.nextInt()-1;
+            diff[l]++;
+            diff[r+1]--;
+        }
+        
+        // int curr_total=0;
+        // int[] prefix_sub = new int[n];
+        // prefix_sub[0] = nums[0];
+        // for(int i=1;i<n;i++) {
+        //     prefix_sub[i] = prefix_sub[i-1]+nums[i];
+        // }
+        // curr_total = calc(prefix_sub,queries);
+        // // System.out.println(curr_total);
+
+        // // greedly shifting to attain max_freq         
+        // PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->b[1]-a[1]); // idx,freq
+
+        // for(int i=0;i<queries_freq.length;i++) {
+        //     pq.offer(new int[]{i,queries_freq[i]});
+        // }
+
+        // // System.out.println(pq);
+        // int max_total= curr_total;
+        // while(!pq.isEmpty()) {
+        //     int[] curr = pq.poll();
+        //     int idx = curr[0];
+
+        //     // swap max_num with this
+        //     int temp = nums[idx];
+        //     nums[idx] = max_num;
+        //     nums[max_idx] = temp;
+
+        //     // re-calculate the prefix
+        //     int[] prefix = new int[n];
+        //     prefix[0] = nums[0];
+        //     for(int i=1;i<n;i++) {
+        //         prefix[i] = prefix[i-1]+nums[i];
+        //     }
+
+        //     max_total = Math.max(max_total,calc(prefix,queries));
+
+        //     // reverting it back
+        //     nums[idx] = nums[max_idx];
+        //     nums[max_idx] = max_num;
+        // }
+
+        // System.out.println(max_total);
+
+        long[] freq = new long[n];
+        int curr_freq=0;
+        for(int i=0;i<n;i++) {
+            curr_freq+=diff[i];
+            freq[i] = curr_freq;
+        }
+
+        Arrays.sort(freq);
+        Arrays.sort(nums);
+
+        long max_sum=0;
+        for(int i=0;i<n;i++) {
+            max_sum+=(nums[i]*freq[i]);
+        }
+
+        System.out.println(max_sum);
+    }
+} 
