@@ -1,0 +1,36 @@
+Question: https://leetcode.com/problems/shifting-letters-ii/
+
+Sollution:
+
+class Solution {
+    public String shiftingLetters(String s, int[][] shifts) {
+        int[] diff = new int[s.length()+1];
+        for(int[] shift : shifts) {
+            int l = shift[0];
+            int r = shift[1];
+            int direction = shift[2];
+            if(direction==0) {
+                diff[l]--;
+                diff[r+1]++;
+            }else {
+                diff[l]++;
+                diff[r+1]--;
+            }
+        }
+
+        // for(int i=0;i<diff.length;i++) {
+        //     System.out.println(i+ " "+ diff[i]);
+        // }
+
+        char[] chr = s.toCharArray();
+        int curr_shift=0;
+        for(int i=0;i<chr.length;i++) {
+            curr_shift+=diff[i];
+            int curr_chr = ((chr[i]-'a')+curr_shift)%26;
+            if(curr_chr<0) curr_chr+=26;
+            chr[i] = (char)(curr_chr+'a');
+        }
+
+        return new String(chr);
+    }
+}
