@@ -1,0 +1,76 @@
+Question: https://codeforces.com/problemset/problem/816/B
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static int lowerBound(List<Integer> nums,int target) {
+        int left=0,right=nums.size();
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+
+            if(nums.get(mid)>=target) {
+                right= mid;
+            }else {
+                left = mid+1;
+            }
+        }
+
+        return left;
+    }
+
+    public static int upperBound(List<Integer> nums,int target) {
+        int left=0,right=nums.size();
+
+        while(left<right) {
+            int mid = left+(right-left)/2;
+            
+            if(nums.get(mid)>target) {
+                right = mid;
+            }else {
+                left = mid+1;
+            }
+        }
+
+        return left;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        int q = sc.nextInt();
+
+        int[] diff = new int[200002];
+        for(int i=0;i<n;i++) {
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+            diff[l]++;
+            diff[r+1]--;
+        }
+
+        List<Integer> admissible = new ArrayList<>();
+        int curr_sum=0;
+        for(int i=0;i<diff.length;i++) {
+            curr_sum+=diff[i];
+            if(curr_sum>=k) {
+                admissible.add(i);
+            }
+        }
+
+        // System.out.println(admissible);
+        /*
+            Range counting: (number of elements ≤ r) - (number of elements < l)
+        */
+
+        for(int i=0;i<q;i++) {
+            int l = sc.nextInt();
+            int r = sc.nextInt();
+
+            int count = upperBound(admissible,r) - lowerBound(admissible,l);
+            System.out.println(count);
+        }
+    }
+}
