@@ -1,0 +1,92 @@
+Question: https://leetcode.com/problems/minimum-moves-to-make-array-complementary/
+
+Solution:
+
+class Solution {
+    /*
+    public int minMoves(int[] nums, int limit) {
+        int min_moves=Integer.MAX_VALUE;
+        
+        for(int target=2;target<=2*limit;target++) {
+            int curr_moves=0;
+            int curr_target = target;
+            int left=0,right=nums.length-1;
+            while(left<right) {
+                int a= Math.min(nums[left],nums[right]);
+                int b= Math.max(nums[left],nums[right]);
+
+                int sum = a+b;
+                if(sum!=curr_target) {
+                    if(curr_target>=a+1 && curr_target<=b+limit) {
+                        curr_moves++;
+                    }else {
+                        curr_moves+=2;
+                    }
+                }
+                left++;
+                right--;
+            }
+            min_moves = Math.min(min_moves,curr_moves);
+        }
+
+        return min_moves;
+    }
+    */
+
+    public int minMoves(int[] nums, int limit) {
+
+        int[] diff = new int[2*limit+2];
+        int left=0,right=nums.length-1;
+        while(left<right) {
+            int a = Math.min(nums[left],nums[right]);
+            int b = Math.max(nums[right],nums[left]);
+
+            // assuming every pair has 2 moves
+            diff[2]+=2;
+            // one move range -> 
+            diff[a+1]--;
+            diff[b+limit+1]++;
+            // zero moves required
+            diff[a+b]--;
+            diff[a+b+1]++;
+
+            left++;
+            right--;
+        }
+
+        int min_moves=Integer.MAX_VALUE;
+        int curr_moves=0;
+        for(int target=2;target<=2*limit;target++) {
+            curr_moves+=diff[target];
+            min_moves= Math.min(min_moves,curr_moves);
+        }
+
+        return min_moves;
+    }
+}
+
+/*
+    # Whenever we get some question which says make them equal to some value -> always ask
+    Q: What does the value belong to ?
+        here, the target S belongs to min = 1+1 (as the nums[i] starts with 1) and max = 2*limit
+        s belongs to [2,2*limit]
+    # now the question becomes given the set of target - "For every possible target sum S, how many moves are required?" find the minimum moves
+
+    # The number of changes possible are: target ∈ [min(a,b)+1, max(a,b)+limit]
+        -> if sum==target -> curr_changes=0;
+        -> if sum!=target:
+            -> change any one number -> curr_changes=1;
+            -> change both numbers -> curr_changes=2
+
+    # optimizing thought process:
+        -> lets assume that all the pairs needs 2 moves to reach to target
+            so we have n/2 pairs, each has 2 moves -> cost = (n/2)*2 = n //
+            diff[2]+=2; // baseline diff[0..n]=2
+        -> now lets say if the pairs only need 1 moves to reach to target, but we already made 2 by default so we reduce it by -1
+            one-move range =   [min(a,b)+1, max(a,b)+limit]
+            diff[min(a,b)+1]++;
+            diff[max(a,b)+limit+1]--;
+        -> now lets say if the pairs only need 0 moves to reach to target, but we already made 
+            diff[a+b]--;
+            diff[a+b+1]++;
+*/
