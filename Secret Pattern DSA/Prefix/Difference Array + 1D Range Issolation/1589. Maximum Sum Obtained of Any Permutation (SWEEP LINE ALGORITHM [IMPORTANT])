@@ -1,0 +1,52 @@
+Question: https://leetcode.com/problems/maximum-sum-obtained-of-any-permutation/
+
+Solution:
+class Solution {
+    public int maxSumRangeQuery(int[] nums, int[][] requests) {
+        int MOD = 1_000_000_007;
+        int[] diff = new int[nums.length+1];
+        for(int[] req : requests) {
+            int start = req[0];
+            int end = req[1];
+            diff[start]++;
+            diff[end+1]--;
+        }
+
+        long[] freq = new long[nums.length];
+        long curr_freq = 0;
+        for(int i=0;i<nums.length;i++) {
+            curr_freq+=diff[i];
+            freq[i] = curr_freq;
+        }
+
+        Arrays.sort(freq);
+        Arrays.sort(nums);
+
+        long max_sum=0;
+        for(int i=0;i<nums.length;i++) {
+            max_sum= (max_sum+(nums[i]*freq[i]))%MOD;
+        }
+
+        return (int)max_sum;
+    }
+}
+
+/*
+    [1,2,3] ->
+    {
+        0->1
+        1->2
+        2->1
+        3->1
+    }
+1
+1
+-1
+0
+-1
+    [1,2,1,1,0]
+    [1,5,3,4,2]
+    5+3+4 = 12
+    1+5 = 7
+    19
+*/
