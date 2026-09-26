@@ -1,0 +1,48 @@
+Question: https://codeforces.com/contest/2267/problem/B
+
+Solution:
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+
+        while(t-- > 0) {
+            int n = sc.nextInt();
+            int[] freq = new int[101];
+            for(int i=0;i<n;i++) {
+                int v = sc.nextInt();
+                freq[v]++;
+            }   
+
+            List<Integer> f= new ArrayList<>();
+            while(f.size()<n) {
+                for(int i=100;i>=0;i--) {
+                    if(freq[i]>0) {
+                        f.add(i);
+                        freq[i]--;
+                    }
+                }
+            }
+
+            for(int p : f) {
+                System.out.print(p+" ");
+            }
+            System.out.println("");
+        }
+    }
+}
+
+/*
+3 2 2
+4 4 3 2 1 1
+4 1 3 2 2
+2 1 1 1
+7 1 2 3 4 5 6
+4 3 2 1 3 3 1 2
+4 4 3 3 2 1 1 3
+
+
+*/
