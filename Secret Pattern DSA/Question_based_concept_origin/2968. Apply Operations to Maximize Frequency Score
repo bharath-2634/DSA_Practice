@@ -1,0 +1,128 @@
+Question: https://leetcode.com/problems/apply-operations-to-maximize-frequency-score/
+
+Solution:
+class Solution {
+    /*
+    public int maxFrequencyScore(int[] nums, long k) {
+        Map<Integer,List<Integer>> fMap = new HashMap<>();
+        for(int i=0;i<nums.length;i++) {
+            int j=0;
+            List<Integer> ds = new ArrayList<>();
+            while(j<nums.length) {
+                int abs = Math.abs(nums[i]-nums[j]);
+                ds.add(abs);
+                j++;
+            }
+            fMap.put(nums[i],ds);
+        }
+
+        int max_freq=0;
+        for(List<Integer> r : fMap.values()) {
+            Collections.sort(r);
+            int curr_sum=0,curr_count=0;
+            for(int val : r) {
+                if(curr_sum+val>k) {
+                    break;
+                }
+                curr_sum+=val;
+                curr_count++;
+            }
+            max_freq = Math.max(max_freq,curr_count);
+        }
+
+        return max_freq;
+    }
+    */
+
+    public int maxFrequencyScore(int[] nums, long k) {
+        Arrays.sort(nums);
+        long[] prefix = new long[nums.length+1];
+        // prefix[0] = nums[0];
+        for(int i=0;i<nums.length;i++) {
+            prefix[i+1] = prefix[i]+nums[i];
+        }
+        int max_freq=0;
+        int left=0,right=0;
+        while(right<nums.length) {
+            // right++;
+            // find median
+            int med_idx = (right+left)/2;
+            long median = nums[med_idx];
+
+            // calculate the cost
+            long left_sum = (prefix[med_idx] - prefix[left]);
+            long right_sum = (prefix[right+1] - prefix[med_idx+1]);
+            long cost = (median*(med_idx - left) - left_sum) + (right_sum - median*(right-med_idx));
+
+            //shrinking condition
+            while(cost>k && left<right) {
+                left++;
+                med_idx = (right+left)/2;
+                median = nums[med_idx];
+                left_sum = (prefix[med_idx] - prefix[left]);
+                right_sum = (prefix[right+1] - prefix[med_idx+1]);
+                cost = (median*(med_idx - left) - left_sum) + (right_sum - median*(right-med_idx));
+            }
+            
+            max_freq = Math.max(max_freq,(right-left+1));
+            right++;
+        }
+
+        return max_freq;
+    }
+}
+
+/*
+
+testcase-1:
+    [1,2,6,4], k=3
+
+    # Current Approach: Take each num and find the abs diff to make all other num in the array to equvalent 
+    1-> [ {2:1}, {6:5}, {4:3}] // {val: diff_to_make_equal_target}
+    2-> [ {1:1}, {6:4}, {4:2}]
+    6-> [ {1:5}, {2:4}, {4:2}]
+    4-> [ {1:3}, {2:2}, {6:2}]
+
+    #next check frequency for each number on whether they adapt to the next k value
+    1-> max number can be formed is (2 or 4) -> freq=2
+    2-> max number can be formed is (1 and 4) -> freq=3
+    6-> max number can be formed is (only 4) -> freq=2
+    4-> max number can be formed is (any one 1,2,6) -> freq=2
+
+    Therefore max frequency can be achieved is 3
+
+testcase-2:
+    [1,4,4,2,4], k=0
+
+    # Current Approach: Take each num and find the abs diff to make all other num in the array to equvalent 
+    1-> [ {4:3}, {4:3}, {2:1}, {4:3}]
+    4-> [ {1:3}, {4:0}, {2:2}, {4:0}]
+    4-> [ {1:3}, {4:0}, {2:2}, {4:0}]
+    2-> [ {1:1}, {4:2}, {4:2}, {4:2}]
+    4-> [ {1:3}, {4:0}, {2:2}, {4:0}]
+
+    #next check frequency for each number on whether they adapt to the next k value
+    1->0
+    4->max freq(4,4) -> 3
+    4->max freq(4,4) ->3
+    2->max freq(0)->0
+    4-> max freq(4,4) -> 3
+
+    Therefore max frequency can be achieved is 3
+============ optimization observation ==========
+
+
+1.    median is the only one number - which can provide max freq 
+ 
+2.      // on the case of increase value by +1
+        target*(window_size) - total_sum;
+
+        // on the case of decrease value by -1
+        total_sum - target*(window_size);
+3. possible causes:
+    -> a = both left -> right
+    -> b = both right->left
+    -> c = only left
+    -> d = only right
+    max = Math.max(a,b,c,d);
+*/
