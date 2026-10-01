@@ -1,0 +1,38 @@
+Question: https://leetcode.com/problems/contiguous-array/
+
+Solution:
+class Solution {
+    public int findMaxLength(int[] nums) {
+        
+        // transforming to cumm sum
+        for(int i=0;i<nums.length;i++) {
+            if(nums[i]==0) {
+                nums[i] = -1;
+            }
+        }
+
+        int res=0,k=0,prefix=0;
+        Map<Integer,Integer> fMap = new HashMap<>();
+        for(int i=0;i<nums.length;i++) {
+            prefix+=nums[i];
+
+            if(prefix==k) {
+                res=i+1;
+            }
+
+            if(fMap.containsKey(prefix)) {
+                res = Math.max(res,i - fMap.get(prefix));
+            } else fMap.put(prefix,i);
+        }
+
+        return res;
+    }
+}
+
+/*
+    [0,1,1,1,1,1,0,0,0]
+    replace all 0's with -1
+    [-1,1,1,1,1,1,-1,-1,-1]
+    now this question becomes the longest subarray whoes sum =0
+    [-1,0,1,2,3,4,3,2,1]
+*/
