@@ -1,0 +1,36 @@
+Question: https://leetcode.com/problems/matrix-block-sum/
+
+Solution:
+
+class Solution {
+    public int[][] matrixBlockSum(int[][] mat, int k) {
+        int n = mat.length,m=mat[0].length;
+        int[][] pre = new int[n+1][m+1];
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                pre[i+1][j+1] = mat[i][j] + pre[i+1][j] + pre[i][j+1] - pre[i][j];
+            }
+        }
+        
+        int[][] ans = new int[n][m];
+
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                // normalize the rectange/square grid indexes
+                int r1 = (i-k)<0 ? 0: (i-k); // r1
+                int r2 = (i+k)>=n ? n-1 : (i+k); // r2
+                int c1 = (j-k)<0 ? 0 : (j-k); // c1
+                int c2 = (j+k)>=m ? m-1 : (j+k); // c2
+                // int sum=0;
+                // for(int r=start_r;r<=end_r;r++) {
+                //     for(int c=start_c;c<=end_c;c++) {
+                //         sum+=mat[r][c];
+                //     }
+                // }
+                // pre[i][j] = sum;
+                ans[i][j] = pre[r2+1][c2+1] - pre[r1][c2+1] - pre[r2+1][c1] + pre[r1][c1];
+            }
+        }
+        return ans;
+    }
+}
