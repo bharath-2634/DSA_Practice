@@ -1,0 +1,55 @@
+Solution:
+class MyHashSet {
+    private static final int INITIAL_SIZE=16;
+    List<List<Integer>> bucket = new LinkedList<>();
+    int size=0;
+    public MyHashSet() {
+        for(int i=0;i<INITIAL_SIZE;i++) {
+            bucket.add(new LinkedList<>());
+        }
+    }
+
+    public int getHashIndex(int key) {
+        Integer k = key;
+        int code= k.hashCode();
+        return Math.abs(code)%INITIAL_SIZE;
+    }
+    
+    public void add(int val) {
+        // getting the hashindex
+        int key = getHashIndex(val);
+        if(contains(val)) {
+            return;
+        }
+        
+        bucket.get(key).add(val);
+    }
+    
+    public void remove(int val) {
+        int key = getHashIndex(val);
+        List<Integer> li = bucket.get(key);
+        if(li==null) return;
+
+        li.remove(Integer.valueOf(val));
+    }
+    
+    public boolean contains(int val) {
+        int key = getHashIndex(val);
+        List<Integer> li = bucket.get(key);
+        if(li==null) return false;
+
+        for(int i=0;i<li.size();i++) {
+            if(li.get(i)==val) return true;
+        }
+
+        return false;
+    }
+}
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet obj = new MyHashSet();
+ * obj.add(key);
+ * obj.remove(key);
+ * boolean param_3 = obj.contains(key);
+ */
