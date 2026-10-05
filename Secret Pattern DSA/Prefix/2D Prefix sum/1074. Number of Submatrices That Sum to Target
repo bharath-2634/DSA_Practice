@@ -1,0 +1,26 @@
+Question: https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/
+
+Solution:
+class Solution {
+    public int numSubmatrixSumTarget(int[][] matrix, int target) {
+        int[][] pre = new int[matrix.length+1][matrix[0].length+1];
+        for(int i=0;i<matrix.length;i++) {
+            for(int j=0;j<matrix[0].length;j++) {
+                pre[i+1][j+1] = matrix[i][j] + pre[i+1][j] + pre[i][j+1] - pre[i][j];
+            }
+        }
+
+        int count=0;
+        for(int r1=0;r1<matrix.length;r1++) {
+            for(int c1=0;c1<matrix[0].length;c1++) {
+                for(int r2=r1;r2<matrix.length;r2++) {
+                    for(int c2=c1;c2<matrix[0].length;c2++) {
+                        int sum = pre[r2+1][c2+1] - pre[r2+1][c1] - pre[r1][c2+1] + pre[r1][c1];
+                        if(sum==target) count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
