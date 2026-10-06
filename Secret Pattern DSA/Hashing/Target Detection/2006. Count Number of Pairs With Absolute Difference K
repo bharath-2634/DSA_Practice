@@ -1,0 +1,29 @@
+Question: https://leetcode.com/problems/count-number-of-pairs-with-absolute-difference-k/
+
+Solution:
+class Solution {
+    public int countKDifference(int[] nums, int k) {
+        Map<Integer,Integer> fMap = new HashMap<>();
+        int count=0;
+        for(int num : nums) {
+            if(fMap.containsKey(k+num)) {
+                count+=fMap.get(k+num);
+            }
+            if(fMap.containsKey(num-k)) {
+                count+=fMap.get(num-k);
+            }
+            fMap.put(num,fMap.getOrDefault(num,0)+1);
+        }
+
+        return count;
+    }
+}
+
+/*
+    a - b = target
+    a = target+b
+
+    b-a = target
+    a = b - target
+    // therefore the hashkey is (target+nums[i]) 
+*/
