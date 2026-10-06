@@ -1,0 +1,36 @@
+Question: https://leetcode.com/problems/count-number-of-bad-pairs/
+
+Solution:
+class Solution {
+    public long countBadPairs(int[] nums) {
+        long n =nums.length;
+        long total_pairs = n*(n-1)/2;
+        long count=0;
+        Map<Integer,Long> fMap = new HashMap<>();
+        for(int i=0;i<nums.length;i++) {
+            int key = i-nums[i];
+            if(fMap.containsKey(key)) {
+                count+=fMap.get(key);
+            }
+
+            fMap.put(key,fMap.getOrDefault(key,0L)+1);
+        } 
+
+        return total_pairs - count;
+    }
+}
+
+/*
+    As we're repeatedly checking on numbers - hashing ! 
+    // Thinking about hashKey 
+    but here since we have two moving pointers - which makes simple hashing impossible, lets try mathematical invariants (Algebric Isolation)
+
+    // conceptual derivation: bad_pairs = total_pairs - good_pairs
+
+    total_pairs = n*(n-1)/2 
+    good_pairs = Algebric isolation
+    j-i != nums[j] - nums[i] -> turning to good pair
+    j-i = nums[j] - nums[i]
+    j - nums[j] = i - nums[i] -> so from this we can say
+    k - nums[k] is the key for hashing
+*/
