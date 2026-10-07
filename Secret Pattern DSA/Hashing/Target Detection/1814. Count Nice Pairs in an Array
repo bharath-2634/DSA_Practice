@@ -1,0 +1,56 @@
+Question: https://leetcode.com/problems/count-nice-pairs-in-an-array/
+
+Solution:
+
+class Solution {
+
+    public int rev(int num) {
+        int res=0;
+        while(num>0) {
+            int temp = num%10;
+            res = res*10+temp;
+            num/=10;
+        }
+
+        return res;
+    }
+
+    public int countNicePairs(int[] nums) {
+        Map<Integer,Integer> fMap = new HashMap<>();
+        long count=0;
+
+        int[] rever = new int[nums.length];
+        for(int i=0;i<nums.length;i++) {
+            rever[i] = rev(nums[i]);
+        }
+        
+        for(int i=0;i<nums.length;i++) {
+            int key = nums[i] - rever[i];
+
+            if(fMap.containsKey(key)) {
+                count = (count+fMap.get(key))%1_000_000_007;
+            }
+            fMap.put(key,fMap.getOrDefault(key,0)+1);
+        }
+
+        return (int)count%1_000_000_007;
+    }
+}
+
+/*
+    stage-1 decision: analyzing the concept of search space
+    on this question we look for the elements mutiple times - so to optimize this we need hashing (perfix sum not required because we're not seeing out cummulative sums)
+    
+    stage-2: What should be the pattern on hashing
+    counting + Hashing template
+
+    stage-3: What should be the key for this 
+
+    good-pairs: nums[i] + rev(nums[j]) == nums[j] + rev(nums[i])
+        - performing algebric isolation:
+            nums[i] - rev(nums[i]) == nums[j] - rev(nums[j])
+        - reduced to 
+            nums[i] - rev(nums[i])
+    Key = nums[i] - rev(nums[i])
+
+*/
