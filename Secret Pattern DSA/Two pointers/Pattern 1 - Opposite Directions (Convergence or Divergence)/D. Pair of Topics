@@ -1,0 +1,48 @@
+Question: https://codeforces.com/problemset/problem/1324/D
+
+Solution:
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		long[] a = new long[n];
+		
+		for(int i=0;i<n;i++) {
+		    a[i] = sc.nextLong();
+		}
+		
+		for(int i=0;i<n;i++) {
+		    long b = sc.nextLong();
+		    a[i]-=b;
+		}
+		
+		Arrays.sort(a);
+        long count=0;
+        int left=0,right=a.length-1;
+        
+        while(left<right) {
+            if(a[right]+a[left]>0) {
+                count+=(right-left);
+                right--;
+            }else left++;
+        }
+        
+        System.out.println(count);
+	}
+}
+
+/*
+    a_i+ a_j > b_i+b_j;
+    a_i - b_i > b_j - a_j;
+    c_i= a_i - b_i;
+    c_j = b_j - a_j;
+    
+    if c_i+c_j>0// yes
+    else // no
+*/
